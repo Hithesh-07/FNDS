@@ -1,0 +1,57 @@
+# TruthLens Pro — Elite Build Walkthrough
+
+## Test Results: 20/20 (100%) ✅
+
+```
+ 1. [OK] REAL  Conf: 97.7% (HIGH)  — Federal Reserve interest rates
+ 2. [OK] REAL  Conf: 87.1% (MED)   — NASA Artemis launch
+ 3. [OK] REAL  Conf: 99.8% (HIGH)  — Apple quarterly earnings
+ 4. [OK] REAL  Conf: 99.2% (HIGH)  — WHO malaria vaccine
+ 5. [OK] REAL  Conf: 96.6% (HIGH)  — India GDP growth
+ 6. [OK] FAKE  Conf:100.0% (HIGH)  — 5G towers cause cancer
+ 7. [OK] FAKE  Conf:100.0% (HIGH)  — Bill Gates microchips
+ 8. [OK] FAKE  Conf:100.0% (HIGH)  — Pope flat earth
+ 9. [OK] FAKE  Conf:100.0% (HIGH)  — Election rigging
+10. [OK] FAKE  Conf:100.0% (HIGH)  — Drinking bleach
+11. [OK] REAL  Conf: 99.4% (HIGH)  — Supreme Court ruling
+12. [OK] REAL  Conf: 98.5% (HIGH)  — Tesla battery tech
+13. [OK] FAKE  Conf:100.0% (HIGH)  — Satanic cult
+14. [OK] FAKE  Conf: 90.7% (HIGH)  — Chemtrails cover-up
+15. [OK] REAL  Conf: 98.3% (HIGH)  — Deep sea fish species
+16. [OK] REAL  Conf: 95.8% (HIGH)  — UK data privacy law
+17. [OK] FAKE  Conf:100.0% (HIGH)  — Alien contact LEAKS
+18. [OK] FAKE  Conf:100.0% (HIGH)  — Soros funds antifa
+19. [OK] REAL  Conf: 97.4% (HIGH)  — UN climate report
+20. [OK] REAL  Conf: 99.7% (HIGH)  — Microsoft acquisition
+```
+
+## Architecture
+
+- **Ensemble**: SVM + Logistic Regression + Passive Aggressive (soft voting)
+- **Features**: TF-IDF (50K, trigrams) + handcrafted stylistic features (CAPS ratio, sensational words, exclamation count)
+- **Confidence Tiers**: HIGH (>90%) / MEDIUM (75-90%) / LOW (60-75%) / UNCERTAIN (<60% or margin <20%)
+- **Rules Engine**: Regex patterns catch obvious fakes instantly
+- **Red Flags**: Sensational word count, CAPS ratio, exclamation frequency boost fake probability
+
+## File Structure
+
+| File | Purpose |
+|------|---------|
+| [prepare_data.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/prepare_data.py) | Multi-source dataset merger |
+| [data_augmentation.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/data_augmentation.py) | Synthetic data generation (3K fake + 3K real) |
+| [preprocess.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/preprocess.py) | NLP pipeline + [extract_features()](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/preprocess.py#71-117) |
+| [train.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/train.py) | Ensemble trainer + confusion analysis |
+| [predict.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py) | Inference engine with confidence tiers + red flags |
+| [test_model.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/test_model.py) | 20 automated test cases |
+| [app.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/app.py) | Flask REST API |
+| [model/scaler.pkl](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/model/scaler.pkl) | StandardScaler for handcrafted features |
+
+## Run Order
+
+```bash
+python data_augmentation.py   # Generate synthetic data
+python prepare_data.py        # Merge all datasets → data/news.csv
+python train.py               # Train ensemble → model/*.pkl
+python test_model.py          # Verify 20/20
+python app.py                 # Launch web UI at localhost:5000
+```

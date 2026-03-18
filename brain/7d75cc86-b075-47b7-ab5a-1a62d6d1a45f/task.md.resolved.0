@@ -1,0 +1,13 @@
+# Task Checklist
+
+- [ ] Create project structure and subdirectories (data, model, templates, static)
+- [ ] Save the updated `preprocess.py`
+- [ ] Save the updated `train.py`
+- [ ] Save the updated `predict.py`
+- [ ] Save the updated `app.py`
+- [ ] Save the updated `templates/index.html`
+- [ ] Save the updated `static/style.css`
+- [ ] Save the CLI version `main.py`
+- [ ] Save the data preparation script `run_once_prepare_data.py`
+- [ ] Save `requirements.txt`
+- [ ] Provide explanation and run instructions to the user

@@ -1,0 +1,25 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+TruthLens
+Pro
+PRIORITY ENGINE v2.0
+AI PATTERN RECOGNITION
+CREDIBILITY SIGNAL AUDIT
+UNCERTAINTY LOGIC SCAN
+FINAL CONSENSUS ENGINE
+☀️
+AI-POWERED
+RULES-FIRST
+PRODUCTION
+TruthLens
+Pro
+The world's most transparent misinformation detection engine.
+Article Analysis
+Auditing...
+0 / 50,000
+Run Priority Audit
+Recent Checks
+
+</current_dom>

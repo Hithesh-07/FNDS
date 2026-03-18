@@ -1,0 +1,9 @@
+# Tasks
+- [ ] Open http://localhost:5000/
+- [ ] Type "This is a test." into the news-text textarea
+- [ ] Verify the counter: "4 words | 15 / 50,000 chars"
+- [ ] Take a screenshot
+- [ ] Confirm everything is working and report back
+
+# Findings
+- 

@@ -1,0 +1,68 @@
+# TruthLens Fake News Detector Improvements
+
+I have fully reviewed, organized, and upgraded your TruthLens Fake News Detector codebase. All files have been securely saved to the project directory along with the recommended feature enhancements and fixes. 
+
+## Key Improvements Implemented:
+1. **Preprocessing Robustness ([preprocess.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/preprocess.py))**:
+   - Added `WordNetLemmatizer` for better generic word coverage.
+   - Handled dataset imbalance by enforcing uniform sampling across both FAKE and REAL categories, guaranteeing an unbiased training block.
+   - Enforced deduplication of content to prevent data leakage and artificially high accuracy scores.
+
+2. **Model Training & Accuracy ([train.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/train.py))**:
+   - Upgraded to `LinearSVC` paired with `CalibratedClassifierCV`. Support Vector Machines generally perform faster and better than Logistic Regression on TF-IDF features. 
+   - Utilized `sublinear_tf=True` in the vectorizer to apply sublinear (logarithmic) scaling to term frequencies, reducing the impact of highly recurrent words.
+   - Added performance metric tracking inside `metrics_log.json` to monitor how changes affect accuracy and F1 scores over time.
+
+3. **Inference Explanations ([predict.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py))**:
+   - Implemented a [get_top_keywords](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py#12-26) function which extracts the most influential words driving the prediction based on TF-IDF weighting. 
+   
+4. **Reliability & Validation ([app.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/app.py) & [main.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/main.py))**:
+   - Integrated custom input validation handling to prevent overly long articles from causing out-of-memory errors by rejecting payloads larger than 5000 characters.
+   - Added REST APIs (`/predict` and `/metrics`) alongside an interactive UI for programmatic use.
+   - Made the CLI [main.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/main.py) flexible enough to seamlessly fetch Base Estimators out of the customized CV model objects.
+
+5. **Aesthetics & UI ([templates/index.html](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/templates/index.html) & [static/style.css](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/static/style.css))**:
+   - Upgraded the interface to support a clean, premium "newsprint" layout using custom Google fonts and dynamic probability bars.
+   - Displayed the keyword signals on the predictive result page for easier interpretability.
+   
+---
+
+## 🚀 How to Run TruthLens
+
+Follow these steps to initialize and start using your upgraded detector.
+
+### Step 1: Install Dependencies
+Open up your terminal inside the project directory and run:
+```bash
+pip install -r requirements.txt
+```
+
+### Step 2: Prepare the Dataset
+*Make sure you first download `Fake.csv` and `True.csv` from Kaggle and place them in the project root folder.*
+Then run:
+```bash
+python run_once_prepare_data.py
+```
+
+### Step 3: Train the Model
+Train the upgraded SVM model by running:
+```bash
+python train.py
+```
+
+### Step 4: Launch It!
+You have two robust ways to utilize the model.
+
+**Option A: The Beautiful Web Application**
+Launch the Flask App:
+```bash
+python app.py
+```
+Open your browser and navigate to `http://localhost:5000`.
+
+**Option B: The Sleek CLI App**
+Run the interactive console application:
+```bash
+python main.py
+```
+*Follow the interactive instructions to type or batch test your datasets.*

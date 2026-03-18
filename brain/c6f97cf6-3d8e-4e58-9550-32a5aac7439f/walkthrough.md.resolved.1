@@ -1,0 +1,40 @@
+# TruthLens UI Upgrades Walkthrough
+
+The TruthLens UI has been successfully redesigned with all 9 requested upgrades. Here are the components built and verified for visual excellence and premium feel:
+
+## Changes Implemented
+- **Dynamic Background Colors**: Implemented fluid gradients in `body-fake`, `body-real`, and `body-uncertain` tied to the JS fetch logic.
+- **Loading Animations**: The "Analyze" button now locks and switches to an animated spinner while a full-width left-to-right progress bar sweeps below the button.
+- **Verdict Stamp & Probability Animation**: Added cubic-bezier scaling to the verdict text (`stampIn`) and variable-width CSS animations to the probability bars (`growBar`).
+- **Credibility Gauge**: Upgraded the standard confidence percentage to an SVG speedometer gauge. The JS calculates the rotation angle based on the `data.confidence` value.
+- **Recent Analysis History**: Implemented a "Recent Checks" section rendering local storage entries. Data persists across reloads and displays timestamps dynamically.
+- **Dark Mode Toggle**: Introduced a comprehensive CSS variables approach (`:root` / `body.dark`) and a top-right toggle button that persists the user's choice.
+- **Download Result Card**: Bundled `html2canvas.js` via CDN to allow downloading the `.result-section` as a beautifully scaled PNG.
+- **Mobile Responsiveness**: Enforced max-width media queries at `max-width: 768px` and `max-width: 480px` to resize fonts, re-flow grids, and ensure usability on smaller devices.
+- **Highlighted Text**: Injected dynamic span highlighting—red for fake-leaning words and green for real-leaning words—displaying the modified original text directly below the analysis card.
+
+## Additional Polish & Fixes
+- **Noise Words Filter:** Added a custom `NOISE_WORDS` set to python keyword extraction to remove generic filler words from model explainability.
+- **Fixed Speedometer Gauge Numbering:** The confidence SVG text is now rendered natively within a `<text>` node to prevent html2canvas splitting.
+- **Collapsible Text:** The highlighted text section now defaults to 150 characters with a dynamic "Show Full Text ▼" toggle.
+- **Dynamic History Dots:** The Recent checks feature uses 🟢 / 🔴 / 🟡 dot indicators natively mapped strictly to the verdict.
+- **Low Confidence Warnings:** Added an attention-grabbing warning alert box when confidence scores drop below 70%.
+- **Bonus UI Interactions:** 
+  - Added a subtle pulsing dot to the `ANALYSIS COMPLETE` status indicator.
+  - Implemented CSS tooltips showing context on word chips.
+  - Added a "📋 Copy Text" button.
+
+## Verification
+
+The browser subagent was used to verify these interactions locally at `http://127.0.0.1:5000`.
+
+### UI Enhancements Preview
+
+````carousel
+![Light Mode Fake Result](file:///C:/Users/98858/.gemini/antigravity/brain/c6f97cf6-3d8e-4e58-9550-32a5aac7439f/result_page_fake_1773826120201.png)
+<!-- slide -->
+![Dark Mode Test](file:///C:/Users/98858/.gemini/antigravity/brain/c6f97cf6-3d8e-4e58-9550-32a5aac7439f/dark_mode_test_1773826173401.png)
+````
+
+### Automated Test Recording
+![Testing Flow Video](file:///C:/Users/98858/.gemini/antigravity/brain/c6f97cf6-3d8e-4e58-9550-32a5aac7439f/truthlens_ui_upgrades_demo_1773826039088.webp)

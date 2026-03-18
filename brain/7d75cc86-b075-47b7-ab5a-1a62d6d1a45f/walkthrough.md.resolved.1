@@ -1,0 +1,84 @@
+# TruthLens Fake News Detector: Advanced Production Build
+
+I have successfully executed the full build of TruthLens. The system has been upgraded with caching, error boundaries, a secure JSON-based REST architecture, and an enterprise-grade aesthetics overhaul.
+
+All scripts have been fully tested and run successfully without any errors.
+
+---
+
+## 📂 Final File Structure
+```text
+golden-apollo/
+│
+├── wsgi.py                  ← Production server entrypoint
+├── app.py                   ← Flask server (Upgraded to fully RESTful JSON API)
+├── train.py                 ← Training pipeline (LinearSVC + CallibratedCV)
+├── predict.py               ← Prediction logic with LRU Memoization Cache
+├── preprocess.py            ← Optimized full data cleaning + LRU Caching
+├── run_once_prepare_data.py ← Dataset merger script
+├── requirements.txt         ← Dependencies including WSGI servers
+├── metrics_log.json         ← Training history
+│
+├── data/
+│   └── news.csv             ← Collated active dataset
+├── model/
+│   ├── model.pkl            ← SVM model weights
+│   └── vectorizer.pkl       ← Fitted TF-IDF Vectorizer
+│
+├── templates/
+│   └── index.html           ← Advanced UI layout (SPA architecture via AJAX)
+└── static/
+    └── style.css            ← Modern, custom styling, animations
+```
+
+---
+
+## ✨ Enhancements & Code Optimizations Made
+
+1. **Performance & Caching ([predict.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py), [preprocess.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/preprocess.py))**:
+   - Added `functools.lru_cache` to `lemmatizer.lemmatize` to speed up the preprocessing phase by memoizing duplicate word variants.
+   - Added LRU caching wrapped around the predictive inference step to completely bypass computation on identical repeated headline evaluations.
+
+2. **UI & User Experience Improvements ([index.html](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/templates/index.html), [style.css](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/static/style.css))**:
+   - **Modernization**: Upgraded to a clean, highly modern dark-bordered "Enterprise" vibe. Added dynamic pulsating background gradients (`bg-gradient`) and custom Google typography (`Outfit` and `Playfair Display`).
+   - **AJAX Single Page App**: Removed clumsy form redirects. The UI now fully relies on JavaScript `fetch()` calls to interact with the backend API, enabling smooth CSS state transitions (`expand-anim`) without page reloads.
+   - **Interactive Elements**: Implemented an animating loading spinner SVG within the Analyze button, interactive typing character counters, and smooth probability bar fills.
+
+3. **Error Handling & Architecture ([app.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/app.py))**:
+   - Switched to strict JSON responses for all predictive routes (`/predict`).
+   - Improved API resilience against empty inputs, and raised character-limit constraints dynamically.
+   
+4. **Keyword Extraction Nuance ([predict.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py))**:
+   - Fixed TF-IDF weighting lookup logic to emphasize high-magnitude vector correlations matching the user's specific text string.
+
+5. **Production Reliability ([wsgi.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/wsgi.py), [requirements.txt](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/requirements.txt))**:
+   - Handled Windows terminal unicode emoji encode errors inside data ingestion scripts via `sys.stdout.reconfigure(encoding='utf-8')`.
+   - Created [wsgi.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/wsgi.py) standard entry point and added `gunicorn` (Linux/Mac standard) and `waitress` (Windows standard) into [requirements.txt](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/requirements.txt) for highly scalable concurrency.
+
+---
+
+## 🚀 How to Run the Production Environment
+
+### Step 1: Install Dependencies
+Open your command prompt/terminal inside the project directory:
+```bash
+pip install -r requirements.txt
+```
+
+### Step 2: Build the Datasets & Train the Model
+Ensure your dataset files (`Fake.csv` & `True.csv`) have been downloaded into the project's root folder.
+```bash
+python run_once_prepare_data.py
+python train.py
+```
+
+### Step 3: Launch server for Production
+If you are running the project natively on Windows, spawn the environment using `Waitress`:
+```bash
+waitress-serve --port=5000 wsgi:app
+```
+*(If you deploy this to a Linux/Mac platform later, you can seamlessly use `gunicorn wsgi:app -b 0.0.0.0:5000`)*
+
+### Step 4: Interact with TruthLens
+Open your web browser and navigate directly to:
+**http://localhost:5000**

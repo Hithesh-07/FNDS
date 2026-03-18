@@ -1,0 +1,20 @@
+# Task Checklist
+
+## Completed
+- [x] Project structure, Flask app, REST API
+- [x] SVM model with TF-IDF training pipeline
+- [x] LRU caching, BERT hybrid fallback
+- [x] UNCERTAIN class, rules engine, explainability UI
+- [x] data_augmentation.py creating news_augmented.csv
+- [x] Windows encoding fixes throughout
+
+## Elite Rewrite
+- [ ] Rewrite [preprocess.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/preprocess.py) — full pipeline + `extract_features()`
+- [ ] Create [prepare_data.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/run_once_prepare_data.py) — multi-dataset merger
+- [ ] Rewrite [train.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/train.py) — ensemble (SVM+LR+PAC) + handcrafted features + scaler.pkl
+- [ ] Rewrite [predict.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/predict.py) — confidence tiers (HIGH/MEDIUM/LOW), red flags, sensational boost
+- [ ] Update [templates/index.html](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/templates/index.html) — red flags section, confidence badge, note
+- [ ] Create `test_model.py` — 20 automated test cases
+- [ ] Update [requirements.txt](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/requirements.txt) — add scipy, requests
+- [ ] Update [app.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/app.py) — pass scaler to predict function
+- [ ] Run [prepare_data.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/run_once_prepare_data.py), [train.py](file:///c:/Users/98858/.gemini/antigravity/playground/golden-apollo/train.py), `test_model.py` and verify 18/20 target

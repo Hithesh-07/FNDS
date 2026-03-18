@@ -1,0 +1,11 @@
+[0] (237,96)<button class='dark-toggle' id='darkToggle'>🌙 />
+AI-POWERED
+RULES-FIRST
+PRODUCTION
+aletheia
+The world's most transparent misinformation detection engine.
+Article Analysis
+Ready
+[1] (500,721)<textarea id='news-text' placeholder='Paste a news headline, article, or social media post here...' />
+0 words | 0 / 50,000 chars
+Run
