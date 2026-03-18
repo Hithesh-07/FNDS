@@ -1,0 +1,730 @@
+[
+  {
+    "timestamp": "2026-03-18 09:37:54",
+    "text": "Scientists from WHO have found a cure for all diseases. Drink bleach today!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 09:59:54",
+    "text": "Scientists confirm drinking bleach cures all diseases",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 13:44:15",
+    "text": "this is fakth",
+    "prediction": "FAKE",
+    "confidence": 94.36,
+    "source": "SVM_Base"
+  },
+  {
+    "timestamp": "2026-03-18 13:47:08",
+    "text": "Hiii",
+    "prediction": "FAKE",
+    "confidence": 94.32,
+    "source": "SVM_Base"
+  },
+  {
+    "timestamp": "2026-03-18 13:47:32",
+    "text": "A viral social media post claims that a new smartphone update can permanently alter human brain function by emitting invisible signals that affect memory and decision-making abilities. The post suggests that technology companies are using this feature to manipulate user behavior without their knowledge. Despite widespread concern, no credible scientific evidence has been presented to support these claims.",
+    "prediction": "FAKE",
+    "confidence": 87.98,
+    "source": "SVM_Base"
+  },
+  {
+    "timestamp": "2026-03-18 13:47:51",
+    "text": "Reports are circulating online that a secret underground civilization has been discovered beneath the Antarctic ice, where advanced human-like beings have lived undetected for centuries. The claims suggest that governments are aware of this hidden society but have chosen to keep it confidential to avoid public panic. Experts in geology and anthropology have dismissed the theory as baseless and lacking any scientific proof.",
+    "prediction": "FAKE",
+    "confidence": 99.38,
+    "source": "SVM_Base"
+  },
+  {
+    "timestamp": "2026-03-18 13:48:04",
+    "text": "A startup has announced the development of a wearable device that can detect early signs of serious illnesses by analyzing subtle changes in body temperature and heart rate patterns. While initial tests appear promising, independent verification of the technology has not yet been completed. Experts caution that more research is needed before the device can be considered reliable for widespread use.",
+    "prediction": "FAKE",
+    "confidence": 86.44,
+    "source": "SVM_Base"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:36",
+    "text": "The Federal Reserve raised interest rates by 0.25 percent on Wednesday.",
+    "prediction": "REAL",
+    "confidence": 99.85,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:36",
+    "text": "NASA successfully launched the Artemis mission to the Moon.",
+    "prediction": "REAL",
+    "confidence": 99.22,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:36",
+    "text": "Apple reported quarterly earnings of 90 billion dollars beating estimates.",
+    "prediction": "REAL",
+    "confidence": 92.32,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:36",
+    "text": "The World Health Organization approved a new malaria vaccine for children.",
+    "prediction": "REAL",
+    "confidence": 99.66,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "India's GDP grew by 6.5 percent in the last fiscal quarter according to government data.",
+    "prediction": "REAL",
+    "confidence": 93.36,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "SHOCKING: Scientists PROVE that 5G towers cause cancer and the government is HIDING it!",
+    "prediction": "REAL",
+    "confidence": 97.21,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "BREAKING: Bill Gates admits microchips are inside COVID vaccines EXPOSED by whistleblower!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Pope Francis SECRETLY endorses flat earth theory in leaked Vatican document!",
+    "prediction": "REAL",
+    "confidence": 60.49,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Donald Trump won 2020 election, voting machines were rigged says INSIDER source!",
+    "prediction": "REAL",
+    "confidence": 69.44,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Drinking bleach cures COVID-19, doctors BANNED from telling you the TRUTH!",
+    "prediction": "REAL",
+    "confidence": 98.46,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "The Supreme Court ruled in favor of environmental regulations today.",
+    "prediction": "REAL",
+    "confidence": 97.13,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Tesla announced a new battery technology with 500 mile range.",
+    "prediction": "REAL",
+    "confidence": 97.65,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Hollywood actress EXPOSED for running secret satanic cult in California!",
+    "prediction": "UNCERTAIN",
+    "confidence": 55.64,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Government CHEMTRAILS confirmed by whistleblower pilot, full COVER-UP revealed!",
+    "prediction": "REAL",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Scientists discover new species of deep sea fish near Pacific Ocean floor.",
+    "prediction": "REAL",
+    "confidence": 81.75,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "UK parliament passed new legislation on data privacy and AI regulation.",
+    "prediction": "REAL",
+    "confidence": 99.72,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "URGENT: Mainstream media HIDING alien contact, NASA astronaut LEAKS footage!",
+    "prediction": "REAL",
+    "confidence": 94.19,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "George Soros FUNDS antifa to DESTROY America says leaked document!",
+    "prediction": "REAL",
+    "confidence": 92.49,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "The United Nations climate report warns of rising sea levels by 2050.",
+    "prediction": "REAL",
+    "confidence": 96.78,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 13:55:37",
+    "text": "Microsoft acquires gaming company in deal worth 15 billion dollars.",
+    "prediction": "REAL",
+    "confidence": 85.61,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "The Federal Reserve raised interest rates by 0.25 percent on Wednesday.",
+    "prediction": "REAL",
+    "confidence": 96.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "NASA successfully launched the Artemis mission to the Moon.",
+    "prediction": "FAKE",
+    "confidence": 88.73,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Apple reported quarterly earnings of 90 billion dollars beating estimates.",
+    "prediction": "REAL",
+    "confidence": 80.91,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "The World Health Organization approved a new malaria vaccine for children.",
+    "prediction": "REAL",
+    "confidence": 81.23,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "India's GDP grew by 6.5 percent in the last fiscal quarter according to government data.",
+    "prediction": "FAKE",
+    "confidence": 68.69,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "SHOCKING: Scientists PROVE that 5G towers cause cancer and the government is HIDING it!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "BREAKING: Bill Gates admits microchips are inside COVID vaccines EXPOSED by whistleblower!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Pope Francis SECRETLY endorses flat earth theory in leaked Vatican document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Donald Trump won 2020 election, voting machines were rigged says INSIDER source!",
+    "prediction": "FAKE",
+    "confidence": 99.98,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Drinking bleach cures COVID-19, doctors BANNED from telling you the TRUTH!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "The Supreme Court ruled in favor of environmental regulations today.",
+    "prediction": "UNCERTAIN",
+    "confidence": 52.31,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Tesla announced a new battery technology with 500 mile range.",
+    "prediction": "REAL",
+    "confidence": 98.56,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Hollywood actress EXPOSED for running secret satanic cult in California!",
+    "prediction": "FAKE",
+    "confidence": 99.99,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Government CHEMTRAILS confirmed by whistleblower pilot, full COVER-UP revealed!",
+    "prediction": "FAKE",
+    "confidence": 95.92,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Scientists discover new species of deep sea fish near Pacific Ocean floor.",
+    "prediction": "FAKE",
+    "confidence": 76.97,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "UK parliament passed new legislation on data privacy and AI regulation.",
+    "prediction": "REAL",
+    "confidence": 90.43,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "URGENT: Mainstream media HIDING alien contact, NASA astronaut LEAKS footage!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "George Soros FUNDS antifa to DESTROY America says leaked document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "The United Nations climate report warns of rising sea levels by 2050.",
+    "prediction": "REAL",
+    "confidence": 60.97,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:01:57",
+    "text": "Microsoft acquires gaming company in deal worth 15 billion dollars.",
+    "prediction": "REAL",
+    "confidence": 73.04,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "The Federal Reserve raised interest rates by 0.25 percent on Wednesday.",
+    "prediction": "REAL",
+    "confidence": 97.72,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "NASA successfully launched the Artemis mission to the Moon.",
+    "prediction": "REAL",
+    "confidence": 87.06,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Apple reported quarterly earnings of 90 billion dollars beating estimates.",
+    "prediction": "REAL",
+    "confidence": 99.78,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "The World Health Organization approved a new malaria vaccine for children.",
+    "prediction": "REAL",
+    "confidence": 99.18,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "India's GDP grew by 6.5 percent in the last fiscal quarter according to government data.",
+    "prediction": "REAL",
+    "confidence": 96.59,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "SHOCKING: Scientists PROVE that 5G towers cause cancer and the government is HIDING it!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "BREAKING: Bill Gates admits microchips are inside COVID vaccines EXPOSED by whistleblower!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Pope Francis SECRETLY endorses flat earth theory in leaked Vatican document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Donald Trump won 2020 election, voting machines were rigged says INSIDER source!",
+    "prediction": "FAKE",
+    "confidence": 99.99,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Drinking bleach cures COVID-19, doctors BANNED from telling you the TRUTH!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "The Supreme Court ruled in favor of environmental regulations today.",
+    "prediction": "REAL",
+    "confidence": 99.38,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Tesla announced a new battery technology with 500 mile range.",
+    "prediction": "REAL",
+    "confidence": 98.52,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Hollywood actress EXPOSED for running secret satanic cult in California!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Government CHEMTRAILS confirmed by whistleblower pilot, full COVER-UP revealed!",
+    "prediction": "FAKE",
+    "confidence": 90.72,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Scientists discover new species of deep sea fish near Pacific Ocean floor.",
+    "prediction": "REAL",
+    "confidence": 98.3,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "UK parliament passed new legislation on data privacy and AI regulation.",
+    "prediction": "REAL",
+    "confidence": 95.84,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "URGENT: Mainstream media HIDING alien contact, NASA astronaut LEAKS footage!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "George Soros FUNDS antifa to DESTROY America says leaked document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "The United Nations climate report warns of rising sea levels by 2050.",
+    "prediction": "REAL",
+    "confidence": 97.44,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:03:46",
+    "text": "Microsoft acquires gaming company in deal worth 15 billion dollars.",
+    "prediction": "REAL",
+    "confidence": 99.67,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "The Federal Reserve raised interest rates by 0.25 percent on Wednesday.",
+    "prediction": "REAL",
+    "confidence": 98.35,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "NASA successfully launched the Artemis mission to the Moon.",
+    "prediction": "REAL",
+    "confidence": 91.97,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Apple reported quarterly earnings of 90 billion dollars beating estimates.",
+    "prediction": "REAL",
+    "confidence": 99.85,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "The World Health Organization approved a new malaria vaccine for children.",
+    "prediction": "REAL",
+    "confidence": 99.58,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "India's GDP grew by 6.5 percent in the last fiscal quarter according to government data.",
+    "prediction": "REAL",
+    "confidence": 97.57,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "SHOCKING: Scientists PROVE that 5G towers cause cancer and the government is HIDING it!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "BREAKING: Bill Gates admits microchips are inside COVID vaccines EXPOSED by whistleblower!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Pope Francis SECRETLY endorses flat earth theory in leaked Vatican document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Donald Trump won 2020 election, voting machines were rigged says INSIDER source!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Drinking bleach cures COVID-19, doctors BANNED from telling you the TRUTH!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "The Supreme Court ruled in favor of environmental regulations today.",
+    "prediction": "REAL",
+    "confidence": 99.62,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Tesla announced a new battery technology with 500 mile range.",
+    "prediction": "REAL",
+    "confidence": 99.1,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Hollywood actress EXPOSED for running secret satanic cult in California!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Government CHEMTRAILS confirmed by whistleblower pilot, full COVER-UP revealed!",
+    "prediction": "FAKE",
+    "confidence": 92.71,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Scientists discover new species of deep sea fish near Pacific Ocean floor.",
+    "prediction": "REAL",
+    "confidence": 98.98,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "UK parliament passed new legislation on data privacy and AI regulation.",
+    "prediction": "REAL",
+    "confidence": 97.55,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "URGENT: Mainstream media HIDING alien contact, NASA astronaut LEAKS footage!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "George Soros FUNDS antifa to DESTROY America says leaked document!",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "The United Nations climate report warns of rising sea levels by 2050.",
+    "prediction": "REAL",
+    "confidence": 98.5,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:05:28",
+    "text": "Microsoft acquires gaming company in deal worth 15 billion dollars.",
+    "prediction": "REAL",
+    "confidence": 99.82,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:06:22",
+    "text": "\"SHOCKING: Scientists PROVE drinking bleach cures cancer and doctors are HIDING it from you!\"",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:06:49",
+    "text": "\"A new study published Monday found that the COVID-19 vaccine reduces human fertility by 30 percent according to independent researchers.\"\n7. \"Senior White House officials confirmed that President Biden signed a secret executive order banning gun ownership for citizens over 65.\"\n8. \"The Indian government has quietly passed a law allowing police to arrest citizens without a warrant starting January 2025.\"\n9. \"A leaked internal memo from WHO reveals that masks were never effective and officials kn...",
+    "prediction": "FAKE",
+    "confidence": 99.76,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:07:12",
+    "text": "\"George Soros FUNDS secret army to overthrow democratic governments worldwide leaked documents REVEAL!\"",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:07:22",
+    "text": "\"George Soros FUNDS secret army to overthrow democratic governments worldwide leaked documents REVEAL\"",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:07:36",
+    "text": "\"NASA's James Webb Space Telescope captured new images of a galaxy cluster approximately 4.6 billion light years away.\"",
+    "prediction": "REAL",
+    "confidence": 93.32,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:07:50",
+    "text": "\"India's Supreme Court ruled that electoral bonds scheme violated the right to information of citizens.\"",
+    "prediction": "REAL",
+    "confidence": 99.68,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:08:07",
+    "text": "\"Microsoft announced layoffs affecting 1900 employees in its gaming division following the Activision Blizzard acquisition.\"",
+    "prediction": "REAL",
+    "confidence": 99.79,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:08:20",
+    "text": "\"Pakistan's government imposed emergency economic measures after foreign exchange reserves dropped to critically low levels.\"",
+    "prediction": "REAL",
+    "confidence": 99.93,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:08:34",
+    "text": "\"Studies show coffee may reduce risk of Alzheimer's disease.\"",
+    "prediction": "REAL",
+    "confidence": 85.18,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:08:48",
+    "text": "\"The government is monitoring all your phone calls.\"",
+    "prediction": "REAL",
+    "confidence": 91.14,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:45:25",
+    "text": "hii",
+    "prediction": "REAL",
+    "confidence": 71.12,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 14:58:32",
+    "text": "The government is secretly monitoring all your phone calls EXPOSED",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 15:03:59",
+    "text": "\ud83d\ude80 Steps to Train BERT on Colab (5-10 minutes)\nOpen Google Colab: colab.research.google.com\n\nUpload the notebook: File \u2192 Upload notebook \u2192 select:\n\nTruthLens_BERT_Training.ipynb\n(located in your project root)\n\nSet GPU runtime: Runtime \u2192 Change runtime type \u2192 T4 GPU \u2192 Save\n\nRun all cells (Ctrl+F9):\n\nCell 1: Installs dependencies\nCell 2: Prompts you to upload data/news.csv \u2014 click Choose Files and select it\nCell 3: Trains RoBERTa (3 epochs, ~5-10 min on T4)\nCell 4: Quick test on 5 samples\nCell 5: D...",
+    "prediction": "REAL",
+    "confidence": 61.52,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 18:55:51",
+    "text": "This news is real",
+    "prediction": "FAKE",
+    "confidence": 79.8,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 19:12:37",
+    "text": "Scientists confirm a natural compound can cure all diseases, but the findings are being suppressed by global organizations.",
+    "prediction": "FAKE",
+    "confidence": 100.0,
+    "source": "RulesEngine"
+  },
+  {
+    "timestamp": "2026-03-18 19:13:34",
+    "text": "Some researchers suggest certain lifestyle changes may improve immunity, though more evidence is required.",
+    "prediction": "REAL",
+    "confidence": 99.75,
+    "source": "Ensemble"
+  },
+  {
+    "timestamp": "2026-03-18 19:14:03",
+    "text": "The Reserve Bank increased interest rates by 0.25% to control inflation amid rising global prices.",
+    "prediction": "REAL",
+    "confidence": 98.09,
+    "source": "Ensemble"
+  }
+]
