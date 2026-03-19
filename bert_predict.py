@@ -1,51 +1,39 @@
-from transformers import pipeline
-import sys
+import requests
+import json
+import os
+import time
 
-# Ensure UTF-8 for console
-sys.stdout.reconfigure(encoding='utf-8')
+# Hugging Face Inference API URL for the model
+API_URL = "https://api-inference.huggingface.co/models/hamzab/roberta-fake-news-classification"
+# Recommend adding your HF token to Vercel/Local environment variables
+HF_TOKEN = os.getenv("HF_TOKEN", "") 
 
-# Load model once lazily
-_classifier = None
-
-def _load_model():
-    global _classifier
-    if _classifier is None:
-        try:
-            print("Loading local BERT model from ./model/bert_model...")
-            _classifier = pipeline(
-                "text-classification",
-                model="./model/bert_model"
-            )
-            print("Local BERT model loaded successfully!")
-        except Exception as e:
-            print(f"Warning: Could not load BERT model: {e}")
-            return False
-    return True
+def query(payload):
+    headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
 
 def bert_predict(text: str) -> dict:
     """
-    BERT (RoBERTa) based prediction using transformers pipeline.
+    BERT (RoBERTa) based prediction using Hugging Face Inference API.
+    Used for serverless deployments (Vercel) to keep the package small.
     """
-    if not _load_model():
-        return {
-            "label": "UNCERTAIN",
-            "confidence": 0.0,
-            "fake_prob": 50.0,
-            "real_prob": 50.0,
-            "confidence_level": "LOW",
-            "model_used": "BERT (Load Fail Fallback)"
-        }
-
-    # RoBERTa has a 512 token limit
     try:
-        result = _classifier(text[:512])[0]
-        label_raw = result["label"].lower()
-        score = result["score"]
+        # RoBERTa has a 512 token limit
+        payload = {"inputs": text[:512], "options": {"wait_for_model": True}}
+        output = query(payload)
+        
+        # API returns a list of lists of dicts: [[{"label": "...", "score": ...}, ...]]
+        if isinstance(output, list) and len(output) > 0:
+            result = output[0][0]
+            label_raw = result["label"].lower()
+            score = result["score"]
+        else:
+            raise ValueError(f"Unexpected API response: {output}")
 
         # Normalize label based on model output:
-        # hamzab/roberta-fake-news-classification returns 'Fake' or 'Real'
-        # but common labels include 'TRUE', 'REAL', 'LABEL_1' for truth.
-        is_real = any(word in label_raw for word in ["real", "true", "label_1", "fact"])
+        # 'LABEL_1' or 'Real' for Truth, 'LABEL_0' or 'Fake' for False
+        is_real = any(word in label_raw for word in ["real", "true", "label_1", "fact", "joy"])
         
         if is_real:
             label = "REAL"
@@ -65,7 +53,8 @@ def bert_predict(text: str) -> dict:
             "confidence_level": conf_level,
             "fake_prob": fake_prob,
             "real_prob": real_prob,
-            "gap": abs(fake_prob - real_prob)
+            "gap": abs(fake_prob - real_prob),
+            "model_used": "RoBERTa (HF Inference API)"
         }
     except Exception as e:
         print(f"BERT Inference Error: {e}")
@@ -74,5 +63,6 @@ def bert_predict(text: str) -> dict:
             "confidence": 0.0,
             "fake_prob": 50.0,
             "real_prob": 50.0,
-            "confidence_level": "LOW"
+            "confidence_level": "LOW",
+            "model_used": "BERT (API Fallback)"
         }
