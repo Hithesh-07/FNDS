@@ -1,7 +1,3 @@
 flask
-scikit-learn
 nltk
-numpy
-joblib
 requests
-scipy
