@@ -1,6 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary": "### Rebrand to Aletheia & UI Color Overhaul\n\nThe user requested a name change to **Aletheia** and a significant improvement to the UI colors, specifically for Dark Mode visibility.\n\n#### Proposed Changes\n- **Branding**: Global replace of \"TruthLens\" with \"Aletheia\".\n- **Color System**:\n    - **Dark Mode**: High-contrast \"Midnight Sapphire\" theme.\n    - **Light Mode**: \"Enlightened\" clean aesthetic.\n    - **Accents**: Switching from a generic cyan to a more premium \"Electric Indigo\" and \"Sunlight Gold\" palette.\n- **Components**:\n    - Improve card contrast.\n    - Enhancing text readability in all result states (Real/Fake/Uncertain).\n\n#### Verification Plan\n- **Manual Verification**: Check both Light and Dark modes for contrast and readability.\n- **Browser Subagent**: Verify that all instances of the name have been updated.\n",
-  "updatedAt": "2026-03-18T15:23:20.105430700Z",
-  "version": "1"
-}

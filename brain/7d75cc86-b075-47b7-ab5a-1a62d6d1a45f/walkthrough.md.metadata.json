@@ -1,6 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
-  "summary": "### Aletheia: Hybrid Intelligence v2.1 🏛️🧠\n\n#### 1. RoBERTa Deep Context Check\n- **Model**: Switched from a custom BERT to a world-class pre-trained model: `hamzab/roberta-fake-news-classification`.\n- **Logic**: Used as the ultimate consensus engine for complex cases where the SVM is uncertain.\n\n#### 2. Strict Hybrid Hierarchy\nWe implemented a multi-stage decision flow to ensure maximum accuracy:\n1. **Rules Layer**: Immediate FAKE verdict for strong red flags (Score >= 3).\n2. **Uncertainty Layer**: Hedged claims are correctly flagged as UNCERTAIN rather than guessed.\n3. **SVM High-Confidence**: Blazing fast detection for standard news.\n4. **RoBERTa Fallback**: Deep contextual analysis for tough cases.\n\n#### 3. Final Calibration Proof\n- **Simple Falsehood**: Correctly identified as FAKE (99%) by RoBERTa.\n- **Hedging Detection**: Correctly flagged as UNCERTAIN (74%) by the Priority Engine.\n\n![Hybrid Intelligence Audit](/C:/Users/98858/.gemini/antigravity/brain/7d75cc86-b075-47b7-ab5a-1a62d6d1a45f/complex_case_results_1773850583917.png)\n",
-  "updatedAt": "2026-03-18T16:16:49.955018200Z",
-  "version": "18"
-}

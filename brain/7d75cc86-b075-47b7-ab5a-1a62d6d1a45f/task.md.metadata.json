@@ -1,6 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_TASK",
-  "summary": "### aletheia: Hybrid Intelligence Upgraded 🏛️🧠\n\n- [x] **Pre-trained Model**: Switched to `hamzab/roberta-fake-news-classification`.\n- [x] **Decision Logic**: Implemented strict Rules -> SVM -> BERT hierarchy.\n- [x] **Deployment**: Server configured for `port 10000`.\n- [ ] **Verification**: Final production audit.\n\n**Status**: Monitoring Model Download... ⏳\n",
-  "updatedAt": "2026-03-18T16:08:56.759881600Z",
-  "version": "22"
-}
