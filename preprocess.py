@@ -1,7 +1,6 @@
 import re
 import sys
 import nltk
-import pandas as pd
 from functools import lru_cache
 
 # Ensure Windows console handles all characters
@@ -117,7 +116,8 @@ def extract_features(text: str) -> dict:
     }
 
 
-def load_and_prepare(path: str = "data/news.csv") -> pd.DataFrame:
+def load_and_prepare(path: str = "data/news.csv") -> "pd.DataFrame":
+    import pandas as pd
     df = pd.read_csv(path).dropna(subset=["content", "label"])
 
     # Remove very short texts (< 10 words)
