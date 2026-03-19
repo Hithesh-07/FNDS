@@ -25,7 +25,8 @@ SENSATIONAL_WORDS = {
     "shocking", "secret", "exposed", "breaking", "urgent", "hoax",
     "conspiracy", "bombshell", "coverup", "leaked", "banned", "censored",
     "hidden", "miracle", "exclusive", "stunning", "unbelievable",
-    "incredible", "explosive", "scandal", "corrupt", "rigged"
+    "incredible", "explosive", "scandal", "corrupt", "rigged",
+    "admit", "admits", "vaccine", "vaccines", "microchip", "microchips"
 }
 
 @lru_cache(maxsize=50000)
@@ -121,7 +122,7 @@ def load_and_prepare(path: str = "data/news.csv") -> pd.DataFrame:
 
     # Remove very short texts (< 10 words)
     before_short = len(df)
-    df = df[df["content"].apply(lambda x: len(str(x).split()) >= 10)]
+    df = df[df["content"].apply(lambda x: len(str(x).split()) >= 2)]
     print(f"   Removed {before_short - len(df)} rows with < 10 words.")
 
     # Remove duplicates

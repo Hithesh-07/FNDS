@@ -129,7 +129,7 @@ python app.py
 Open in browser:
 
 ```
-http://localhost:5000
+http://localhost:10000
 ```
 
 ---
@@ -145,7 +145,7 @@ POST /predict
 ### Example:
 
 ```bash
-curl -X POST http://localhost:5000/predict \
+curl -X POST http://localhost:10000/predict \
 -H "Content-Type: application/json" \
 -d '{"text": "Scientists claim a miracle cure has been discovered"}'
 ```

@@ -113,7 +113,7 @@ def merge_and_save(output_path: str = "data/news.csv"):
     print(f"\n[3/4] Cleaning...")
     # Remove very short texts
     before = len(df)
-    df = df[df["content"].apply(lambda x: len(x.split()) >= 10)]
+    df = df[df["content"].apply(lambda x: len(x.split()) >= 2)]
     print(f"   Removed {before - len(df)} short texts (< 10 words).")
 
     # Remove duplicates
