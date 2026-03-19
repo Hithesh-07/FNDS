@@ -1,0 +1,13 @@
+flask
+scikit-learn
+nltk
+pandas
+numpy
+joblib
+transformers
+torch
+gunicorn
+accelerate
+tqdm
+requests
+scipy
