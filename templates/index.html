@@ -1,608 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Aletheia — AI Fake News Detector</title>
-  <meta name="description" content="Aletheia — AI-powered fake news detector using a 4-layer hybrid decision engine combining BERT, RoBERTa, and rule-based credibility analysis.">
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Aletheia — AI-powered fake news detection using BERT and SVM ensemble with credibility analysis"/>
+    <title>Aletheia — AI Fake News Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 </head>
 <body>
-  <!-- Loading Overlay -->
+
+<!-- Loading Overlay -->
 <div id="loadingOverlay" class="loading-overlay" style="display:none;">
-
-    <!-- Glowing background grid -->
-    <div class="scan-grid"></div>
-
-    <!-- Scanning line -->
-    <div class="scan-line"></div>
-
-    <!-- Progress bar at top -->
-    <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <!-- Main content -->
-    <div class="loading-content">
-
-        <!-- Dual ring spinner -->
-        <div class="spinner-container">
-            <div class="spinner-outer"></div>
-            <div class="spinner-inner"></div>
-            <div class="spinner-core"></div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">ANALYZING...</div>
+    <div class="loading-steps">
+        <div class="loading-step" id="ls1">
+            <div class="step-indicator"></div>
+            AI PATTERN RECOGNITION
         </div>
-
-        <!-- Dynamic status text -->
-        <div class="status-text" id="statusText">INITIALIZING...</div>
-        <div class="status-subtext" id="statusSubtext">
-            Preparing analysis engine
+        <div class="loading-step" id="ls2">
+            <div class="step-indicator"></div>
+            CREDIBILITY SIGNAL AUDIT
         </div>
-
-        <!-- Steps list -->
-        <div class="steps-list">
-            <div class="step-item" id="step1">
-                <div class="step-dot"></div>
-                <span class="step-label">AI PATTERN RECOGNITION</span>
-                <span class="step-time" id="time1"></span>
-            </div>
-            <div class="step-item" id="step2">
-                <div class="step-dot"></div>
-                <span class="step-label">CREDIBILITY SIGNAL AUDIT</span>
-                <span class="step-time" id="time2"></span>
-            </div>
-            <div class="step-item" id="step3">
-                <div class="step-dot"></div>
-                <span class="step-label">UNCERTAINTY LOGIC SCAN</span>
-                <span class="step-time" id="time3"></span>
-            </div>
-            <div class="step-item" id="step4">
-                <div class="step-dot"></div>
-                <span class="step-label">FINAL CONSENSUS ENGINE</span>
-                <span class="step-time" id="time4"></span>
-            </div>
+        <div class="loading-step" id="ls3">
+            <div class="step-indicator"></div>
+            UNCERTAINTY LOGIC SCAN
         </div>
-
-        <!-- Elapsed time -->
-        <div class="elapsed-time">
-            <span id="elapsedTime">0.0s</span>
+        <div class="loading-step" id="ls4">
+            <div class="step-indicator"></div>
+            FINAL CONSENSUS ENGINE
         </div>
     </div>
 </div>
 
-  <div class="bg-gradient"></div>
-  <div class="app-container">
+<div class="page-wrapper">
 
-    <div class="header-top">
-      <button id="darkToggle" class="dark-toggle">🌙</button>
-    </div>
-
-    <header>
-      <div class="badge-container" style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.25rem;">
-        <span class="badge">AI-POWERED</span>
-        <span class="badge">RULES-FIRST</span>
-        <span class="badge">PRODUCTION</span>
-        <span class="badge accuracy-badge">98.2% ACCURACY</span>
-      </div>
-      <h1 class="logo">aletheia</h1>
-      <p class="tagline">The world's most transparent misinformation detection engine.</p>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="badge-row">
+            <span class="badge">AI-POWERED</span>
+            <span class="badge">RULES-FIRST</span>
+            <span class="badge">PRODUCTION</span>
+            <span class="badge badge-green">98.2% ACCURACY</span>
+        </div>
+        <button class="dark-toggle" id="darkToggle" title="Toggle theme">🌙</button>
     </header>
 
-    <main>
-      <section class="card input-card">
-        <div class="card-header">
-          <h2>Article Analysis</h2>
-          <span class="status-indicator ready" id="status-indicator">Ready</span>
+    <!-- Hero -->
+    <div class="hero">
+        <h1 class="hero-logo">aletheia</h1>
+        <p class="hero-tagline">
+            The world's most transparent misinformation detection engine.
+        </p>
+    </div>
+
+    <!-- Input -->
+    <div class="input-section">
+        <div class="input-header">
+            <span class="input-title">Article Analysis</span>
+            <span class="input-status">
+                <span class="status-dot"></span>
+                {% if result %}ANALYSIS COMPLETE{% else %}READY{% endif %}
+            </span>
         </div>
-        <form id="analysis-form">
-          <div style="position:relative;">
-            <textarea id="news-text" placeholder="Paste a news headline, article, or social media post here..." rows="6" spellcheck="false"></textarea>
-          </div>
-          <div id="highlight-view" class="highlight-container" style="display:none;"></div>
-          <div id="input-error" style="color:var(--fake);font-size:0.85rem;margin-bottom:0.75rem;display:none;">⚠️ Please enter some text to analyze.</div>
-          <div class="form-actions">
-            <span class="char-count" id="char-count">0 words | 0 / 50,000 chars</span>
-            <button type="submit" class="primary-btn analyze-btn" id="submit-btn" style="width: 100%;">
-              <span class="btn-text" id="btn-text">Run</span>
-            </button>
-          </div>
+
+        {% if error %}
+        <div class="error-msg">⚠ {{ error }}</div>
+        {% endif %}
+
+        <form id="analysisForm" method="POST" action="/">
+            <textarea
+                id="newsText"
+                name="news_text"
+                class="news-textarea"
+                placeholder="Paste a news headline, article, or social media post here..."
+                spellcheck="false"
+            >{{ text }}</textarea>
+            <div class="input-footer">
+                <span class="char-count" id="charCount">0 words | 0 / 50,000 chars</span>
+                <button type="submit" class="analyze-btn" id="analyzeBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    Analyze
+                </button>
+            </div>
         </form>
-      </section>
-
-      <!-- Results Area -->
-      <section id="results-section" class="results-section hidden">
-<div class="result-section">
-
-    <!-- Verdict Card -->
-    <div class="verdict-card">
-        <div>
-            <div class="verdict-label
-                {% if result and result.label == 'FAKE' %}verdict-fake
-                {% elif result and result.label == 'REAL' %}verdict-real
-                {% else %}verdict-uncertain{% endif %}" id="verdict-label">
-                {{ result.label if result else '---' }}
-            </div>
-            <div style="font-size:0.72rem; letter-spacing:0.15em;
-                        color:#ffffff40; margin-top:0.5rem;">
-                AI CONFIDENCE LEVEL
-            </div>
-        </div>
-        <div class="verdict-confidence">
-            <div class="confidence-number" id="confidence-badge-val">{{ result.confidence if result else '0' }}%</div>
-            <span class="confidence-label" id="verdict-tier">{{ result.confidence_level if result else 'CERTAINTY' }}</span>
-            <div style="margin-top:0.8rem;">
-                <span id="role-badge-primary" class="role-badge
-                    {% if result and result.bert_ok %}role-primary{% else %}role-fallback{% endif %}">
-                    {% if result and result.bert_ok %}🤖 BERT Active{% else %}⚙️ SVM Active{% endif %}
-                </span>
-            </div>
-        </div>
     </div>
 
-    <!-- Two Column Grid -->
-    <div class="two-col-grid">
+    <!-- Results -->
+    {% if result %}
+    <div class="result-section">
 
-        <!-- Priority Engine -->
-        <div class="info-card">
-            <div class="card-title">⚡ Priority Engine Logic</div>
-            <div style="font-size:0.8rem; color:#00c8ff;
-                        font-family:monospace; margin-bottom:1rem;" id="logic-reason">
-                {{ result.decision_reason if result else 'ML_CONSENSUS' }}
-            </div>
-            
-            <div class="prob-row">
-                <span class="prob-label">FAKE</span>
-                <div class="prob-track">
-                    <div class="prob-fill prob-fill-fake" id="bar-fake"
-                         style="width:{{ result.fake_prob if result else '0' }}%"></div>
+        <!-- Verdict -->
+        <div class="verdict-card
+            {% if result.label == 'FAKE' %}card-fake
+            {% elif result.label == 'REAL' %}card-real
+            {% else %}card-uncertain{% endif %}">
+            <div>
+                <div class="verdict-label
+                    {% if result.label == 'FAKE' %}verdict-fake
+                    {% elif result.label == 'REAL' %}verdict-real
+                    {% else %}verdict-uncertain{% endif %}">
+                    {{ result.label }}
                 </div>
-                <span class="prob-pct" id="p-fake">{{ result.fake_prob if result else '0' }}%</span>
-            </div>
-            
-            <!-- We also need the logic-bar-fill for JS fallback if it relies on logic-bar-fill mapping -->
-            <!-- Wait, user JS accesses id="logic-bar-fill", I will add it hidden here just so it doesn't break JS -->
-            <div id="logic-bar-fill" style="display:none;"></div>
-            
-            <div class="prob-row">
-                <span class="prob-label">REAL</span>
-                <div class="prob-track">
-                    <div class="prob-fill prob-fill-real" id="bar-real"
-                         style="width:{{ result.real_prob if result else '0' }}%"></div>
+                <div style="font-size:0.7rem; letter-spacing:0.15em;
+                            color:var(--text-dim); margin-top:0.5rem;">
+                    AI CONFIDENCE LEVEL
                 </div>
-                <span class="prob-pct" id="p-real">{{ result.real_prob if result else '0' }}%</span>
+            </div>
+            <div class="verdict-right">
+                <div class="confidence-pct">{{ result.confidence }}%</div>
+                <span class="confidence-lbl">{{ result.confidence_level }} CERTAINTY</span>
+                <div>
+                    <span class="model-badge
+                        {% if result.bert_ok %}badge-bert{% else %}badge-svm{% endif %}">
+                        {% if result.bert_ok %}🤖 BERT Active{% else %}⚙️ SVM Active{% endif %}
+                    </span>
+                </div>
             </div>
         </div>
 
-        <!-- Credibility Signals -->
-        <div class="info-card">
-            <div class="card-title">🔍 Credibility Signals</div>
-            <div style="margin-bottom:0.5rem; font-size:0.72rem;
-                        color:#ffffff40; letter-spacing:0.1em;">
-                NET SCORE
-            </div>
-            <div class="net-score
-                {% if result and result.net_score > 0 %}score-positive
-                {% elif result and result.net_score < 0 %}score-negative
-                {% else %}score-zero{% endif %}" id="net-score-val">
-                {% if result and result.net_score > 0 %}+{% endif %}{{ result.net_score if result else '0' }}
-            </div>
-            <div style="margin-top:1rem;" id="cred-flags-grid">
-            {% if result and result.credibility_flags %}
-                {% for flag in result.credibility_flags[:4] %}
-                <div style="font-size:0.7rem; font-family:monospace;
-                            color:#ff6b7a; margin-bottom:0.3rem;">
-                    ⚠ {{ flag }}
+        <!-- Two column -->
+        <div class="two-col">
+
+            <!-- Priority Engine -->
+            <div class="info-card">
+                <div class="card-title">⚡ Priority Engine Logic</div>
+                <div style="font-family:var(--font-mono); font-size:0.78rem;
+                            color:var(--blue); margin-bottom:1.2rem;">
+                    {{ result.decision_reason }}
                 </div>
+                <div class="prob-row">
+                    <span class="prob-label">FAKE</span>
+                    <div class="prob-track">
+                        <div class="prob-fill fill-fake"
+                             style="width:{{ result.fake_prob }}%"></div>
+                    </div>
+                    <span class="prob-pct">{{ result.fake_prob }}%</span>
+                </div>
+                <div class="prob-row">
+                    <span class="prob-label">REAL</span>
+                    <div class="prob-track">
+                        <div class="prob-fill fill-real"
+                             style="width:{{ result.real_prob }}%"></div>
+                    </div>
+                    <span class="prob-pct">{{ result.real_prob }}%</span>
+                </div>
+            </div>
+
+            <!-- Credibility -->
+            <div class="info-card">
+                <div class="card-title">🔍 Credibility Signals</div>
+                <div style="font-size:0.65rem; letter-spacing:0.15em;
+                            color:var(--text-dim); margin-bottom:0.4rem;">
+                    NET SCORE
+                </div>
+                <div class="net-score-value
+                    {% if result.net_score > 0 %}score-pos
+                    {% elif result.net_score < 0 %}score-neg
+                    {% else %}score-zero{% endif %}">
+                    {% if result.net_score > 0 %}+{% endif %}{{ result.net_score }}
+                </div>
+                {% if result.credibility_flags %}
+                <div style="margin-top:1rem;">
+                    {% for flag in result.credibility_flags[:4] %}
+                    <div class="cred-flag">⚠ {{ flag }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- Model table -->
+        <div class="model-table-wrap">
+            <div class="card-title">⚖️ Model Details</div>
+            <table class="model-table">
+                <thead>
+                    <tr>
+                        <th>MODEL</th>
+                        <th>ROLE</th>
+                        <th>VERDICT</th>
+                        <th>FAKE %</th>
+                        <th>REAL %</th>
+                        <th>CONF %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="{% if result.bert_ok %}{% else %}row-failed{% endif %}">
+                        <td>🤖 BERT</td>
+                        <td>
+                            {% if result.bert_ok %}
+                            <span class="role-pill pill-primary">PRIMARY</span>
+                            {% else %}
+                            <span class="role-pill pill-failed">FAILED</span>
+                            {% endif %}
+                        </td>
+                        <td class="{% if result.bert_ok %}{% if result.bert_label == 'FAKE' %}text-fake{% else %}text-real{% endif %}{% else %}text-muted{% endif %}">
+                            {{ result.bert_label if result.bert_ok else '—' }}
+                        </td>
+                        <td>{% if result.bert_ok %}{{ result.bert_fake }}%{% else %}—{% endif %}</td>
+                        <td>{% if result.bert_ok %}{{ result.bert_real }}%{% else %}—{% endif %}</td>
+                        <td>{% if result.bert_ok %}{{ result.bert_confidence }}%{% else %}—{% endif %}</td>
+                    </tr>
+                    <tr class="row-svm">
+                        <td>⚙️ SVM</td>
+                        <td>
+                            {% if not result.bert_ok %}
+                            <span class="role-pill pill-fallback">FALLBACK</span>
+                            {% else %}
+                            <span class="role-pill pill-secondary">SECONDARY</span>
+                            {% endif %}
+                        </td>
+                        <td class="{% if result.svm_label == 'FAKE' %}text-fake{% else %}text-real{% endif %}">
+                            {{ result.svm_label }}
+                        </td>
+                        <td>{{ result.svm_fake }}%</td>
+                        <td>{{ result.svm_real }}%</td>
+                        <td>{{ result.svm_confidence }}%</td>
+                    </tr>
+                    <tr class="row-final">
+                        <td>🎯 FINAL</td>
+                        <td><span class="role-pill pill-engine">DECISION ENGINE</span></td>
+                        <td class="{% if result.label == 'FAKE' %}text-fake{% elif result.label == 'REAL' %}text-real{% else %}text-uncertain{% endif %}">
+                            <strong>{{ result.label }}</strong>
+                        </td>
+                        <td>{{ result.fake_prob }}%</td>
+                        <td>{{ result.real_prob }}%</td>
+                        <td><strong>{{ result.confidence }}%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Keywords -->
+        {% if result.keywords %}
+        <div class="info-card">
+            <div class="card-title">🔑 Key Signals Detected</div>
+            <div class="kw-wrap">
+                {% for kw in result.keywords %}
+                <span class="kw-tag">{{ kw }}</span>
                 {% endfor %}
-            {% endif %}
             </div>
         </div>
+        {% endif %}
 
-    </div>
-
-    <!-- Model Table -->
-    <div class="model-table-card" id="model-consensus-card" style="display:block;">
-        <div class="card-title">⚖️ Model Details</div>
-        <table class="model-table">
-            <thead>
-                <tr>
-                    <th>MODEL</th>
-                    <th>ROLE</th>
-                    <th>VERDICT</th>
-                    <th>FAKE %</th>
-                    <th>REAL %</th>
-                    <th>CONFIDENCE</th>
-                </tr>
-            </thead>
-            <tbody id="model-table-body">
-                <!-- Fallback SSR content in case no JS -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Keywords -->
-    <div class="info-card" id="keywords-container" style="display:none;">
-        <div class="card-title">🔑 Key Signals</div>
-        <div class="keywords-grid" id="keywords-grid">
-            {% if result and result.keywords %}
-            {% for kw in result.keywords %}
-            <span class="keyword-tag">{{ kw }}</span>
-            {% endfor %}
-            {% endif %}
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            Always verify important news from trusted sources like BBC, Reuters, or AP News.
+            AI analysis is not a substitute for human judgment.
+            · <a href="/metrics">Model Metrics</a>
+            · <a href="/logs">Prediction Logs</a>
         </div>
+
+    </div>
+    {% endif %}
+
+    <!-- Recent checks -->
+    <div class="recent-section" id="recentSection" style="display:none;">
+        <div class="recent-title">Recent Checks</div>
+        <div id="recentList"></div>
     </div>
 
-    <!-- Keyword Highlights Legend -->
-    <div id="highlight-legend" class="highlight-legend hidden" style="margin-top:1rem;">
-          <span class="legend-item"><span class="legend-dot legend-fake" style="background:var(--fake);width:8px;height:8px;border-radius:50%;display:inline-block;"></span> Fake signal words</span>
-          <span class="legend-item"><span class="legend-dot legend-real" style="background:var(--real);width:8px;height:8px;border-radius:50%;display:inline-block;"></span> Credibility words</span>
-          <small style="opacity:0.6;margin-left:10px;">(Click highlighted text above to dismiss)</small>
-    </div>
-
-    <!-- Disclaimer -->
-    <div class="disclaimer">
-        Always verify important news from trusted sources like
-        BBC, Reuters, or AP News. AI analysis is not a substitute
-        for human judgment. · <a href="/about"
-        style="color:#ffffff40;">About Aletheia</a>
-    </div>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <span>Aletheia © 2026</span>
+        <span>·</span>
+        <span>4-Layer Hybrid Decision Engine</span>
+        <span>·</span>
+        <span>BERT + SVM Ensemble</span>
+        <span>·</span>
+        <a href="/metrics" class="footer-link">MODEL METRICS</a>
+        <span>·</span>
+        <a href="/logs" class="footer-link">PREDICTION LOGS</a>
+    </footer>
 
 </div>
-</section>
 
-      <!-- Recent Checks -->
-      <section class="recent-checks mt-4" id="recent-checks-section">
-        <h3>Recent Checks</h3>
-        <div id="history-list"></div>
-        <div id="history-empty" style="color:var(--text-muted);font-size:0.9rem;padding:1rem 0;display:none;">No recent checks yet. Analyze your first article above.</div>
-      </section>
+<script>
+// ── Char counter ─────────────────────────────────────────
+const textarea  = document.getElementById('newsText');
+const charCount = document.getElementById('charCount');
 
-    </main>
+function updateCount() {
+    const text  = textarea.value;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+    charCount.textContent = `${words} words | ${chars.toLocaleString()} / 50,000 chars`;
+    charCount.style.color = chars > 45000 ? '#ff4757' : '';
+}
+textarea.addEventListener('input', updateCount);
+updateCount();
 
-    <footer>
-      <p>aletheia &copy; 2026 &nbsp;&middot;&nbsp; 4-Layer Hybrid Decision Engine &nbsp;&middot;&nbsp; v6.0</p>
-      <div class="footer-links">
-        <a href="/about" class="footer-link">ABOUT</a>
-        <a href="/metrics" target="_blank" class="footer-link">MODEL_METRICS</a>
-        <a href="/logs" target="_blank" class="footer-link">PREDICTION_LOGS</a>
-      </div>
-    </footer>
-  </div>
+// ── Loading animation ────────────────────────────────────
+const steps    = ['ls1','ls2','ls3','ls4'];
+const stepTexts = [
+    'SCANNING PATTERNS...',
+    'AUDITING CREDIBILITY...',
+    'CHECKING UNCERTAINTY...',
+    'GENERATING VERDICT...',
+];
 
-  <script>
-    // ── LOADING CONTROLLER ──────────────────────────────────────
-    const loadingSteps = [
-        { id: "step1", timeId: "time1", status: "SCANNING PATTERNS...", sub: "Analyzing linguistic patterns and word signals", progress: 25, duration: 600 },
-        { id: "step2", timeId: "time2", status: "AUDITING CREDIBILITY...", sub: "Checking source reliability and evidence signals", progress: 50, duration: 800 },
-        { id: "step3", timeId: "time3", status: "SCANNING UNCERTAINTY...", sub: "Detecting hedging language and ambiguous claims", progress: 75, duration: 600 },
-        { id: "step4", timeId: "time4", status: "GENERATING VERDICT...", sub: "Running final consensus engine", progress: 95, duration: 400 },
-    ];
-    let elapsedInterval = null;
-    let startTime = null;
+function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.getElementById('analyzeBtn').disabled = true;
+    steps.forEach(s => document.getElementById(s).classList.remove('active'));
 
-    function showLoading() {
-        const overlay = document.getElementById('loadingOverlay');
-        overlay.style.display = 'flex';
-        loadingSteps.forEach(s => {
-            const el = document.getElementById(s.id);
-            el.classList.remove('active', 'done');
-            document.getElementById(s.timeId).textContent = '';
-        });
-        document.getElementById('progressBar').style.width = '0%';
-        document.getElementById('statusText').textContent = 'INITIALIZING...';
-        document.getElementById('statusSubtext').textContent = 'Preparing analysis engine';
-
-        startTime = Date.now();
-        elapsedInterval = setInterval(() => {
-            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-            document.getElementById('elapsedTime').textContent = elapsed + 's';
-        }, 100);
-
-        let delay = 200;
-        loadingSteps.forEach((step, index) => {
-            setTimeout(() => {
-                if (document.getElementById('loadingOverlay').style.display === 'none') return; // Cancel if done early
-                if (index > 0) {
-                    const prev = document.getElementById(loadingSteps[index-1].id);
-                    prev.classList.remove('active');
-                    prev.classList.add('done');
-                    const prevTime = ((Date.now() - startTime) / 1000).toFixed(1);
-                    document.getElementById(loadingSteps[index-1].timeId).textContent = prevTime + 's';
-                }
-                document.getElementById(step.id).classList.add('active');
-                document.getElementById('statusText').textContent    = step.status;
-                document.getElementById('statusSubtext').textContent = step.sub;
-                document.getElementById('progressBar').style.width   = step.progress + '%';
-            }, delay);
-            delay += step.duration;
-        });
-    }
-
-    function hideLoading(error = false) {
-        clearInterval(elapsedInterval);
-        if(!error) {
-            loadingSteps.forEach(s => {
-                const el = document.getElementById(s.id);
-                el.classList.remove('active');
-                el.classList.add('done');
-            });
-            document.getElementById('progressBar').style.width = '100%';
-            document.getElementById('statusText').textContent  = 'ANALYSIS COMPLETE';
+    let i = 0;
+    const interval = setInterval(() => {
+        if (i > 0) document.getElementById(steps[i-1]).classList.remove('active');
+        if (i < steps.length) {
+            document.getElementById(steps[i]).classList.add('active');
+            document.getElementById('loadingText').textContent = stepTexts[i];
+            i++;
+        } else {
+            clearInterval(interval);
         }
-        setTimeout(() => {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }, 600);
-    }
+    }, 600);
+}
 
-    const form       = document.getElementById('analysis-form');
-    const input      = document.getElementById('news-text');
-    const resultsSec = document.getElementById('results-section');
-    const historyList = document.getElementById('history-list');
-    const historyEmpty = document.getElementById('history-empty');
-    const inputError = document.getElementById('input-error');
-    const highlightView = document.getElementById('highlight-view');
+document.getElementById('analysisForm')
+    .addEventListener('submit', showLoading);
 
-    // ── DARK MODE ──
-    const toggle = document.getElementById('darkToggle');
-    toggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-        toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+// ── Recent checks ────────────────────────────────────────
+{% if result %}
+try {
+    const history = JSON.parse(localStorage.getItem('aletheia_history') || '[]');
+    history.unshift({
+        label     : '{{ result.label }}',
+        confidence: '{{ result.confidence }}',
+        text      : '{{ text[:60]|replace("'", "") }}',
+        time      : new Date().toISOString(),
     });
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark');
-        toggle.textContent = '☀️';
-    }
+    localStorage.setItem('aletheia_history',
+        JSON.stringify(history.slice(0, 5)));
+} catch(e) {}
+{% endif %}
 
-    // ── WORD & CHAR COUNT ──
-    const countDisplay = document.getElementById('char-count');
-    input.addEventListener('input', () => {
-        const text = input.value;
-        const charCount = text.length;
-        const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-        countDisplay.textContent = `${words} words | ${charCount.toLocaleString()} / 50,000 chars`;
-        countDisplay.style.color = charCount > 50000 ? 'var(--fake)' : 'var(--text-muted)';
-        if (text.trim()) inputError.style.display = 'none';
-        if (highlightView.style.display !== 'none') {
-            highlightView.style.display = 'none';
-            document.getElementById('highlight-legend').classList.add('hidden');
-        }
-    });
+function loadRecent() {
+    try {
+        const history = JSON.parse(
+            localStorage.getItem('aletheia_history') || '[]'
+        );
+        if (!history.length) return;
 
-    // ── FORM SUBMIT ──
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const text = input.value.trim();
+        const section = document.getElementById('recentSection');
+        const list    = document.getElementById('recentList');
+        section.style.display = 'block';
+        list.innerHTML = '';
 
-      // Input validation
-      if (!text) {
-        inputError.style.display = 'block';
-        return;
-      }
-      inputError.style.display = 'none';
-
-      // Show overlay & reset steps
-      showLoading();
-      resultsSec.classList.add('hidden');
-
-      try {
-        const response = await fetch('/predict', {
-            method  : 'POST',
-            headers : {'Content-Type': 'application/json'},
-            body    : JSON.stringify({text: text})
-        });
-
-        // Check if response is OK before parsing JSON
-        if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                const data = await response.json();
-                throw new Error(data.error || `Server error ${response.status}`);
-            }
-            const errorText = await response.text();
-            console.error('Server error:', errorText);
-            throw new Error(`Server error ${response.status}`);
-        }
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const errorText = await response.text();
-            console.error('Non-JSON response:', errorText);
-            throw new Error('Server returned non-JSON response');
-        }
-
-        const data = await response.json();
-
-        if (data.error) {
-            throw new Error(data.error);
-        }
-
-        // Brief pause then hide overlay
-        hideLoading(false);
-        await new Promise(r => setTimeout(r, 600)); // wait for fade
-        resultsSec.classList.remove('hidden');
-        resultsSec.scrollIntoView({ behavior: 'smooth' });
-
-        // Populate Dashboard
-        const lbl = document.getElementById('verdict-label');
-        lbl.textContent = data.label;
-        lbl.className = 'verdict-label-' + data.label.toLowerCase();
-
-        const badge = document.getElementById('confidence-badge-val');
-        badge.textContent = Math.round(data.confidence) + '%';
-        badge.style.color = data.label === 'FAKE' ? 'var(--fake)' : (data.label === 'REAL' ? 'var(--real)' : 'var(--uncertain)');
-
-        document.getElementById('verdict-tier').textContent = (data.confidence_level || 'LOW') + ' CERTAINTY';
-        document.getElementById('p-real').textContent = Math.round(data.real_prob) + '%';
-        document.getElementById('p-fake').textContent = Math.round(data.fake_prob) + '%';
-        document.getElementById('bar-real').style.width = data.real_prob + '%';
-        document.getElementById('bar-fake').style.width = data.fake_prob + '%';
-        document.getElementById('logic-reason').textContent = data.decision_reason || 'ML_CONSENSUS';
-        document.getElementById('logic-bar-fill').style.width = data.confidence + '%';
-
-        // ── Model Comparison Table ──────────────────────────
-        const consensusCard = document.getElementById('model-consensus-card');
-        const body = document.getElementById('model-table-body');
-        consensusCard.style.display = 'block';
-        
-        body.innerHTML = `
-            <tr class="${data.bert_ok ? 'row-active' : 'row-inactive'}">
-                <td>🤖 BERT</td>
-                <td>
-                    ${data.bert_ok ? '<span class="role-primary">PRIMARY</span>' : '<span class="role-failed">FAILED</span>'}
-                </td>
-                <td class="${data.bert_ok ? (data.bert_label === 'FAKE' ? 'text-fake' : 'text-real') : 'text-dim'}">
-                    ${data.bert_ok ? data.bert_label : '—'}
-                </td>
-                <td>${data.bert_ok ? data.bert_fake + '%' : '—'}</td>
-                <td>${data.bert_ok ? data.bert_real + '%' : '—'}</td>
-                <td>${data.bert_ok ? data.bert_confidence + '%' : '—'}</td>
-            </tr>
-            <tr class="${!data.bert_ok ? 'row-active' : 'row-secondary'}">
-                <td>⚙️ SVM</td>
-                <td>
-                    ${!data.bert_ok ? '<span class="role-fallback">FALLBACK</span>' : '<span class="role-secondary">SECONDARY</span>'}
-                </td>
-                <td class="${data.svm_label === 'FAKE' ? 'text-fake' : 'text-real'}">
-                    ${data.svm_label}
-                </td>
-                <td>${data.svm_fake}%</td>
-                <td>${data.svm_real}%</td>
-                <td>${data.svm_confidence}%</td>
-            </tr>
-            <tr class="row-final">
-                <td>🎯 FINAL</td>
-                <td><span class="role-engine">DECISION ENGINE</span></td>
-                <td class="${data.label === 'FAKE' ? 'text-fake' : (data.label === 'REAL' ? 'text-real' : 'text-uncertain')}">
-                    <strong>${data.label}</strong>
-                </td>
-                <td>${data.fake_prob}%</td>
-                <td>${data.real_prob}%</td>
-                <td><strong>${data.confidence}%</strong></td>
-            </tr>
-        `;
-
-        // Credibility Audit
-        const grid = document.getElementById('cred-flags-grid');
-        grid.innerHTML = '';
-        const credFlags = data.credibility_flags || [];
-        const realFlags = data.real_flags || [];
-
-        credFlags.forEach(flag => {
-            const b = document.createElement('div');
-            b.className = 'cred-flag-item cred-negative';
-            b.textContent = flag;
-            grid.appendChild(b);
-        });
-        realFlags.forEach(flag => {
-            const b = document.createElement('div');
-            b.className = 'cred-flag-item cred-positive';
-            b.textContent = flag;
-            grid.appendChild(b);
-        });
-
-        const netVal = document.getElementById('net-score-val');
-        netVal.textContent = data.net_score;
-        netVal.className = data.net_score >= 5 ? 'score-high' : (data.net_score >= 2 ? 'score-medium' : 'score-low');
-
-        // ── KEYWORD HIGHLIGHTING ──────────────────────────────
-        const keywords = data.keywords || {}; // SVM keywords
-        const redFlags = data.red_flags || {};
-        
-        let allKws = [];
-        if (Array.isArray(keywords)) {
-            // Some models return keywords as list
-            keywords.forEach(k => allKws.push({ phrase: k, type: 'real' }));
-        }
-        
-        // SVM specific highlights
-        if (data.keywords && Array.isArray(data.keywords)) {
-            data.keywords.forEach(k => allKws.push({phrase: k, type: 'real'}));
-        }
-
-        renderHighlights(text, allKws);
-
-        // History
-        saveHistory(data.label, data.confidence, text);
-
-      } catch (err) {
-        hideLoading(true);
-        console.error(err);
-        alert('Priority Audit failed. Error: ' + err.message);
-      }
-    };
-
-
-    // ── KEYWORD HIGHLIGHTING ──────────────────────────────────
-    function renderHighlights(text, flags) {
-        const legend = document.getElementById('highlight-legend');
-
-        if (!flags.length) {
-            highlightView.style.display = 'none';
-            legend.classList.add('hidden');
-            return;
-        }
-
-        let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        flags.sort((a, b) => b.phrase.length - a.phrase.length);
-
-        flags.forEach(f => {
-            const safe = f.phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${safe})`, 'gi');
-            html = html.replace(regex, `<span class="highlight-${f.type} highlight-word">$1</span>`);
-        });
-
-        highlightView.innerHTML = html.replace(/\n/g, '<br>');
-        highlightView.style.display = 'block';
-        legend.classList.remove('hidden');
-
-        highlightView.onclick = () => {
-            highlightView.style.display = 'none';
-            legend.classList.add('hidden');
-        };
-    }
-
-    // ── HISTORY ───────────────────────────────────────────────
-    function saveHistory(label, conf, text) {
-        const history = JSON.parse(localStorage.getItem('al_history') || '[]');
-        history.unshift({
-            label,
-            confidence: Math.round(conf),
-            text: text.substring(0, 60) + (text.length > 60 ? '...' : ''),
-            time: new Date().toISOString()
-        });
-        localStorage.setItem('al_history', JSON.stringify(history.slice(0, 5)));
-        renderHistory();
-    }
-
-    const dotColor = { 'REAL': '#2ed573', 'FAKE': '#ff4757', 'UNCERTAIN': '#ffa502' };
-    function renderHistory() {
-        const history = JSON.parse(localStorage.getItem('al_history') || '[]');
-        if (!history.length) {
-            historyEmpty.style.display = 'block';
-            historyList.innerHTML = '';
-            return;
-        }
-        historyEmpty.style.display = 'none';
-        historyList.innerHTML = '';
         history.forEach(item => {
-            historyList.innerHTML += `
-              <div class="history-item">
-                <div class="history-dot" style="background:${dotColor[item.label]}"></div>
-                <div class="history-content">
-                  <div class="history-header">
-                    <span style="color:${dotColor[item.label]};font-weight:bold;">${item.label} (${item.confidence}%)</span>
-                  </div>
-                  <div class="history-text" style="font-size:0.75rem;opacity:0.7;">${item.text}</div>
-                </div>
-              </div>
-            `;
+            const dot   = item.label === 'REAL' ? 'dot-real' :
+                          item.label === 'FAKE' ? 'dot-fake' : 'dot-uncertain';
+            const color = item.label === 'REAL' ? '#00ff88' :
+                          item.label === 'FAKE' ? '#ff4757' : '#ffa502';
+            const ago   = timeAgo(new Date(item.time));
+            list.innerHTML += `
+                <div class="recent-item">
+                    <div class="recent-dot ${dot}"></div>
+                    <span class="recent-label" style="color:${color}">
+                        ${item.label} (${item.confidence}%)
+                    </span>
+                    <span class="recent-text">${item.text}...</span>
+                    <span class="recent-time">${ago}</span>
+                </div>`;
         });
+    } catch(e) {}
+}
+
+function timeAgo(date) {
+    const s = Math.floor((new Date() - date) / 1000);
+    if (s < 60)  return 'Just now';
+    if (s < 3600) return Math.floor(s/60) + 'm ago';
+    return Math.floor(s/3600) + 'h ago';
+}
+
+loadRecent();
+
+// ── Dark mode ─────────────────────────────────────────────
+const toggle = document.getElementById('darkToggle');
+if (localStorage.getItem('darkMode') === 'light') {
+    document.body.style.background = '#f0f2f5';
+    document.body.style.color = '#1a1a2e';
+    toggle.textContent = '☀️';
+}
+toggle.addEventListener('click', () => {
+    const isLight = document.body.style.background === 'rgb(240, 242, 245)';
+    if (isLight) {
+        document.body.style.background = '';
+        document.body.style.color = '';
+        toggle.textContent = '🌙';
+        localStorage.setItem('darkMode', 'dark');
+    } else {
+        document.body.style.background = '#f0f2f5';
+        document.body.style.color = '#1a1a2e';
+        toggle.textContent = '☀️';
+        localStorage.setItem('darkMode', 'light');
     }
-    renderHistory();
-  </script>
+});
+</script>
+
 </body>
 </html>
