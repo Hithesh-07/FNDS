@@ -137,59 +137,33 @@ def rule_based_predict(f_score: int, real_signal_score: int, h_score: int) -> di
 
 def predict(text: str) -> dict:
     """
-    v5.2 Hybrid Engine:
-    1. Extract credibility signals from text.
-    2. Try BERT via HF Router.
-    3. If BERT fails → rule-based fallback (never blind UNCERTAIN).
-    4. Override BERT if rule signals overwhelmingly disagree.
-    5. Return matched keywords for frontend text highlighting.
+    v5.3 Hybrid Engine:
+    1. Extract credibility signals from text (for UI highlighting).
+    2. Try BERT via HF Router (PRIMARY MODEL).
+    3. If BERT fails → rule-based fallback (SVM/Rule fallback).
     """
     text_lower = text.lower()
     h_score, f_score, real_signal_score, detected_hedge, detected_neg, detected_real = get_signal_data(text, text_lower)
 
-    # ── BERT ─────────────────────────────────────────────────
+    # ── PRIMARY MODEL: BERT ──────────────────────────────────
     bert_result = bert_predict(text)
-    bert_ok = bert_result is not None
-
-    if bert_ok:
-        bert_label      = bert_result.get("label", "UNCERTAIN")
-        bert_confidence = bert_result.get("confidence", 0.0)
+    
+    if bert_result is not None:
+        final_label      = bert_result.get("label", "UNCERTAIN")
+        final_confidence = bert_result.get("confidence", 0.0)
         fake_prob       = bert_result.get("fake_prob", 50.0)
         real_prob       = bert_result.get("real_prob", 50.0)
         model_tag       = bert_result.get("model_used", "RoBERTa")
     else:
-        print("BERT unavailable → using Rule-Based fallback")
+        print("BERT unavailable → using Fallback Engine")
         fallback        = rule_based_predict(f_score, real_signal_score, h_score)
-        bert_label      = fallback["label"]
-        bert_confidence = fallback["confidence"]
+        final_label     = fallback["label"]
+        final_confidence = fallback["confidence"]
         fake_prob       = fallback["fake_prob"]
         real_prob       = fallback["real_prob"]
         model_tag       = fallback["model_used"]
 
-    # ── Override Logic (applied for BERT and rule results) ────
-    final_label      = bert_label
-    final_confidence = bert_confidence
-
-    if bert_label == "REAL" and f_score >= 6:
-        final_label      = "FAKE"
-        final_confidence = 75.0
-    elif bert_label == "FAKE" and real_signal_score >= 6:
-        final_label      = "REAL"
-        final_confidence = 78.0
-    elif bert_label in ("REAL", "FAKE") and h_score >= 8 and bert_confidence < 75:
-        final_label      = "UNCERTAIN"
-        final_confidence = max(fake_prob, real_prob)
-
     # ── Sync probs ────────────────────────────────────────────
-    if final_label == "REAL":
-        real_prob = max(real_prob, 70.0)
-        fake_prob = 100.0 - real_prob
-    elif final_label == "FAKE":
-        fake_prob = max(fake_prob, 70.0)
-        real_prob = 100.0 - fake_prob
-    elif final_label == "UNCERTAIN":
-        fake_prob = 50.0
-        real_prob = 50.0
 
     # ── UI Metadata ───────────────────────────────────────────
     words      = text.split()

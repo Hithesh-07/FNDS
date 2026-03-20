@@ -268,8 +268,24 @@ body.dark .audit-overlay { background: #0B0F19; }
 .verdict-label-uncertain{ font-size: 2.5rem; font-weight: 700; color: var(--uncertain); letter-spacing: 0.05em; }
 
 /* ── Model Badges ── */
-.model-badge-bert { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.3rem 0.75rem; border-radius: 20px; background: rgba(99,102,241,0.15); color: #6366F1; }
-.model-badge-svm  { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.3rem 0.75rem; border-radius: 20px; background: rgba(245,158,11,0.15); color: #D97706; }
+.badge-bert {
+    background: rgba(0, 120, 255, 0.2);
+    border: 1px solid #0078ff;
+    color: #4da6ff;
+    padding: 0.3rem 0.8rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+.badge-svm {
+    background: rgba(150, 150, 150, 0.2);
+    border: 1px solid #666;
+    color: #aaa;
+    padding: 0.3rem 0.8rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
 
 /* ── Logic Bars ── */
 .section-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 1.25rem; color: var(--text-muted); text-transform: uppercase; }
