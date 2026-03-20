@@ -155,7 +155,7 @@ def run_decision_engine(text: str, ml_label: str, ml_conf: float, fake_prob: flo
 
     return {
         "final_label": final_label,
-        "final_confidence": round(final_conf, 2),
+        "final_confidence": float(round(final_conf, 2)),
         "confidence_level": level,
         "decision_reason": reason,
         "net_score": net_score,
