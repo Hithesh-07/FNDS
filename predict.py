@@ -1,4 +1,4 @@
-# predict.py — v4.0 Lean Serverless (Vercel Optimized)
+# predict.py — v5.0 Hybrid Engine: Rules + BERT (HF Router) + Rule-Based Fallback
 
 from preprocess import clean_text, extract_features
 from bert_predict import bert_predict
@@ -8,15 +8,30 @@ import json
 # NEGATIVE SIGNALS (Misinformation / Sensationalism)
 FAKE_TRIGGERS = [
     "shocking", "secret", "exposed", "breaking", "urgent",
-    "hoax", "conspiracy", "conspiracies", "bombshell", "cover-up", 
+    "hoax", "conspiracy", "conspiracies", "bombshell", "cover-up",
     "leaked", "leak", "banned", "censored", "suppressed", "suppress",
     "they don't want you to know", "what they aren't telling",
     "mainstream media", "big pharma", "deep state", "new world order",
     "illuminati", "government hiding", "doctors hate", "one weird trick",
     "miracle cure", "cure all", "cures everything", "100% proven",
-    "scientists confirm cure", "breakthrough in intelligence", 
+    "scientists confirm cure", "breakthrough in intelligence",
     "replace traditional", "financial interest", "direct bias",
-    "extraordinary claims", "gain traction", "social media influencers"
+    "extraordinary claims", "gain traction", "social media influencers",
+    "you won't believe", "share before it's deleted", "they're hiding",
+    "wake up", "sheeple", "plandemic", "fake vaccine", "mind control",
+    "5g causes", "microchip vaccine", "globalist", "satanic"
+]
+
+# REAL NEWS SIGNALS (Authority / Verifiable Data)
+REAL_SIGNALS = [
+    "reserve bank", "interest rates", "inflation", "gdp", "fiscal",
+    "revenue", "quarterly", "nasa", "telescope", "galaxy",
+    "supreme court", "regulations", "environmental", "government data",
+    "according to official", "press release", "confirmed by",
+    "study published", "peer reviewed", "journal of", "university of",
+    "reuters", "associated press", "official statement", "ministry of",
+    "world health organization", "united nations", "cdc says",
+    "statistics show", "data from", "research shows", "scientists say"
 ]
 
 # UNCERTAINTY SIGNALS (Hedging / Scientific skepticism)
@@ -24,7 +39,7 @@ HEDGE_WORDS = [
     "may", "might", "could", "suggest", "suggests", "suggested",
     "unclear", "unconfirmed", "not confirmed", "more research",
     "more evidence", "further study", "further research",
-    "experts say", "preliminary", "alleged", "allegedly", 
+    "experts say", "preliminary", "alleged", "allegedly",
     "reportedly", "rumored", "some researchers", "some scientists",
     "some experts", "possibly", "potentially", "appears to",
     "seems to", "not yet proven", "under investigation",
@@ -34,74 +49,130 @@ HEDGE_WORDS = [
     "awaiting more robust", "definitive conclusions", "skepticism"
 ]
 
+
 def get_signal_data(text_lower: str):
-    """Scans text for signals and returns (score, phrases)."""
+    """Scans text for signals and returns scored data."""
     h_score = 0
     f_score = 0
+    real_signal_score = 0
     detected_neg = []
     detected_hedge = []
+    detected_real = []
 
     for word in FAKE_TRIGGERS:
         if word in text_lower:
             f_score += 2
             detected_neg.append(word)
-    
+
     for word in HEDGE_WORDS:
         if word in text_lower:
-            h_score += 2
+            h_score += 1
             detected_hedge.append(word)
-            
-    return h_score, f_score, detected_hedge, detected_neg
+
+    for word in REAL_SIGNALS:
+        if word in text_lower:
+            real_signal_score += 3
+            detected_real.append(word)
+
+    return h_score, f_score, real_signal_score, detected_hedge, detected_neg, detected_real
+
+
+def rule_based_predict(text_lower: str, f_score: int, real_signal_score: int, h_score: int) -> dict:
+    """
+    Standalone rule-based classifier used when BERT is unavailable.
+    Returns a label, confidence, fake_prob, real_prob.
+    """
+    net = real_signal_score - f_score
+
+    if f_score >= 6:
+        label = "FAKE"
+        confidence = min(60 + f_score * 2, 90)
+        fake_prob = confidence
+        real_prob = 100 - fake_prob
+    elif real_signal_score >= 6:
+        label = "REAL"
+        confidence = min(60 + real_signal_score, 88)
+        real_prob = confidence
+        fake_prob = 100 - real_prob
+    elif h_score >= 4:
+        label = "UNCERTAIN"
+        confidence = 55.0
+        fake_prob = 50.0
+        real_prob = 50.0
+    elif net > 0:
+        label = "REAL"
+        confidence = 60.0
+        real_prob = 65.0
+        fake_prob = 35.0
+    elif net < 0:
+        label = "FAKE"
+        confidence = 62.0
+        fake_prob = 65.0
+        real_prob = 35.0
+    else:
+        # Truly no signal either way — default lean
+        label = "UNCERTAIN"
+        confidence = 50.0
+        fake_prob = 50.0
+        real_prob = 50.0
+
+    return {
+        "label": label,
+        "confidence": round(confidence, 2),
+        "fake_prob": round(fake_prob, 2),
+        "real_prob": round(real_prob, 2),
+        "model_used": "Rule-Based Engine (BERT Unavailable)"
+    }
+
 
 def predict(text: str) -> dict:
     """
-    v4.0 Hybrid Engine: Rules + BERT API (Zero local ML binaries)
+    v5.0 Hybrid Engine:
+    1. Extract rule signals
+    2. Try BERT (HF Router)
+    3. If BERT fails → use Rule-Based fallback (NOT UNCERTAIN)
+    4. Override BERT label if rule signals are overwhelming
     """
     text_lower = text.lower()
-    h_score, f_score, detected_hedge, detected_neg = get_signal_data(text_lower)
+    h_score, f_score, real_signal_score, detected_hedge, detected_neg, detected_real = get_signal_data(text_lower)
 
-    # 1. API-Based BERT Prediction (RoBERTa)
+    # ── Step 1: Try BERT ─────────────────────────────────────
     bert_result = bert_predict(text)
-    
-    # Extract BERT metrics
-    bert_label = bert_result.get("label", "UNCERTAIN")
-    bert_confidence = bert_result.get("confidence", 0.0)
-    fake_prob = bert_result.get("fake_prob", 50.0)
-    real_prob = bert_result.get("real_prob", 50.0)
+    bert_ok = bert_result is not None
 
-    # 2. Rule-Based Bias Scaling
-    # Real signals counter
-    real_signal_score = 0
-    real_signal_words = [
-        "reserve bank", "interest rates", "inflation", "gdp", "fiscal",
-        "revenue", "quarterly", "nasa", "telescope", "galaxy",
-        "supreme court", "regulations", "environmental", "government data"
-    ]
-    detected_real = []
-    for w in real_signal_words:
-        if w in text_lower:
-            real_signal_score += 3
-            detected_real.append(w)
+    if bert_ok:
+        bert_label = bert_result.get("label", "UNCERTAIN")
+        bert_confidence = bert_result.get("confidence", 0.0)
+        fake_prob = bert_result.get("fake_prob", 50.0)
+        real_prob = bert_result.get("real_prob", 50.0)
+        model_tag = bert_result.get("model_used", "RoBERTa")
+    else:
+        # ── Step 2: Rule-Based Fallback ───────────────────────
+        print("BERT unavailable → using Rule-Based fallback")
+        fallback = rule_based_predict(text_lower, f_score, real_signal_score, h_score)
+        bert_label = fallback["label"]
+        bert_confidence = fallback["confidence"]
+        fake_prob = fallback["fake_prob"]
+        real_prob = fallback["real_prob"]
+        model_tag = fallback["model_used"]
 
-    # 3. Consensus Logic (Weighted v4.0)
+    # ── Step 3: Override Logic ────────────────────────────────
     final_label = bert_label
     final_confidence = bert_confidence
 
-    # Boost/Override Logic based on Signals
-    if bert_label == "REAL" and f_score >= 6:
-        # Override BERT if fake news buzzwords are overwhelming
-        final_label = "FAKE"
-        final_confidence = 75.0
-    elif bert_label == "FAKE" and real_signal_score >= 6:
-        # Override BERT if high-quality verifyable nouns are found
-        final_label = "REAL"
-        final_confidence = 75.0
-    elif h_score >= 6 and (bert_confidence < 85):
-        # Override to Uncertain if hedging is extreme
-        final_label = "UNCERTAIN"
-        final_confidence = max(fake_prob, real_prob)
+    if bert_ok:
+        # Only apply override logic when BERT gave a result
+        if bert_label == "REAL" and f_score >= 6:
+            final_label = "FAKE"
+            final_confidence = 75.0
+        elif bert_label == "FAKE" and real_signal_score >= 6:
+            final_label = "REAL"
+            final_confidence = 75.0
+        elif h_score >= 6 and bert_confidence < 85:
+            final_label = "UNCERTAIN"
+            final_confidence = max(fake_prob, real_prob)
 
-    # Sync probabilities to UI for the final label
+    # ── Sync probabilities ────────────────────────────────────
     if final_label == "REAL":
         real_prob = max(real_prob, 70.0)
         fake_prob = 100.0 - real_prob
@@ -112,22 +183,15 @@ def predict(text: str) -> dict:
         fake_prob = 50.0
         real_prob = 50.0
 
-    # UI Meta Data
-    words      = text.split()
+    # ── UI Meta Data ──────────────────────────────────────────
+    words = text.split()
     caps_count = sum(1 for w in words if w.isupper() and len(w) > 2)
     caps_ratio = (caps_count / max(len(words), 1)) * 100
     excl_count = text.count("!")
 
-    # Credibility Flags Assembly
-    credibility_flags = []
-    for f in detected_neg:
-        credibility_flags.append(f"{f.title()} Signal")
-    for h in detected_hedge:
-        credibility_flags.append(f"{h.title()} (Uncertainty)")
-    
-    real_flags = []
-    for r in detected_real:
-        real_flags.append(f"{r.title()} Verified")
+    credibility_flags = [f"{f.title()} Signal" for f in detected_neg]
+    credibility_flags += [f"{h.title()} (Uncertainty)" for h in detected_hedge]
+    real_flags = [f"{r.title()} Verified" for r in detected_real]
 
     return {
         "label"             : final_label,
@@ -136,7 +200,7 @@ def predict(text: str) -> dict:
         "fake_prob"         : round(fake_prob, 2),
         "real_prob"         : round(real_prob, 2),
         "gap"               : round(abs(fake_prob - real_prob), 2),
-        "keywords"          : {"fake": [], "real": []}, # Reduced for speed
+        "keywords"          : {"fake": [], "real": []},
         "credibility_flags" : credibility_flags,
         "real_flags"        : real_flags,
         "net_score"         : (real_signal_score - f_score),
@@ -147,8 +211,10 @@ def predict(text: str) -> dict:
             "exclamation_marks" : excl_count,
             "hedge_words"       : h_score,
         },
-        "model_used"        : f"v4.0 Consensus ({bert_result.get('model_used', 'API')})"
+        "model_used"        : f"v5.0 Hybrid ({model_tag})",
+        "decision_reason"   : model_tag
     }
+
 
 def cached_predict(text: str) -> dict:
     """Helper for Flask app."""

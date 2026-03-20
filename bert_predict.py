@@ -1,57 +1,64 @@
 import requests
-import json
 import os
 import time
 
-# Hugging Face Inference API URL for the model
-API_URL = "https://api-inference.huggingface.co/models/hamzab/roberta-fake-news-classification"
-# Recommend adding your HF token to Vercel/Local environment variables
-HF_TOKEN = os.getenv("HF_TOKEN", "") 
+# Hugging Face Inference Router URL for the model (NEW API as of 2025)
+API_URL = "https://router.huggingface.co/models/hamzab/roberta-fake-news-classification"
+HF_TOKEN = os.getenv("HF_TOKEN", "")
+
 
 def query(payload):
     headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
-    for _ in range(3):
+    for attempt in range(3):
         try:
-            response = requests.post(API_URL, headers=headers, json=payload)
+            response = requests.post(API_URL, headers=headers, json=payload, timeout=20)
             output = response.json()
             if isinstance(output, dict) and 'error' in output:
                 if 'estimated_time' in output:
-                    wait_time = min(output['estimated_time'], 15)
-                    print(f"Model is loading, waiting {wait_time}s...")
+                    wait_time = min(float(output['estimated_time']), 15)
+                    print(f"Model is loading, waiting {wait_time}s... (attempt {attempt+1})")
                     time.sleep(wait_time)
                     continue
                 else:
                     print(f"HF API Error: {output['error']}")
-                    time.sleep(2)
-                    continue
+                    return None
             return output
+        except requests.exceptions.Timeout:
+            print(f"HF API timeout (attempt {attempt+1})")
+            time.sleep(2)
         except Exception as e:
             print(f"Requests error: {e}")
             time.sleep(2)
-    return {"error": "Failed to reach API after retries"}
+    return None
+
 
 def bert_predict(text: str) -> dict:
     """
-    BERT (RoBERTa) based prediction using Hugging Face Inference API.
-    Used for serverless deployments (Vercel) to keep the package small.
+    BERT (RoBERTa) based prediction via Hugging Face Inference Router.
+    Returns None-safe dict; caller should check if result is None to use fallback.
     """
     try:
-        # RoBERTa has a 512 token limit
         payload = {"inputs": text[:512], "options": {"wait_for_model": True}}
         output = query(payload)
-        
-        # API returns a list of lists of dicts: [[{"label": "...", "score": ...}, ...]]
+
+        if output is None:
+            return None  # Signal caller to use fallback
+
+        # API returns: [[{"label": "...", "score": ...}, ...]]
         if isinstance(output, list) and len(output) > 0:
-            result = output[0][0]
+            if isinstance(output[0], list):
+                result = output[0][0]
+            else:
+                result = output[0]
             label_raw = result["label"].lower()
             score = result["score"]
         else:
-            raise ValueError(f"Unexpected API response: {output}")
+            print(f"Unexpected API response shape: {output}")
+            return None
 
-        # Normalize label based on model output:
-        # 'LABEL_1' or 'Real' for Truth, 'LABEL_0' or 'Fake' for False
-        is_real = any(word in label_raw for word in ["real", "true", "label_1", "fact", "joy"])
-        
+        # Normalize: LABEL_1 / real / true → REAL, else FAKE
+        is_real = any(w in label_raw for w in ["real", "true", "label_1", "fact", "joy"])
+
         if is_real:
             label = "REAL"
             real_prob = round(score * 100, 2)
@@ -71,15 +78,8 @@ def bert_predict(text: str) -> dict:
             "fake_prob": fake_prob,
             "real_prob": real_prob,
             "gap": abs(fake_prob - real_prob),
-            "model_used": "RoBERTa (HF Inference API)"
+            "model_used": "RoBERTa (HF Router)"
         }
     except Exception as e:
         print(f"BERT Inference Error: {e}")
-        return {
-            "label": "UNCERTAIN",
-            "confidence": 0.0,
-            "fake_prob": 50.0,
-            "real_prob": 50.0,
-            "confidence_level": "LOW",
-            "model_used": "BERT (API Fallback)"
-        }
+        return None  # Signal caller to use fallback
