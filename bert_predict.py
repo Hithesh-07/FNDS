@@ -6,8 +6,8 @@ import time
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
 # Best fake news model — already fine-tuned
-BERT_MODEL = "hamzab/roberta-fake-news-classification"
-BERT_URL   = f"https://router.huggingface.co/models/{BERT_MODEL}"
+BERT_MODEL = "mrm8488/bert-mini-finetuned-fake-news-detection"
+BERT_URL   = f"https://api-inference.huggingface.co/models/{BERT_MODEL}"
 
 HEADERS = {
     "Authorization"    : f"Bearer {HF_TOKEN}",
