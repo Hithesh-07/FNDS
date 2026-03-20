@@ -4,6 +4,7 @@ import warnings
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, abort
 
+port = int(os.environ.get("PORT", 10000))
 warnings.filterwarnings("ignore")  # suppress version warnings
 
 import nltk
@@ -144,4 +145,5 @@ def server_error(e):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=False)
