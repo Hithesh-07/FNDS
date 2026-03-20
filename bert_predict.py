@@ -3,16 +3,17 @@
 import os
 import requests
 import time
+import threading
 
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
 # Primary: TruthLens Fine-Tuned Model
 BERT_MODEL = "Monk3ydluffy/truthlens-bert"
-BERT_URL   = f"https://api-inference.huggingface.co/models/{BERT_MODEL}"
+BERT_URL   = f"https://router.huggingface.co/hf-inference/models/{BERT_MODEL}"
 
 # Fallback if primary fails
 FALLBACK_MODEL = "jy46604790/Fake-News-Bert-Detect"
-FALLBACK_URL   = f"https://api-inference.huggingface.co/models/{FALLBACK_MODEL}"
+FALLBACK_URL   = f"https://router.huggingface.co/hf-inference/models/{FALLBACK_MODEL}"
 
 
 def bert_predict(text: str) -> dict:
@@ -46,14 +47,14 @@ def bert_predict(text: str) -> dict:
 
 def call_api(url: str, text: str, headers: dict, name: str) -> dict:
     last_error = None
-    for attempt in range(3):
+    for attempt in range(2):
         try:
             print(f"  {name} BERT attempt {attempt+1}/3...")
             response = requests.post(
                 url,
                 headers = headers,
                 json    = {"inputs": text},
-                timeout = 25
+                timeout = 12
             )
             print(f"  {name} status: {response.status_code}")
 
@@ -136,3 +137,24 @@ def parse_bert_response(data) -> dict:
 
     except Exception as e:
         raise Exception(f"Parse failed: {e}")
+
+
+def bert_predict_with_timeout(text: str, timeout_seconds: int = 20) -> dict:
+    result    = [None]
+    exception = [None]
+
+    def run():
+        try:
+            result[0] = bert_predict(text)
+        except Exception as e:
+            exception[0] = e
+
+    thread = threading.Thread(target=run)
+    thread.start()
+    thread.join(timeout=timeout_seconds)
+
+    if thread.is_alive():
+        raise Exception("BERT timeout after 20s — using SVM")
+    if exception[0]:
+        raise exception[0]
+    return result[0]

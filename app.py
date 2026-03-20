@@ -105,8 +105,8 @@ def analyze(text: str) -> dict:
     bert_result = None
     if HF_TOKEN:
         try:
-            from bert_predict import bert_predict
-            bert_result = bert_predict(text)
+            from bert_predict import bert_predict, bert_predict_with_timeout
+            bert_result = bert_predict_with_timeout(text, timeout_seconds=20)
             bert_ok     = True
             print(f"→ BERT OK: {bert_result['label']}")
         except Exception as e:

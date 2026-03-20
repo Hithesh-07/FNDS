@@ -114,84 +114,144 @@
 
       <!-- Results Area -->
       <section id="results-section" class="results-section hidden">
-          <div class="results-header">
-              <h2 class="mb-0 fw-bold">Analysis Results</h2>
-          <div class="dashboard-grid">
-              <!-- Verdict Card -->
-              <div class="card-v2 verdict-card">
-                  <div class="scan-line"></div>
-                  <div>
-                      <div id="verdict-label" class="verdict-label-real">REAL</div>
-                      <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;margin-top:5px;color:var(--muted);letter-spacing:1px;">AI CONFIDENCE LEVEL</div>
-                  </div>
-                  <div class="text-end">
-                      <div class="confidence-badge" id="confidence-badge-val" style="font-size:2.5rem;line-height:1;">0%</div>
-                      <div id="verdict-tier" style="font-size:0.6rem;margin-top:10px;letter-spacing:2px;opacity:0.7;">HIGH CERTAINTY</div>
-                  </div>
-              </div>
+<div class="result-section">
 
-              <!-- Decision Logic Card -->
-              <div class="card-v2">
-                  <h3 class="section-title">Priority Engine Logic</h3>
-                  <div class="logic-row">
-                      <span>Reason:</span>
-                      <span id="logic-reason" style="color:var(--accent);">N/A</span>
-                  </div>
-                  <div class="logic-bar-bg"><div id="logic-bar-fill" class="logic-bar-fill"></div></div>
-                  <div style="margin-top:1.5rem;display:flex;gap:1rem;">
-                      <div style="flex:1;">
-                          <div class="logic-row" style="font-size:0.75rem;"><span>Fake Prob</span><span id="p-fake">0%</span></div>
-                          <div class="logic-bar-bg"><div id="bar-fake" class="logic-bar-fill" style="background:var(--fake);width:0%;"></div></div>
-                      </div>
-                      <div style="flex:1;">
-                          <div class="logic-row" style="font-size:0.75rem;"><span>Real Prob</span><span id="p-real">0%</span></div>
-                          <div class="logic-bar-bg"><div id="bar-real" class="logic-bar-fill" style="background:var(--real);width:0%;"></div></div>
-                      </div>
-                  </div>
-              </div>
+    <!-- Verdict Card -->
+    <div class="verdict-card">
+        <div>
+            <div class="verdict-label
+                {% if result and result.label == 'FAKE' %}verdict-fake
+                {% elif result and result.label == 'REAL' %}verdict-real
+                {% else %}verdict-uncertain{% endif %}" id="verdict-label">
+                {{ result.label if result else '---' }}
+            </div>
+            <div style="font-size:0.72rem; letter-spacing:0.15em;
+                        color:#ffffff40; margin-top:0.5rem;">
+                AI CONFIDENCE LEVEL
+            </div>
+        </div>
+        <div class="verdict-confidence">
+            <div class="confidence-number" id="confidence-badge-val">{{ result.confidence if result else '0' }}%</div>
+            <span class="confidence-label" id="verdict-tier">{{ result.confidence_level if result else 'CERTAINTY' }}</span>
+            <div style="margin-top:0.8rem;">
+                <span id="role-badge-primary" class="role-badge
+                    {% if result and result.bert_ok %}role-primary{% else %}role-fallback{% endif %}">
+                    {% if result and result.bert_ok %}🤖 BERT Active{% else %}⚙️ SVM Active{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
 
-              <!-- Credibility Audit Card -->
-              <div class="card-v2">
-                  <h3 class="section-title">Credibility Signals</h3>
-                  <div id="cred-flags-grid" class="cred-flags-grid" style="min-height:60px;"></div>
-                  <div style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;">
-                      <div class="logic-row">
-                          <span>NET SCORE:</span>
-                          <span id="net-score-val" class="score-low">0</span>
-                      </div>
-                  </div>
-              </div>
-          </div> <!-- End Dashboard Grid -->
+    <!-- Two Column Grid -->
+    <div class="two-col-grid">
 
-          <!-- Model Details Table -->
-          <div class="card-v2 full-width" id="model-consensus-card" style="display:none; margin-top: 1.5rem;">
-               <h3 class="section-title">⚖️ Model Details</h3>
-               <table class="model-table">
-                   <thead>
-                       <tr>
-                           <th>Model</th>
-                           <th>Role</th>
-                           <th>Verdict</th>
-                           <th>FAKE %</th>
-                           <th>REAL %</th>
-                           <th>Confidence</th>
-                       </tr>
-                   </thead>
-                   <tbody id="model-table-body">
-                       <!-- Populated via JS -->
-                   </tbody>
-               </table>
-           </div>
+        <!-- Priority Engine -->
+        <div class="info-card">
+            <div class="card-title">⚡ Priority Engine Logic</div>
+            <div style="font-size:0.8rem; color:#00c8ff;
+                        font-family:monospace; margin-bottom:1rem;" id="logic-reason">
+                {{ result.decision_reason if result else 'ML_CONSENSUS' }}
+            </div>
+            
+            <div class="prob-row">
+                <span class="prob-label">FAKE</span>
+                <div class="prob-track">
+                    <div class="prob-fill prob-fill-fake" id="bar-fake"
+                         style="width:{{ result.fake_prob if result else '0' }}%"></div>
+                </div>
+                <span class="prob-pct" id="p-fake">{{ result.fake_prob if result else '0' }}%</span>
+            </div>
+            
+            <!-- We also need the logic-bar-fill for JS fallback if it relies on logic-bar-fill mapping -->
+            <!-- Wait, user JS accesses id="logic-bar-fill", I will add it hidden here just so it doesn't break JS -->
+            <div id="logic-bar-fill" style="display:none;"></div>
+            
+            <div class="prob-row">
+                <span class="prob-label">REAL</span>
+                <div class="prob-track">
+                    <div class="prob-fill prob-fill-real" id="bar-real"
+                         style="width:{{ result.real_prob if result else '0' }}%"></div>
+                </div>
+                <span class="prob-pct" id="p-real">{{ result.real_prob if result else '0' }}%</span>
+            </div>
+        </div>
 
-          <!-- Keyword Highlights Legend -->
-          <div id="highlight-legend" class="highlight-legend hidden">
-              <span class="legend-item"><span class="legend-dot legend-fake"></span> Fake signal words</span>
-              <span class="legend-item"><span class="legend-dot legend-real"></span> Credibility words</span>
-              <small style="opacity:0.6;">(Click highlighted text above to dismiss)</small>
-          </div>
+        <!-- Credibility Signals -->
+        <div class="info-card">
+            <div class="card-title">🔍 Credibility Signals</div>
+            <div style="margin-bottom:0.5rem; font-size:0.72rem;
+                        color:#ffffff40; letter-spacing:0.1em;">
+                NET SCORE
+            </div>
+            <div class="net-score
+                {% if result and result.net_score > 0 %}score-positive
+                {% elif result and result.net_score < 0 %}score-negative
+                {% else %}score-zero{% endif %}" id="net-score-val">
+                {% if result and result.net_score > 0 %}+{% endif %}{{ result.net_score if result else '0' }}
+            </div>
+            <div style="margin-top:1rem;" id="cred-flags-grid">
+            {% if result and result.credibility_flags %}
+                {% for flag in result.credibility_flags[:4] %}
+                <div style="font-size:0.7rem; font-family:monospace;
+                            color:#ff6b7a; margin-bottom:0.3rem;">
+                    ⚠ {{ flag }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
 
-          <p class="disclaimer mt-4" style="text-align:center;opacity:0.6;">High-risk claims should be verified via multiple independent sources. · <a href="/about" style="color:var(--primary);text-decoration:none;">About Aletheia</a></p>
-      </section>
+    </div>
+
+    <!-- Model Table -->
+    <div class="model-table-card" id="model-consensus-card" style="display:block;">
+        <div class="card-title">⚖️ Model Details</div>
+        <table class="model-table">
+            <thead>
+                <tr>
+                    <th>MODEL</th>
+                    <th>ROLE</th>
+                    <th>VERDICT</th>
+                    <th>FAKE %</th>
+                    <th>REAL %</th>
+                    <th>CONFIDENCE</th>
+                </tr>
+            </thead>
+            <tbody id="model-table-body">
+                <!-- Fallback SSR content in case no JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Keywords -->
+    <div class="info-card" id="keywords-container" style="display:none;">
+        <div class="card-title">🔑 Key Signals</div>
+        <div class="keywords-grid" id="keywords-grid">
+            {% if result and result.keywords %}
+            {% for kw in result.keywords %}
+            <span class="keyword-tag">{{ kw }}</span>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Keyword Highlights Legend -->
+    <div id="highlight-legend" class="highlight-legend hidden" style="margin-top:1rem;">
+          <span class="legend-item"><span class="legend-dot legend-fake" style="background:var(--fake);width:8px;height:8px;border-radius:50%;display:inline-block;"></span> Fake signal words</span>
+          <span class="legend-item"><span class="legend-dot legend-real" style="background:var(--real);width:8px;height:8px;border-radius:50%;display:inline-block;"></span> Credibility words</span>
+          <small style="opacity:0.6;margin-left:10px;">(Click highlighted text above to dismiss)</small>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+        Always verify important news from trusted sources like
+        BBC, Reuters, or AP News. AI analysis is not a substitute
+        for human judgment. · <a href="/about"
+        style="color:#ffffff40;">About Aletheia</a>
+    </div>
+
+</div>
+</section>
 
       <!-- Recent Checks -->
       <section class="recent-checks mt-4" id="recent-checks-section">
