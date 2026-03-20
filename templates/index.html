@@ -337,6 +337,11 @@
 
         // Check if response is OK before parsing JSON
         if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                throw new Error(data.error || `Server error ${response.status}`);
+            }
             const errorText = await response.text();
             console.error('Server error:', errorText);
             throw new Error(`Server error ${response.status}`);

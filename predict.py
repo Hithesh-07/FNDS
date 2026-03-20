@@ -202,9 +202,9 @@ def predict(text: str, model=None, vectorizer=None, scaler=None) -> dict:
 
     return {
         "label"      : label,
-        "confidence" : round(conf, 2),
-        "fake_prob"  : round(fake_prob, 2),
-        "real_prob"  : round(real_prob, 2),
+        "confidence" : float(round(conf, 2)),
+        "fake_prob"  : float(round(fake_prob, 2)),
+        "real_prob"  : float(round(real_prob, 2)),
         "keywords"   : {"fake": list(set(detected_neg)), "real": list(set(detected_real))},
         "red_flags"  : {
             "sensational_words" : f_score,
