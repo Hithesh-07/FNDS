@@ -37,12 +37,29 @@ def analyze(text: str) -> dict:
     2. BERT primary model
     3. SVM fallback if BERT fails
     """
-    from decision_engine import run_decision_engine_raw, calculate_scores
+    try:
+        print("→ Loading decision engine...")
+        from decision_engine import run_decision_engine_raw, calculate_scores
+        print("→ Decision engine loaded")
+    except Exception as e:
+        print(f"❌ Decision engine import failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
 
     text = text.strip()
 
     # ── Step 1: Get credibility signals first ──────────────
-    scores = calculate_scores(text)
+    try:
+        print("→ Running credibility scores...")
+        scores = calculate_scores(text)
+        print(f"→ Scores done: net={scores['net_score']}")
+    except Exception as e:
+        print(f"❌ Credibility scores failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
+
     cred_net_score   = scores["net_score"]
     uncertain_score  = scores["uncertain_score"]
     fake_flags       = scores["fake_flags"]
@@ -55,6 +72,7 @@ def analyze(text: str) -> dict:
 
     if HF_TOKEN:
         try:
+            print("→ Running BERT...")
             from bert_predict import bert_predict
             bert_result = bert_predict(text)
             bert_ok     = True
@@ -64,7 +82,15 @@ def analyze(text: str) -> dict:
             print(f"⚠️  BERT failed: {e} — switching to SVM")
 
     # ── Step 3: SVM fallback if BERT failed ────────────────
-    svm_result = svm_predict(text, svm_model, svm_vectorizer, svm_scaler)
+    try:
+        print("→ Running SVM...")
+        svm_result = svm_predict(text, svm_model, svm_vectorizer, svm_scaler)
+        print(f"→ SVM done: {svm_result['label']}")
+    except Exception as e:
+        print(f"❌ SVM failed: {e}")
+        import traceback
+        traceback.print_exc()
+        raise
 
     if not bert_ok:
         model_used = "SVM (BERT unavailable)"
@@ -144,29 +170,54 @@ def analyze(text: str) -> dict:
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
+    error  = None
     text   = ""
     if request.method == "POST":
-        text = request.form.get("news_text", "").strip()
-        if len(text) < 10:
-            return render_template("index.html",
-                                   error="Please enter at least 10 characters.",
-                                   text=text)
-        if text:
-            result = analyze(text)
-    return render_template("index.html", result=result, text=text)
+        try:
+            text = request.form.get("news_text", "").strip()
+            if len(text) < 10:
+                error = "Please enter at least 10 characters."
+            else:
+                result = analyze(text)
+        except Exception as e:
+            print(f"❌ index error: {e}")
+            import traceback
+            traceback.print_exc()
+            error = f"Analysis failed: {str(e)}"
+    return render_template("index.html", result=result, text=text, error=error)
 
 
 # ── REST API ───────────────────────────────────────────────
 @app.route("/predict", methods=["POST"])
 def api_predict():
-    data = request.get_json(silent=True)
-    if not data or "text" not in data:
-        return jsonify({"error": "Send JSON with text field"}), 400
-    text = data["text"].strip()
-    if not text:
-        return jsonify({"error": "Text is empty"}), 400
-    result = analyze(text)
-    return jsonify(result)
+    try:
+        data = request.get_json(silent=True)
+        if not data or "text" not in data:
+            return jsonify({"error": "Send JSON with text field"}), 400
+        text = data["text"].strip()
+        if not text:
+            return jsonify({"error": "Text is empty"}), 400
+        result = analyze(text)
+        return jsonify(result)
+    except Exception as e:
+        print(f"❌ /predict error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "error"     : str(e),
+            "label"     : "ERROR",
+            "confidence": 0,
+        }), 500
+
+
+# ── Global error handlers ──────────────────────────────────
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Route not found"}), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
 
 # ── Metrics ────────────────────────────────────────────────

@@ -242,11 +242,30 @@
 
       try {
         const response = await fetch('/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
+            method  : 'POST',
+            headers : {'Content-Type': 'application/json'},
+            body    : JSON.stringify({text: text})
         });
+
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server error:', errorText);
+            throw new Error(`Server error ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const errorText = await response.text();
+            console.error('Non-JSON response:', errorText);
+            throw new Error('Server returned non-JSON response');
+        }
+
         const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
 
         // Mark all steps done
         clearInterval(stepInterval);
