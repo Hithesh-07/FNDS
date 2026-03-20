@@ -1,7 +1,25 @@
-# predict.py — v5.2 Hybrid Engine: BERT + Expanded Rule-Based Fallback
-
+import joblib
+import os
 from preprocess import clean_text, extract_features
-from bert_predict import bert_predict
+
+def get_handcrafted_features(text):
+    """Sync helper to get stylistic feature list."""
+    return list(extract_features(text).values())
+
+def load_model():
+    """Loads the SVM ensemble and preprocessors from disk."""
+    model_path = "model/model.pkl"
+    vec_path   = "model/vectorizer.pkl"
+    scl_path   = "model/scaler.pkl"
+    
+    if not all(os.path.exists(p) for p in [model_path, vec_path, scl_path]):
+        print("Missing model files! Run train.py first.")
+        return None, None, None
+        
+    model = joblib.load(model_path)
+    vec   = joblib.load(vec_path)
+    scl   = joblib.load(scl_path)
+    return model, vec, scl
 
 # ── FAKE TRIGGERS — sensational / misinformation keywords ──
 FAKE_TRIGGERS = [
@@ -46,15 +64,8 @@ REAL_SIGNALS = [
     "research published", "clinical trial", "scientific study",
     "according to researchers", "scientists found", "scientists say",
     "scientists discovered", "health ministry", "world health organization",
-    "cdc", "who said", "expert says", "experts say", "experts believe",
-    "industry experts", "analysts say", "analysts believe",
-    # Journalism / source attribution
-    "reuters", "associated press", "according to", "confirmed by",
-    "statistics show", "data from", "report says", "report found",
-    "survey found", "survey shows", "poll shows", "study shows",
-    "study found", "research shows", "research found",
     # Legal / courts
-    "supreme court", "court ruled", "court said", "court ordered",
+    "supreme court", "court ruled", "court ordered",
     "regulations", "law passed", "bill passed", "signed into law",
 ]
 
@@ -135,70 +146,67 @@ def rule_based_predict(f_score: int, real_signal_score: int, h_score: int) -> di
     }
 
 
-def predict(text: str) -> dict:
+def predict(text: str, model=None, vectorizer=None, scaler=None) -> dict:
     """
-    v5.3 Hybrid Engine:
-    1. Extract credibility signals from text (for UI highlighting).
-    2. Try BERT via HF Router (PRIMARY MODEL).
-    3. If BERT fails → rule-based fallback (SVM/Rule fallback).
+    SVM/Rule component for Fusion Engine.
+    1. Extract credibility signals.
+    2. Run SVM prediction (if model provided).
+    3. Return combined probabilities.
     """
     text_lower = text.lower()
     h_score, f_score, real_signal_score, detected_hedge, detected_neg, detected_real = get_signal_data(text, text_lower)
 
-    # ── PRIMARY MODEL: BERT ──────────────────────────────────
-    bert_result = bert_predict(text)
-    
-    if bert_result is not None:
-        final_label      = bert_result.get("label", "UNCERTAIN")
-        final_confidence = bert_result.get("confidence", 0.0)
-        fake_prob       = bert_result.get("fake_prob", 50.0)
-        real_prob       = bert_result.get("real_prob", 50.0)
-        model_tag       = bert_result.get("model_used", "RoBERTa")
+    # ── SVM Prediction ───────────────────────────────────────
+    if model and vectorizer and scaler:
+        try:
+            cleaned = clean_text(text)
+            tfidf   = vectorizer.transform([cleaned])
+            
+            # Re-stacking features properly (matching train.py)
+            hand    = get_handcrafted_features(text)
+            hand_scaled = scaler.transform([hand])
+            
+            import scipy.sparse as sp
+            X_final = sp.hstack([tfidf, sp.csr_matrix(hand_scaled)])
+            
+            proba = model.predict_proba(X_final)[0] 
+            
+            fake_prob = proba[0] * 100
+            real_prob = proba[1] * 100
+            conf      = max(fake_prob, real_prob)
+            label     = "FAKE" if fake_prob > real_prob else "REAL"
+        except Exception as e:
+            print(f"SVM proba failed: {e}")
+            fallback  = rule_based_predict(f_score, real_signal_score, h_score)
+            fake_prob = fallback["fake_prob"]
+            real_prob = fallback["real_prob"]
+            conf      = fallback["confidence"]
+            label     = fallback["label"]
     else:
-        print("BERT unavailable → using Fallback Engine")
-        fallback        = rule_based_predict(f_score, real_signal_score, h_score)
-        final_label     = fallback["label"]
-        final_confidence = fallback["confidence"]
-        fake_prob       = fallback["fake_prob"]
-        real_prob       = fallback["real_prob"]
-        model_tag       = fallback["model_used"]
+        fallback  = rule_based_predict(f_score, real_signal_score, h_score)
+        fake_prob = fallback["fake_prob"]
+        real_prob = fallback["real_prob"]
+        conf      = fallback["confidence"]
+        label     = fallback["label"]
 
-    # ── Sync probs ────────────────────────────────────────────
-
-    # ── UI Metadata ───────────────────────────────────────────
+    # UI Metadata
     words      = text.split()
     caps_count = sum(1 for w in words if w.isupper() and len(w) > 2)
     caps_ratio = (caps_count / max(len(words), 1)) * 100
     excl_count = text.count("!")
 
-    credibility_flags = [f"{f.title()} Signal" for f in detected_neg]
-    credibility_flags += [f"{h.title()} (Uncertainty)" for h in detected_hedge]
-    real_flags = [f"{r.title()} Verified" for r in detected_real]
-
-    # Keywords for frontend text highlighting
-    fake_keywords = list(set(detected_neg))
-    real_keywords = list(set(detected_real))
-
     return {
-        "label"             : final_label,
-        "confidence"        : round(final_confidence, 2),
-        "confidence_level"  : "HIGH" if final_confidence >= 80 else "MEDIUM" if final_confidence >= 60 else "LOW",
-        "fake_prob"         : round(fake_prob, 2),
-        "real_prob"         : round(real_prob, 2),
-        "gap"               : round(abs(fake_prob - real_prob), 2),
-        "keywords"          : {"fake": fake_keywords, "real": real_keywords},
-        "credibility_flags" : credibility_flags,
-        "real_flags"        : real_flags,
-        "net_score"         : (real_signal_score - f_score),
-        "uncertain_score"   : h_score,
-        "red_flags"         : {
+        "label"      : label,
+        "confidence" : round(conf, 2),
+        "fake_prob"  : round(fake_prob, 2),
+        "real_prob"  : round(real_prob, 2),
+        "keywords"   : {"fake": list(set(detected_neg)), "real": list(set(detected_real))},
+        "red_flags"  : {
             "sensational_words" : f_score,
             "caps_ratio"        : round(caps_ratio, 1),
             "exclamation_marks" : excl_count,
             "hedge_words"       : h_score,
-        },
-        "model_used"        : f"v5.2 Hybrid ({model_tag})",
-        "decision_reason"   : model_tag
+        }
     }
 
 

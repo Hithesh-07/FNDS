@@ -115,7 +115,31 @@
                       </div>
                   </div>
               </div>
-          </div>
+          </div> <!-- End Dashboard Grid -->
+
+          <!-- Model Comparison Table -->
+          <div class="card-v2 full-width" id="fusion-details" style="display:none; margin-top: 1.5rem;">
+               <h3 class="section-title">⚖️ Model Consensus</h3>
+               <table class="model-table">
+                   <thead>
+                       <tr>
+                           <th>Model</th>
+                           <th>Verdict</th>
+                           <th>FAKE %</th>
+                           <th>REAL %</th>
+                           <th>Confidence</th>
+                       </tr>
+                   </thead>
+                   <tbody id="model-comparison-body">
+                       <!-- Populated via JS -->
+                   </tbody>
+               </table>
+           
+               <!-- Agreement badge -->
+               <div id="agreement-badge" class="agreement-badge">
+                   <!-- Populated via JS -->
+               </div>
+           </div>
 
           <!-- Keyword Highlights Legend -->
           <div id="highlight-legend" class="highlight-legend hidden">
@@ -262,16 +286,44 @@
         document.getElementById('logic-reason').textContent = data.decision_reason || 'ML_CONSENSUS';
         document.getElementById('logic-bar-fill').style.width = data.confidence + '%';
 
-        const modelBadge = document.getElementById('model-badge');
-        const isBert = data.model_used && data.model_used.includes('BERT');
+        // ── Model Comparison Table ──────────────────────────
+        const fusionBox = document.getElementById('fusion-details');
+        const body = document.getElementById('model-comparison-body');
+        fusionBox.style.display = 'block';
         
-        if (isBert) {
-            modelBadge.innerHTML = '🤖 BERT Active';
-            modelBadge.className = 'badge-bert';
-        } else {
-            modelBadge.innerHTML = '⚙️ SVM Fallback';
-            modelBadge.className = 'badge-svm';
-        }
+        body.innerHTML = `
+            <tr class="${data.bert_label === 'FAKE' ? 'row-fake' : 'row-real'}">
+                <td>🤖 BERT</td>
+                <td><strong>${data.bert_label}</strong></td>
+                <td>${data.bert_fake}%</td>
+                <td>${data.bert_real}%</td>
+                <td>${data.bert_confidence}%</td>
+            </tr>
+            <tr class="${data.svm_label === 'FAKE' ? 'row-fake' : 'row-real'}">
+                <td>⚙️ SVM</td>
+                <td><strong>${data.svm_label}</strong></td>
+                <td>${data.svm_fake}%</td>
+                <td>${data.svm_real}%</td>
+                <td>${data.svm_confidence}%</td>
+            </tr>
+            <tr class="row-fused">
+                <td>🔀 FUSED</td>
+                <td><strong>${data.label}</strong></td>
+                <td>${data.fake_prob}%</td>
+                <td>${data.real_prob}%</td>
+                <td>${data.confidence}%</td>
+            </tr>
+        `;
+
+        const agreBadge = document.getElementById('agreement-badge');
+        const agreType = data.agreement === 'FULL' ? 'badge-agree' : (data.agreement === 'SPLIT' ? 'badge-split' : 'badge-leads');
+        const agreIcon = data.agreement === 'FULL' ? '🤝' : (data.agreement === 'SPLIT' ? '⚡' : '🏆');
+        agreBadge.className = 'agreement-badge ' + agreType;
+        agreBadge.innerHTML = `${agreIcon} ${data.agreement_text}`;
+
+        const modelBadge = document.getElementById('model-badge');
+        modelBadge.innerHTML = `🔀 ${data.model_used}`;
+        modelBadge.className = 'badge-bert';
 
         // Credibility Audit
         const grid = document.getElementById('cred-flags-grid');

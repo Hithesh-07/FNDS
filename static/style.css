@@ -346,3 +346,60 @@ footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: 
 
 .hidden { display: none !important; }
 .mt-4 { margin-top: 2rem; }
+
+/* ── Model Comparison Table ── */
+.model-comparison {
+    margin-top    : 1.5rem;
+    border-top    : 1px solid rgba(255,255,255,0.1);
+    padding-top   : 1.2rem;
+}
+.model-table {
+    width         : 100%;
+    border-collapse: collapse;
+    font-family   : 'JetBrains Mono', monospace;
+    font-size     : 0.82rem;
+    margin-bottom : 1rem;
+}
+.model-table th {
+    text-align    : left;
+    padding       : 0.5rem 0.8rem;
+    border-bottom : 1px solid rgba(255,255,255,0.15);
+    font-size     : 0.7rem;
+    letter-spacing: 0.1em;
+    opacity       : 0.6;
+    text-transform: uppercase;
+}
+.model-table td {
+    padding       : 0.6rem 0.8rem;
+    border-bottom : 1px solid rgba(255,255,255,0.05);
+}
+.row-fake td  { color: var(--fake); }
+.row-real td  { color: var(--real); }
+.row-fused td {
+    color         : var(--accent);
+    font-weight   : bold;
+    background    : rgba(0, 120, 255, 0.05);
+}
+.agreement-badge {
+    display       : inline-block;
+    padding       : 0.4rem 1rem;
+    border-radius : 20px;
+    font-size     : 0.8rem;
+    font-family   : 'JetBrains Mono', monospace;
+    margin-top    : 0.5rem;
+}
+.badge-agree {
+    background    : rgba(46, 213, 115, 0.15);
+    border        : 1px solid #2ed573;
+    color         : #2ed573;
+}
+.badge-split {
+    background    : rgba(255, 165, 0, 0.15);
+    border        : 1px solid #ffa502;
+    color         : #ffa502;
+}
+.badge-leads {
+    background    : rgba(0, 120, 255, 0.15);
+    border        : 1px solid #0078ff;
+    color         : #4da6ff;
+}
