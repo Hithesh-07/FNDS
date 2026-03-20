@@ -6,8 +6,8 @@ import time
 
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
 
-# Primary: 99.28% accuracy — trained on 5M articles
-BERT_MODEL = "Arko007/fake-news-roberta-5M"
+# Primary: TruthLens Fine-Tuned Model
+BERT_MODEL = "Monk3ydluffy/truthlens-bert"
 BERT_URL   = f"https://api-inference.huggingface.co/models/{BERT_MODEL}"
 
 # Fallback if primary fails
@@ -101,7 +101,8 @@ def parse_bert_response(data) -> dict:
             score = float(item.get("score", 0))
             print(f"  Label: {label}  Score: {score:.4f}")
 
-            # Arko007 model: LABEL_0=FAKE, LABEL_1=REAL
+            # Monk3ydluffy/truthlens-bert & Arko007 labels:
+            # LABEL_0 = FAKE, LABEL_1 = REAL
             if label == "LABEL_0":
                 fake_prob = score * 100
             elif label == "LABEL_1":
