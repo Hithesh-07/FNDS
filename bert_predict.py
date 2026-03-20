@@ -1,150 +1,129 @@
+# bert_predict.py
+
 import os
 import requests
 import time
 
-# ── Use the NEW HuggingFace router URL ────────────────────
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
-
-# Best fake news model — already fine-tuned
-BERT_MODEL = "mrm8488/bert-mini-finetuned-fake-news-detection"
+BERT_MODEL = "omykhailiv/bert-fake-news-recognition"
 BERT_URL   = f"https://api-inference.huggingface.co/models/{BERT_MODEL}"
-
-HEADERS = {
-    "Authorization"    : f"Bearer {HF_TOKEN}",
-    "Content-Type"     : "application/json",
-    "x-wait-for-model" : "true",
-}
-
-
-def parse_bert_response(data) -> dict:
-    """
-    Handles every possible HuggingFace response format.
-    """
-    try:
-        # Unwrap nested lists
-        if isinstance(data, list) and isinstance(data[0], list):
-            data = data[0]
-        if isinstance(data, list):
-            items = data
-        else:
-            raise Exception(f"Unexpected format: {type(data)}")
-
-        scores = {}
-        for item in items:
-            label = str(item.get("label", "")).upper().strip()
-            score = float(item.get("score", 0))
-
-            # Normalize all possible label formats
-            if label in ["FAKE", "LABEL_1", "LABEL_0",
-                         "NEGATIVE", "0", "FALSE"]:
-                # Check which one means FAKE for this model
-                # hamzab model: FAKE=FAKE, REAL=REAL
-                if label == "FAKE":
-                    scores["FAKE"] = score
-                elif label == "REAL":
-                    scores["REAL"] = score
-                elif label == "LABEL_0":
-                    scores["REAL"] = score
-                elif label == "LABEL_1":
-                    scores["FAKE"] = score
-            elif label in ["REAL", "POSITIVE", "1", "TRUE"]:
-                scores["REAL"] = score
-
-        # If still empty try direct assignment
-        if not scores:
-            for item in items:
-                label = str(item.get("label","")).upper()
-                score = float(item.get("score", 0))
-                if "FAKE" in label or "FALSE" in label:
-                    scores["FAKE"] = score
-                elif "REAL" in label or "TRUE" in label:
-                    scores["REAL"] = score
-
-        if not scores:
-            raise Exception(f"Could not parse labels from: {items}")
-
-        fake_prob = round(scores.get("FAKE", 0.0) * 100, 2)
-        real_prob = round(scores.get("REAL", 0.0) * 100, 2)
-
-        # Normalize to 100%
-        total = fake_prob + real_prob
-        if total > 0 and abs(total - 100) > 1:
-            fake_prob = round((fake_prob / total) * 100, 2)
-            real_prob = round((real_prob / total) * 100, 2)
-
-        # Cap at 95%
-        fake_prob = min(fake_prob, 95.0)
-        real_prob = min(real_prob, 95.0)
-
-        label      = "FAKE" if fake_prob > real_prob else "REAL"
-        confidence = round(max(fake_prob, real_prob), 2)
-        
-        conf_level = "HIGH" if confidence >= 85 else "MEDIUM" if confidence >= 70 else "LOW"
-
-        return {
-            "label"      : label,
-            "confidence" : confidence,
-            "confidence_level" : conf_level,
-            "fake_prob"  : fake_prob,
-            "real_prob"  : real_prob,
-            "gap"        : round(abs(fake_prob - real_prob), 2),
-            "model_used" : "BERT (RoBERTa)"
-        }
-
-    except Exception as e:
-        raise Exception(f"parse_bert_response failed: {e} | raw: {str(data)[:200]}")
 
 
 def bert_predict(text: str) -> dict:
-    """
-    Calls HuggingFace API with retry logic.
-    Never returns 50/50 — raises exception on failure
-    so fusion engine uses SVM instead.
-    """
+    if not HF_TOKEN:
+        raise Exception("HF_TOKEN not set in environment variables")
 
-    # Truncate to 512 tokens worth of text
-    text_input = str(text)[:1500]
+    headers = {
+        "Authorization"    : f"Bearer {HF_TOKEN}",
+        "Content-Type"     : "application/json",
+        "x-wait-for-model" : "true",
+    }
+
+    # This model works best with 6-12 words (headline style)
+    # For long articles, use first 200 words
+    words      = text.strip().split()
+    text_input = " ".join(words[:200])
 
     last_error = None
 
     for attempt in range(3):
         try:
+            print(f"  BERT attempt {attempt+1}/3...")
             response = requests.post(
                 BERT_URL,
-                headers = HEADERS,
+                headers = headers,
                 json    = {"inputs": text_input},
-                timeout = 20
+                timeout = 25
             )
+            print(f"  BERT status: {response.status_code}")
 
-            # Model loading — wait and retry
             if response.status_code == 503:
-                print(f"  BERT loading (attempt {attempt+1}/3)...")
-                time.sleep(4)
+                print("  Model loading, waiting 5s...")
+                time.sleep(5)
                 continue
 
+            if response.status_code == 401:
+                raise Exception("Invalid HF_TOKEN")
+
+            if response.status_code == 404:
+                raise Exception("Model not found")
+
             if response.status_code != 200:
-                raise Exception(
-                    f"API returned {response.status_code}: {response.text[:100]}"
-                )
+                raise Exception(f"API error {response.status_code}: {response.text[:200]}")
 
             data = response.json()
-
-            # Parse response — handle all formats
-            result = parse_bert_response(data)
-            print(f"  BERT success: {result['label']} ({result['confidence']}%)")
-            return result
+            print(f"  BERT raw: {str(data)[:200]}")
+            return parse_bert_response(data)
 
         except requests.exceptions.Timeout:
             last_error = "Timeout"
-            print(f"  BERT timeout (attempt {attempt+1}/3)")
-            time.sleep(2)
+            print(f"  Timeout (attempt {attempt+1})")
+            time.sleep(3)
             continue
-
         except Exception as e:
             last_error = str(e)
-            print(f"  BERT error (attempt {attempt+1}/3): {e}")
+            print(f"  Error (attempt {attempt+1}): {e}")
             time.sleep(2)
             continue
 
-    # All retries failed — raise so fusion uses SVM
-    raise Exception(f"BERT failed after 3 attempts: {last_error}")
+    raise Exception(f"BERT failed: {last_error}")
+
+
+def parse_bert_response(data) -> dict:
+    """
+    omykhailiv model returns:
+    LABEL_0 = FAKE (false news)
+    LABEL_1 = REAL (true news)
+    Score = confidence probability
+    """
+    try:
+        # Unwrap nested list
+        if isinstance(data, list) and isinstance(data[0], list):
+            data = data[0]
+
+        items     = data
+        fake_prob = 0.0
+        real_prob = 0.0
+
+        for item in items:
+            label = str(item.get("label", "")).upper().strip()
+            score = float(item.get("score", 0))
+            print(f"  Parsing → Label: {label}  Score: {score:.4f}")
+
+            # omykhailiv model specific labels
+            if label == "LABEL_0":
+                fake_prob = score * 100    # LABEL_0 = FAKE
+            elif label == "LABEL_1":
+                real_prob = score * 100    # LABEL_1 = REAL
+
+            # Fallback for other formats
+            elif "FAKE" in label or "FALSE" in label:
+                fake_prob = score * 100
+            elif "REAL" in label or "TRUE" in label:
+                real_prob = score * 100
+
+        # Normalize to 100%
+        total = fake_prob + real_prob
+        if total > 0:
+            fake_prob = round((fake_prob / total) * 100, 2)
+            real_prob = round((real_prob / total) * 100, 2)
+        else:
+            raise Exception(f"Could not parse labels: {items}")
+
+        # Cap at 95%
+        fake_prob  = min(fake_prob, 95.0)
+        real_prob  = min(real_prob, 95.0)
+        label      = "FAKE" if fake_prob > real_prob else "REAL"
+        confidence = round(max(fake_prob, real_prob), 2)
+
+        print(f"  ✅ BERT result: {label} (fake:{fake_prob}% real:{real_prob}%)")
+
+        return {
+            "label"      : label,
+            "confidence" : confidence,
+            "fake_prob"  : fake_prob,
+            "real_prob"  : real_prob,
+        }
+
+    except Exception as e:
+        raise Exception(f"Parse failed: {e} | raw: {str(data)[:300]}")
