@@ -1,11 +1,41 @@
-"""
-app.py — Aletheia Flask Application v5.0
-Hybrid BERT + Rule-Based Engine with in-memory prediction logs.
-"""
 import os
 import json
+import warnings
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, abort
+
+warnings.filterwarnings("ignore")  # suppress version warnings
+
+import nltk
+nltk.download("stopwords", quiet=True)
+nltk.download("wordnet",   quiet=True)
+nltk.download("omw-1.4",   quiet=True)
+
+# Auto retrain if model missing or version mismatch
+version_file  = "model/sklearn_version.txt"
+
+def needs_retrain():
+    if not os.path.exists("model/model.pkl"):
+        return True, "model missing"
+    if not os.path.exists(version_file):
+        return True, "version file missing"
+    with open(version_file) as f:
+        saved = f.read().strip()
+    import sklearn
+    if saved != sklearn.__version__:
+        return True, f"version mismatch: {saved} vs {sklearn.__version__}"
+    return False, "ok"
+
+should_retrain, reason = needs_retrain()
+if should_retrain:
+    print(f"Retraining model: {reason}")
+    from train import train
+    train()
+    import sklearn
+    os.makedirs("model", exist_ok=True)
+    with open(version_file, "w") as f:
+        f.write(sklearn.__version__)
+    print("Retraining complete!")
 
 app = Flask(__name__)
 

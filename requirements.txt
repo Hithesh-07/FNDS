@@ -1,8 +1,10 @@
 flask
-nltk
-requests
 gunicorn
-scikit-learn
+scikit-learn==1.7.1
+nltk
 pandas
+numpy
 joblib
-
+scipy
+requests
+colorama
