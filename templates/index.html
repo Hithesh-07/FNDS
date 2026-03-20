@@ -300,12 +300,11 @@
         
         if (!flags.length) {
             hView.style.display = 'none';
-            textArea.style.display = 'block';
             return;
         }
 
         hView.style.display = 'block';
-        textArea.style.display = 'none';
+        // Note: we intentionally do not hide the textArea so that the user can still edit
         
         let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         
@@ -321,7 +320,6 @@
         
         hView.onclick = () => {
             hView.style.display = 'none';
-            textArea.style.display = 'block';
             textArea.focus();
         };
     }

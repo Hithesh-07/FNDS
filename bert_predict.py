@@ -10,8 +10,25 @@ HF_TOKEN = os.getenv("HF_TOKEN", "")
 
 def query(payload):
     headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
-    response = requests.post(API_URL, headers=headers, json=payload)
-    return response.json()
+    for _ in range(3):
+        try:
+            response = requests.post(API_URL, headers=headers, json=payload)
+            output = response.json()
+            if isinstance(output, dict) and 'error' in output:
+                if 'estimated_time' in output:
+                    wait_time = min(output['estimated_time'], 15)
+                    print(f"Model is loading, waiting {wait_time}s...")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    print(f"HF API Error: {output['error']}")
+                    time.sleep(2)
+                    continue
+            return output
+        except Exception as e:
+            print(f"Requests error: {e}")
+            time.sleep(2)
+    return {"error": "Failed to reach API after retries"}
 
 def bert_predict(text: str) -> dict:
     """
