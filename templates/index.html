@@ -13,16 +13,65 @@
 </head>
 <body>
   <!-- Loading Overlay -->
-  <div id="audit-overlay" class="audit-overlay">
-    <div class="spinner"></div>
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); margin-top: 1.5rem; letter-spacing: 2px;">ANALYZING...</div>
-    <div class="audit-status-list">
-        <div class="audit-step" id="step-1"><div class="step-indicator"></div><span>AI PATTERN RECOGNITION</span></div>
-        <div class="audit-step" id="step-2"><div class="step-indicator"></div><span>CREDIBILITY SIGNAL AUDIT</span></div>
-        <div class="audit-step" id="step-3"><div class="step-indicator"></div><span>UNCERTAINTY LOGIC SCAN</span></div>
-        <div class="audit-step" id="step-4"><div class="step-indicator"></div><span>FINAL CONSENSUS ENGINE</span></div>
+<div id="loadingOverlay" class="loading-overlay" style="display:none;">
+
+    <!-- Glowing background grid -->
+    <div class="scan-grid"></div>
+
+    <!-- Scanning line -->
+    <div class="scan-line"></div>
+
+    <!-- Progress bar at top -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
-  </div>
+
+    <!-- Main content -->
+    <div class="loading-content">
+
+        <!-- Dual ring spinner -->
+        <div class="spinner-container">
+            <div class="spinner-outer"></div>
+            <div class="spinner-inner"></div>
+            <div class="spinner-core"></div>
+        </div>
+
+        <!-- Dynamic status text -->
+        <div class="status-text" id="statusText">INITIALIZING...</div>
+        <div class="status-subtext" id="statusSubtext">
+            Preparing analysis engine
+        </div>
+
+        <!-- Steps list -->
+        <div class="steps-list">
+            <div class="step-item" id="step1">
+                <div class="step-dot"></div>
+                <span class="step-label">AI PATTERN RECOGNITION</span>
+                <span class="step-time" id="time1"></span>
+            </div>
+            <div class="step-item" id="step2">
+                <div class="step-dot"></div>
+                <span class="step-label">CREDIBILITY SIGNAL AUDIT</span>
+                <span class="step-time" id="time2"></span>
+            </div>
+            <div class="step-item" id="step3">
+                <div class="step-dot"></div>
+                <span class="step-label">UNCERTAINTY LOGIC SCAN</span>
+                <span class="step-time" id="time3"></span>
+            </div>
+            <div class="step-item" id="step4">
+                <div class="step-dot"></div>
+                <span class="step-label">FINAL CONSENSUS ENGINE</span>
+                <span class="step-time" id="time4"></span>
+            </div>
+        </div>
+
+        <!-- Elapsed time -->
+        <div class="elapsed-time">
+            <span id="elapsedTime">0.0s</span>
+        </div>
+    </div>
+</div>
 
   <div class="bg-gradient"></div>
   <div class="app-container">
@@ -164,11 +213,73 @@
   </div>
 
   <script>
+    // ── LOADING CONTROLLER ──────────────────────────────────────
+    const loadingSteps = [
+        { id: "step1", timeId: "time1", status: "SCANNING PATTERNS...", sub: "Analyzing linguistic patterns and word signals", progress: 25, duration: 600 },
+        { id: "step2", timeId: "time2", status: "AUDITING CREDIBILITY...", sub: "Checking source reliability and evidence signals", progress: 50, duration: 800 },
+        { id: "step3", timeId: "time3", status: "SCANNING UNCERTAINTY...", sub: "Detecting hedging language and ambiguous claims", progress: 75, duration: 600 },
+        { id: "step4", timeId: "time4", status: "GENERATING VERDICT...", sub: "Running final consensus engine", progress: 95, duration: 400 },
+    ];
+    let elapsedInterval = null;
+    let startTime = null;
+
+    function showLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.style.display = 'flex';
+        loadingSteps.forEach(s => {
+            const el = document.getElementById(s.id);
+            el.classList.remove('active', 'done');
+            document.getElementById(s.timeId).textContent = '';
+        });
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('statusText').textContent = 'INITIALIZING...';
+        document.getElementById('statusSubtext').textContent = 'Preparing analysis engine';
+
+        startTime = Date.now();
+        elapsedInterval = setInterval(() => {
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('elapsedTime').textContent = elapsed + 's';
+        }, 100);
+
+        let delay = 200;
+        loadingSteps.forEach((step, index) => {
+            setTimeout(() => {
+                if (document.getElementById('loadingOverlay').style.display === 'none') return; // Cancel if done early
+                if (index > 0) {
+                    const prev = document.getElementById(loadingSteps[index-1].id);
+                    prev.classList.remove('active');
+                    prev.classList.add('done');
+                    const prevTime = ((Date.now() - startTime) / 1000).toFixed(1);
+                    document.getElementById(loadingSteps[index-1].timeId).textContent = prevTime + 's';
+                }
+                document.getElementById(step.id).classList.add('active');
+                document.getElementById('statusText').textContent    = step.status;
+                document.getElementById('statusSubtext').textContent = step.sub;
+                document.getElementById('progressBar').style.width   = step.progress + '%';
+            }, delay);
+            delay += step.duration;
+        });
+    }
+
+    function hideLoading(error = false) {
+        clearInterval(elapsedInterval);
+        if(!error) {
+            loadingSteps.forEach(s => {
+                const el = document.getElementById(s.id);
+                el.classList.remove('active');
+                el.classList.add('done');
+            });
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('statusText').textContent  = 'ANALYSIS COMPLETE';
+        }
+        setTimeout(() => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }, 600);
+    }
+
     const form       = document.getElementById('analysis-form');
     const input      = document.getElementById('news-text');
-    const overlay    = document.getElementById('audit-overlay');
     const resultsSec = document.getElementById('results-section');
-    const statusInd  = document.getElementById('status-indicator');
     const historyList = document.getElementById('history-list');
     const historyEmpty = document.getElementById('history-empty');
     const inputError = document.getElementById('input-error');
@@ -195,7 +306,6 @@
         countDisplay.textContent = `${words} words | ${charCount.toLocaleString()} / 50,000 chars`;
         countDisplay.style.color = charCount > 50000 ? 'var(--fake)' : 'var(--text-muted)';
         if (text.trim()) inputError.style.display = 'none';
-        // If user edits text, hide the highlight overlay
         if (highlightView.style.display !== 'none') {
             highlightView.style.display = 'none';
             document.getElementById('highlight-legend').classList.add('hidden');
@@ -215,30 +325,8 @@
       inputError.style.display = 'none';
 
       // Show overlay & reset steps
-      const steps = ['step-1', 'step-2', 'step-3', 'step-4'];
-      steps.forEach(s => {
-          const el = document.getElementById(s);
-          el.classList.remove('done', 'active');
-      });
-      overlay.classList.add('active');
+      showLoading();
       resultsSec.classList.add('hidden');
-      statusInd.textContent = 'Auditing...';
-      statusInd.className = 'status-indicator processing';
-
-      // Start step animations immediately (non-blocking)
-      let stepIdx = 0;
-      const stepInterval = setInterval(() => {
-          if (stepIdx > 0) {
-              document.getElementById(steps[stepIdx - 1]).classList.remove('active');
-              document.getElementById(steps[stepIdx - 1]).classList.add('done');
-          }
-          if (stepIdx < steps.length) {
-              document.getElementById(steps[stepIdx]).classList.add('active');
-              stepIdx++;
-          } else {
-              clearInterval(stepInterval);
-          }
-      }, 600);
 
       try {
         const response = await fetch('/predict', {
@@ -267,17 +355,9 @@
             throw new Error(data.error);
         }
 
-        // Mark all steps done
-        clearInterval(stepInterval);
-        steps.forEach(s => {
-            const el = document.getElementById(s);
-            el.classList.remove('active');
-            el.classList.add('done');
-        });
-
         // Brief pause then hide overlay
-        await new Promise(r => setTimeout(r, 400));
-        overlay.classList.remove('active');
+        hideLoading(false);
+        await new Promise(r => setTimeout(r, 600)); // wait for fade
         resultsSec.classList.remove('hidden');
         resultsSec.scrollIntoView({ behavior: 'smooth' });
 
@@ -383,14 +463,8 @@
         // History
         saveHistory(data.label, data.confidence, text);
 
-        statusInd.textContent = 'Audit Complete';
-        statusInd.className = 'status-indicator complete';
-
       } catch (err) {
-        clearInterval(stepInterval);
-        overlay.classList.remove('active');
-        statusInd.textContent = 'Error';
-        statusInd.className = 'status-indicator';
+        hideLoading(true);
         console.error(err);
         alert('Priority Audit failed. Error: ' + err.message);
       }

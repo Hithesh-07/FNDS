@@ -33,73 +33,91 @@ prediction_logs = []
 
 
 def analyze(text: str) -> dict:
-    """
-    Priority order:
-    1. Credibility rules (always runs)
-    2. BERT primary model
-    3. SVM fallback if BERT fails
-    """
-    print(f"→ analyze() start, length={len(text)}")
+    print(f"→ analyze() start len={len(text)}")
 
-    if not SVM_OK:
-        raise Exception("SVM model not loaded")
-
-    # Step 1: SVM prediction
+    # ── SVM (always runs) ──────────────────────────────────
     try:
         svm_result = svm_predict(
             text, svm_model, svm_vectorizer, svm_scaler
         )
-        print(f"→ SVM: {svm_result['label']} ({svm_result['confidence']}%)")
+        print(f"→ SVM OK: {svm_result['label']}")
     except Exception as e:
-        print(f"❌ SVM error: {e}")
-        raise Exception(f"SVM prediction failed: {e}")
+        print(f"❌ SVM crashed: {e}")
+        import traceback
+        traceback.print_exc()
+        # Return safe default instead of crashing
+        return {
+            "label"            : "UNCERTAIN",
+            "confidence"       : 50.0,
+            "confidence_level" : "LOW",
+            "fake_prob"        : 50.0,
+            "real_prob"        : 50.0,
+            "model_used"       : "ERROR - SVM failed",
+            "decision_reason"  : "svm_error",
+            "net_score"        : 0,
+            "uncertain_score"  : 0,
+            "credibility_flags": [],
+            "real_flags"       : [],
+            "bert_ok"          : False,
+            "bert_label"       : "N/A",
+            "bert_fake"        : 0,
+            "bert_real"        : 0,
+            "bert_confidence"  : 0,
+            "svm_label"        : "ERROR",
+            "svm_fake"         : 50,
+            "svm_real"         : 50,
+            "svm_confidence"   : 50,
+            "keywords"         : [],
+            "red_flags"        : {},
+            "error"            : str(e),
+        }
 
-    # Step 2: Decision engine
+    # ── Decision engine ────────────────────────────────────
+    decision = None
     try:
-        from decision_engine import run_decision_engine_raw
-        decision = run_decision_engine_raw(
+        from decision_engine import run_decision_engine
+        decision = run_decision_engine(
             text,
             svm_result["label"],
             svm_result["confidence"],
             svm_result["fake_prob"],
             svm_result["real_prob"]
         )
-        print(f"→ Decision: {decision['final_label']} reason={decision['decision_reason']}")
+        print(f"→ Decision OK: {decision['final_label']}")
     except Exception as e:
-        print(f"❌ Decision engine error: {e}")
-        # Fallback to raw SVM if decision engine fails
+        print(f"❌ Decision engine crashed: {e}")
+        import traceback
+        traceback.print_exc()
+        # Fallback to raw SVM result
         decision = {
             "final_label"      : svm_result["label"],
             "final_confidence" : svm_result["confidence"],
             "confidence_level" : "MEDIUM",
-            "decision_reason"  : "svm_direct",
+            "decision_reason"  : "svm_direct_fallback",
             "net_score"        : 0,
             "fake_flags"       : [],
             "real_flags"       : [],
             "uncertain_score"  : 0,
         }
 
-    # Step 3: Try BERT (optional)
+    # ── BERT (optional) ────────────────────────────────────
     bert_ok     = False
     bert_result = None
-
     if HF_TOKEN:
         try:
             from bert_predict import bert_predict
             bert_result = bert_predict(text)
             bert_ok     = True
-            print(f"→ BERT: {bert_result['label']} ({bert_result['confidence']}%)")
+            print(f"→ BERT OK: {bert_result['label']}")
         except Exception as e:
-            print(f"→ BERT failed (using SVM): {e}")
+            print(f"→ BERT failed: {e}")
 
-    # Step 4: Choose final model source
+    # ── Final probabilities ────────────────────────────────
     if bert_ok and bert_result:
-        # BERT worked — use BERT probabilities
         final_fake = bert_result["fake_prob"]
         final_real = bert_result["real_prob"]
         model_used = "BERT (Primary) ✅"
     else:
-        # SVM fallback
         final_fake = svm_result["fake_prob"]
         final_real = svm_result["real_prob"]
         model_used = "SVM (BERT unavailable)"
@@ -138,7 +156,7 @@ def analyze(text: str) -> dict:
         "text_preview": text[:80],
     })
 
-    print(f"→ Final: {result['label']} {result['confidence']}% via {model_used}")
+    print(f"→ Final: {result['label']} {result['confidence']}%")
     return result
 
 

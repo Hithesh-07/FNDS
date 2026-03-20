@@ -110,7 +110,7 @@ def calculate_scores(text: str) -> dict:
     }
 
 
-def run_decision_engine_raw(text: str, ml_label: str, ml_conf: float, fake_prob: float, real_prob: float) -> dict:
+def run_decision_engine(text: str, ml_label: str, ml_conf: float, fake_prob: float, real_prob: float) -> dict:
     """
     Step 5 of the new analyze() flow.
     Applies overrides and determines final verdict.
@@ -157,5 +157,9 @@ def run_decision_engine_raw(text: str, ml_label: str, ml_conf: float, fake_prob:
         "final_label": final_label,
         "final_confidence": round(final_conf, 2),
         "confidence_level": level,
-        "decision_reason": reason
+        "decision_reason": reason,
+        "net_score": net_score,
+        "uncertain_score": uncertain_score,
+        "fake_flags": scores["fake_flags"],
+        "real_flags": scores["real_flags"],
     }

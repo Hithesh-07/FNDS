@@ -12,14 +12,19 @@ def load_model():
     vec_path   = "model/vectorizer.pkl"
     scl_path   = "model/scaler.pkl"
     
-    if not all(os.path.exists(p) for p in [model_path, vec_path, scl_path]):
-        print("Missing model files! Run train.py first.")
+    # Check for mandatory files: model and vectorizer
+    if not all(os.path.exists(p) for p in [model_path, vec_path]):
+        print("Missing mandatory model files (model.pkl or vectorizer.pkl)! Run train.py first.")
         return None, None, None
         
     model = joblib.load(model_path)
     vec   = joblib.load(vec_path)
-    scl   = joblib.load(scl_path)
-    return model, vec, scl
+    
+    scaler = None
+    if os.path.exists(scl_path):
+        scaler = joblib.load(scl_path)
+        
+    return model, vec, scaler
 
 # ── FAKE TRIGGERS — sensational / misinformation keywords ──
 FAKE_TRIGGERS = [
