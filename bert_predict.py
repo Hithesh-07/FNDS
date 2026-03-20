@@ -1,133 +1,150 @@
-import requests
 import os
+import requests
 import time
 
-# Option 1 — Best for fake news
+# ── Use the NEW HuggingFace router URL ────────────────────
+HF_TOKEN   = os.environ.get("HF_TOKEN", "")
+
+# Best fake news model — already fine-tuned
 BERT_MODEL = "hamzab/roberta-fake-news-classification"
-BERT_API_URL = f"https://router.huggingface.co/models/{BERT_MODEL}"
+BERT_URL   = f"https://router.huggingface.co/models/{BERT_MODEL}"
 
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
-
-def call_bert_api(text: str, max_retries: int = 3) -> dict:
-    headers = {
-        "Content-Type": "application/json",
-        "x-wait-for-model": "true"
-    }
-    if HF_TOKEN:
-        headers["Authorization"] = f"Bearer {HF_TOKEN}"
-
-    for attempt in range(max_retries):
-        try:
-            response = requests.post(
-                BERT_API_URL,
-                headers=headers,
-                json={"inputs": text[:512]},
-                timeout=20
-            )
-
-            if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, dict) and "error" in data:
-                    print(f"API returned error in JSON: {data}")
-                    time.sleep(3)
-                    continue
-                return data
-            elif response.status_code == 503:
-                # Model loading — wait and retry
-                print(f"Model loading, retry {attempt+1}/{max_retries}")
-                time.sleep(10) # 10 seconds is usually enough for a roberta model
-                continue
-            else:
-                print(f"API error {response.status_code}: {response.text}")
-                break
-
-        except requests.exceptions.Timeout:
-            print(f"Timeout on attempt {attempt+1}")
-            if attempt < max_retries - 1:
-                time.sleep(2)
-            continue
-        except Exception as e:
-            print(f"Request error: {e}")
-            break
-
-    raise Exception("BERT API failed after all retries")
+HEADERS = {
+    "Authorization"    : f"Bearer {HF_TOKEN}",
+    "Content-Type"     : "application/json",
+    "x-wait-for-model" : "true",
+}
 
 
-def parse_bert_response(response_data) -> dict:
+def parse_bert_response(data) -> dict:
     """
-    Handles multiple HuggingFace response formats
+    Handles every possible HuggingFace response format.
     """
     try:
-        # Unwrap nested list if needed
-        if isinstance(response_data, list) and len(response_data) > 0:
-            if isinstance(response_data[0], list):
-                response_data = response_data[0]
-            elif isinstance(response_data[0], dict) and "label" not in response_data[0] and len(response_data) == 1:
-                 # sometimes it wraps the dict in a list and inside there's a list
-                 pass
+        # Unwrap nested lists
+        if isinstance(data, list) and isinstance(data[0], list):
+            data = data[0]
+        if isinstance(data, list):
+            items = data
+        else:
+            raise Exception(f"Unexpected format: {type(data)}")
 
-        if not isinstance(response_data, list) and isinstance(response_data, dict):
-            # sometimes it just returns a single dict like {"label": "FAKE", "score": 0.9}
-            response_data = [response_data]
-
-        if not response_data or not isinstance(response_data[0], dict) or "label" not in response_data[0]:
-            print(f"Unexpected data shape: {response_data}")
-            raise Exception("Unexpected response data shape")
-
-        # Build scores dict
         scores = {}
-        for item in response_data:
-            label = str(item.get("label", "")).upper()
-            score = item.get("score", 0.5)
+        for item in items:
+            label = str(item.get("label", "")).upper().strip()
+            score = float(item.get("score", 0))
 
-            # Normalize label names
-            if label in ["FAKE", "LABEL_1", "NEGATIVE", "0"]:
-                scores["FAKE"] = score
-            elif label in ["REAL", "LABEL_0", "POSITIVE", "1"]:
+            # Normalize all possible label formats
+            if label in ["FAKE", "LABEL_1", "LABEL_0",
+                         "NEGATIVE", "0", "FALSE"]:
+                # Check which one means FAKE for this model
+                # hamzab model: FAKE=FAKE, REAL=REAL
+                if label == "FAKE":
+                    scores["FAKE"] = score
+                elif label == "REAL":
+                    scores["REAL"] = score
+                elif label == "LABEL_0":
+                    scores["REAL"] = score
+                elif label == "LABEL_1":
+                    scores["FAKE"] = score
+            elif label in ["REAL", "POSITIVE", "1", "TRUE"]:
                 scores["REAL"] = score
 
-        # If only one label is returned (e.g. just {"label": "FAKE", "score": 0.99})
-        if "FAKE" in scores and "REAL" not in scores:
-            scores["REAL"] = 1.0 - scores["FAKE"]
-        elif "REAL" in scores and "FAKE" not in scores:
-            scores["FAKE"] = 1.0 - scores["REAL"]
-        elif "FAKE" not in scores and "REAL" not in scores:
-             # Default fallback if labels are totally weird
-             scores["FAKE"] = 0.5
-             scores["REAL"] = 0.5
+        # If still empty try direct assignment
+        if not scores:
+            for item in items:
+                label = str(item.get("label","")).upper()
+                score = float(item.get("score", 0))
+                if "FAKE" in label or "FALSE" in label:
+                    scores["FAKE"] = score
+                elif "REAL" in label or "TRUE" in label:
+                    scores["REAL"] = score
 
-        fake_prob = round(scores["FAKE"] * 100, 2)
-        real_prob = round(scores["REAL"] * 100, 2)
+        if not scores:
+            raise Exception(f"Could not parse labels from: {items}")
+
+        fake_prob = round(scores.get("FAKE", 0.0) * 100, 2)
+        real_prob = round(scores.get("REAL", 0.0) * 100, 2)
 
         # Normalize to 100%
         total = fake_prob + real_prob
-        if total > 0:
+        if total > 0 and abs(total - 100) > 1:
             fake_prob = round((fake_prob / total) * 100, 2)
             real_prob = round((real_prob / total) * 100, 2)
 
+        # Cap at 95%
+        fake_prob = min(fake_prob, 95.0)
+        real_prob = min(real_prob, 95.0)
+
+        label      = "FAKE" if fake_prob > real_prob else "REAL"
+        confidence = round(max(fake_prob, real_prob), 2)
+        
+        conf_level = "HIGH" if confidence >= 85 else "MEDIUM" if confidence >= 70 else "LOW"
+
         return {
-            "fake_prob" : min(fake_prob, 99.9),
-            "real_prob" : min(real_prob, 99.9),
-            "label"     : "FAKE" if fake_prob > real_prob else "REAL",
-            "confidence": min(max(fake_prob, real_prob), 99.9)
+            "label"      : label,
+            "confidence" : confidence,
+            "confidence_level" : conf_level,
+            "fake_prob"  : fake_prob,
+            "real_prob"  : real_prob,
+            "gap"        : round(abs(fake_prob - real_prob), 2),
+            "model_used" : "BERT (RoBERTa)"
         }
 
     except Exception as e:
-        raise Exception(f"Failed to parse BERT response: {e}")
+        raise Exception(f"parse_bert_response failed: {e} | raw: {str(data)[:200]}")
+
 
 def bert_predict(text: str) -> dict:
-    try:
-        raw_response = call_bert_api(text)
-        parsed = parse_bert_response(raw_response)
-        
-        confidence = parsed["confidence"]
-        conf_level = "HIGH" if confidence >= 85 else "MEDIUM" if confidence >= 70 else "LOW"
-        
-        parsed["confidence_level"] = conf_level
-        parsed["gap"] = round(abs(parsed["fake_prob"] - parsed["real_prob"]), 2)
-        parsed["model_used"] = "BERT (RoBERTa)"
-        
-        return parsed
-    except Exception as e:
-        print(f"bert_predict final error: {e}")
-        return None
+    """
+    Calls HuggingFace API with retry logic.
+    Never returns 50/50 — raises exception on failure
+    so fusion engine uses SVM instead.
+    """
+
+    # Truncate to 512 tokens worth of text
+    text_input = str(text)[:1500]
+
+    last_error = None
+
+    for attempt in range(3):
+        try:
+            response = requests.post(
+                BERT_URL,
+                headers = HEADERS,
+                json    = {"inputs": text_input},
+                timeout = 20
+            )
+
+            # Model loading — wait and retry
+            if response.status_code == 503:
+                print(f"  BERT loading (attempt {attempt+1}/3)...")
+                time.sleep(4)
+                continue
+
+            if response.status_code != 200:
+                raise Exception(
+                    f"API returned {response.status_code}: {response.text[:100]}"
+                )
+
+            data = response.json()
+
+            # Parse response — handle all formats
+            result = parse_bert_response(data)
+            print(f"  BERT success: {result['label']} ({result['confidence']}%)")
+            return result
+
+        except requests.exceptions.Timeout:
+            last_error = "Timeout"
+            print(f"  BERT timeout (attempt {attempt+1}/3)")
+            time.sleep(2)
+            continue
+
+        except Exception as e:
+            last_error = str(e)
+            print(f"  BERT error (attempt {attempt+1}/3): {e}")
+            time.sleep(2)
+            continue
+
+    # All retries failed — raise so fusion uses SVM
+    raise Exception(f"BERT failed after 3 attempts: {last_error}")

@@ -58,7 +58,59 @@ STRONG_FAKE_SIGNALS = {
     "have been secretly": 4, "withheld from the public": 4, "withheld from public": 4,
     "anonymous insiders": 3, "claim the manipulation": 3, "independent verification has": 4,
     "verification has not been": 4, "feasibility of such claims": 3,
+    "scientists have strongly rejected"  : 4, "strongly rejected these claims"     : 4,
+    "experts have rejected"              : 3, "doctors have rejected"              : 3,
+    "no scientific basis"                : 4, "no scientific evidence"             : 4,
+    "biologically impossible"            : 4, "scientifically impossible"          : 4,
+    "cannot be bypassed"                 : 2, "eliminate the need for sleep"       : 4,
+    "eliminate the need for"             : 3, "completely eliminate"               : 2,
+    "without any negative"               : 2, "without causing any"                : 2,
+    "fully alert for weeks"              : 3, "weeks without rest"                 : 3,
+    "newly discovered"                   : 2, "plant extract"                      : 2,
+    "natural extract"                    : 2, "miracle extract"                    : 3,
+    "early trials showed"                : 2, "early trials"                       : 1,
+    "claimed benefits"                   : 2, "claimed results"                    : 2,
 }
+
+def detect_pseudoscience(text_lower: str) -> int:
+    """
+    Detects pseudoscientific claims that contradict
+    established biology/medicine/physics.
+    These are almost always fake news.
+    """
+    score = 0
+
+    # Extraordinary biological claims
+    bio_impossible = [
+        "eliminate the need for sleep", "without sleep", "no sleep needed",
+        "cure all diseases", "cures all", "reverses aging completely",
+        "regrow organs", "regrow limbs", "unlimited energy",
+        "defy gravity", "100% effective cure", "guaranteed cure",
+        "no side effects whatsoever", "completely safe for everyone",
+        "ancient secret cure", "forbidden cure",
+    ]
+
+    # Contradiction patterns
+    contradiction_pairs = [
+        ("sleep is a biological necessity", "eliminate"),
+        ("scientists rejected", "claims"),
+        ("experts dismissed", "claims"),
+        ("no evidence", "cure"),
+        ("no evidence", "treatment"),
+        ("rejected by", "researchers"),
+    ]
+
+    for claim in bio_impossible:
+        if claim in text_lower:
+            score += 4
+            print(f"  Pseudoscience detected: '{claim}'")
+
+    for word1, word2 in contradiction_pairs:
+        if word1 in text_lower and word2 in text_lower:
+            score += 3
+            print(f"  Contradiction detected: '{word1}' + '{word2}'")
+
+    return score
 
 def run_decision_engine_raw(text: str) -> dict:
     """
@@ -72,6 +124,9 @@ def run_decision_engine_raw(text: str) -> dict:
     # Score from contextual functions
     net_score += score_according_to(text_lower)
     net_score += score_organization_mentions(text_lower)
+    
+    pseudo_score = detect_pseudoscience(text_lower)
+    net_score += pseudo_score
     
     # Simple flags for UI
     for phrase, val in STRONG_FAKE_SIGNALS.items():
