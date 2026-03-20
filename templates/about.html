@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Aletheia — AI Fake News Detector</title>
+  <meta name="description" content="Learn how Aletheia detects fake news using a 4-layer hybrid AI system.">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="app-container" style="max-width:860px;">
+    <div class="header-top">
+      <a href="/" class="dark-toggle" style="text-decoration:none;font-size:1.1rem;" title="Back to Home">←</a>
+      <button id="darkToggle" class="dark-toggle">🌙</button>
+    </div>
+
+    <header style="margin-bottom:3rem;">
+      <h1 class="logo">aletheia</h1>
+      <p class="tagline">About the Engine</p>
+    </header>
+
+    <main>
+
+      <section class="card">
+        <h2 style="margin-bottom:1rem;">What is Aletheia?</h2>
+        <p style="color:var(--text-muted);font-size:1.05rem;line-height:1.8;">
+          Aletheia (Greek: ἀλήθεια, meaning <em>Truth</em>) is an AI-powered fake news detection system that uses a 
+          multi-layer decision pipeline to classify news as <strong>REAL</strong>, <strong>FAKE</strong>, or <strong>UNCERTAIN</strong>.
+          It combines deep learning, machine learning, and rule-based credibility analysis to provide reliable, 
+          transparent predictions with confidence scores and keyword explanations.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-bottom:1.5rem;">How It Works — 4-Layer Pipeline</h2>
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+          <div class="about-step">
+            <div class="about-step-num">1</div>
+            <div>
+              <strong>Credibility Signal Engine</strong>
+              <p style="color:var(--text-muted);font-size:0.95rem;margin-top:0.25rem;">
+                Scans for sensational language, fake news buzzwords ("miracle cure", "they don't want you to know"), 
+                and credibility markers (Reuters, peer-reviewed, official statement). Fast O(n) rule scan.
+              </p>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">2</div>
+            <div>
+              <strong>RoBERTa Deep Learning (BERT API)</strong>
+              <p style="color:var(--text-muted);font-size:0.95rem;margin-top:0.25rem;">
+                Uses the <code>hamzab/roberta-fake-news-classification</code> model via the Hugging Face Router 
+                to understand semantic context, tone, and structure. Handles complex nuanced text that 
+                simple rules cannot classify.
+              </p>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">3</div>
+            <div>
+              <strong>Uncertainty Detection</strong>
+              <p style="color:var(--text-muted);font-size:0.95rem;margin-top:0.25rem;">
+                Flags texts with heavy hedging language ("may suggest", "allegedly", "reportedly", 
+                "under review") as UNCERTAIN to avoid overconfident wrong predictions.
+              </p>
+            </div>
+          </div>
+          <div class="about-step">
+            <div class="about-step-num">4</div>
+            <div>
+              <strong>Consensus Engine + Override Logic</strong>
+              <p style="color:var(--text-muted);font-size:0.95rem;margin-top:0.25rem;">
+                Combines BERT output and rule scores. If BERT says REAL but fake buzzwords overwhelm 
+                the text, it overrides to FAKE. If BERT fails, rule-based engine takes over.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-bottom:1.5rem;">Model Performance</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+          <div class="metric-box">
+            <div class="metric-val" style="color:var(--real);">98.2%</div>
+            <div class="metric-label">Accuracy</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" style="color:var(--primary);">98.1%</div>
+            <div class="metric-label">F1 Score</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" style="color:var(--primary);">98.3%</div>
+            <div class="metric-label">Precision</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" style="color:var(--primary);">98.0%</div>
+            <div class="metric-label">Recall</div>
+          </div>
+        </div>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:1rem;">
+          Trained on 40,000 balanced news articles (20,000 REAL + 20,000 FAKE) using an 
+          ensemble of SVM + Logistic Regression + Passive Aggressive Classifier with TF-IDF features.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-bottom:1rem;">Tech Stack</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+          <span class="badge">Python / Flask</span>
+          <span class="badge">RoBERTa (HuggingFace)</span>
+          <span class="badge">scikit-learn SVM</span>
+          <span class="badge">NLTK</span>
+          <span class="badge">Gunicorn</span>
+          <span class="badge">Render.com</span>
+          <span class="badge">TF-IDF</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-bottom:1rem;">Built By</h2>
+        <p style="color:var(--text-muted);font-size:1.05rem;">
+          <strong>Boreddy Hithesh Reddy</strong> — Aspiring AI Developer &amp; ML Enthusiast<br>
+          Alliance University, Bengaluru<br>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;">Final Year College Project · 2026</span>
+        </p>
+      </section>
+
+      <div style="text-align:center;margin-top:2rem;">
+        <a href="/" class="primary-btn" style="display:inline-block;padding:0.9rem 2.5rem;text-decoration:none;">← Try Aletheia</a>
+      </div>
+    </main>
+
+    <footer>
+      <p>aletheia &copy; 2026 &nbsp;&middot;&nbsp; 4-Layer Hybrid Decision Engine &nbsp;&middot;&nbsp; v5.1</p>
+    </footer>
+  </div>
+  <script>
+    const toggle = document.getElementById('darkToggle');
+    toggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+        toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    });
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark');
+        toggle.textContent = '☀️';
+    }
+  </script>
+</body>
+</html>
