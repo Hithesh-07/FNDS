@@ -347,59 +347,36 @@ footer p { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: 
 .hidden { display: none !important; }
 .mt-4 { margin-top: 2rem; }
 
-/* ── Model Comparison Table ── */
-.model-comparison {
-    margin-top    : 1.5rem;
-    border-top    : 1px solid rgba(255,255,255,0.1);
-    padding-top   : 1.2rem;
-}
+/* ── Model Roles & Table v6.0 ── */
+.role-primary   { color: #00c8ff; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+.role-fallback  { color: #ffa502; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+.role-failed    { color: #ff4757; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+.role-secondary { color: #666; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+.role-engine    { color: #ffd700; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+
+.row-active td   { opacity: 1.0; }
+.row-inactive td { opacity: 0.4; }
+.row-secondary td{ opacity: 0.7; }
+.row-final td    { background: rgba(255,215,0,0.05); font-weight: bold; border-top: 1px solid rgba(255,215,0,0.15); }
+
+.text-fake      { color: #ff4757; }
+.text-real      { color: #2ed573; }
+.text-uncertain { color: #ffa502; }
+.text-dim       { color: #555; }
+
 .model-table {
-    width         : 100%;
-    border-collapse: collapse;
-    font-family   : 'JetBrains Mono', monospace;
-    font-size     : 0.82rem;
-    margin-bottom : 1rem;
+    width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; margin-top: 1rem;
 }
 .model-table th {
-    text-align    : left;
-    padding       : 0.5rem 0.8rem;
-    border-bottom : 1px solid rgba(255,255,255,0.15);
-    font-size     : 0.7rem;
-    letter-spacing: 0.1em;
-    opacity       : 0.6;
-    text-transform: uppercase;
+    text-align: left; padding: 0.8rem; border-bottom: 2px solid var(--border);
+    font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase;
 }
-.model-table td {
-    padding       : 0.6rem 0.8rem;
-    border-bottom : 1px solid rgba(255,255,255,0.05);
+.model-table td { padding: 1rem 0.8rem; border-bottom: 1px solid var(--border); }
+
+.model-badge {
+    padding: 0.5rem 1rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; display: inline-block;
 }
-.row-fake td  { color: var(--fake); }
-.row-real td  { color: var(--real); }
-.row-fused td {
-    color         : var(--accent);
-    font-weight   : bold;
-    background    : rgba(0, 120, 255, 0.05);
-}
-.agreement-badge {
-    display       : inline-block;
-    padding       : 0.4rem 1rem;
-    border-radius : 20px;
-    font-size     : 0.8rem;
-    font-family   : 'JetBrains Mono', monospace;
-    margin-top    : 0.5rem;
-}
-.badge-agree {
-    background    : rgba(46, 213, 115, 0.15);
-    border        : 1px solid #2ed573;
-    color         : #2ed573;
-}
-.badge-split {
-    background    : rgba(255, 165, 0, 0.15);
-    border        : 1px solid #ffa502;
-    color         : #ffa502;
-}
-.badge-leads {
-    background    : rgba(0, 120, 255, 0.15);
-    border        : 1px solid #0078ff;
-    color         : #4da6ff;
-}
+.badge-bert { background: rgba(0, 200, 255, 0.1); border: 1px solid #00c8ff; color: #00c8ff; }
+.badge-svm  { background: rgba(255, 165, 2, 0.1); border: 1px solid #ffa502; color: #ffa502; }
+

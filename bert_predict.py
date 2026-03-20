@@ -1,17 +1,23 @@
-# bert_predict.py
+# bert_predict.py — Using 99.28% accuracy model
 
 import os
 import requests
 import time
 
 HF_TOKEN   = os.environ.get("HF_TOKEN", "")
-BERT_MODEL = "omykhailiv/bert-fake-news-recognition"
+
+# Primary: 99.28% accuracy — trained on 5M articles
+BERT_MODEL = "Arko007/fake-news-roberta-5M"
 BERT_URL   = f"https://api-inference.huggingface.co/models/{BERT_MODEL}"
+
+# Fallback if primary fails
+FALLBACK_MODEL = "jy46604790/Fake-News-Bert-Detect"
+FALLBACK_URL   = f"https://api-inference.huggingface.co/models/{FALLBACK_MODEL}"
 
 
 def bert_predict(text: str) -> dict:
     if not HF_TOKEN:
-        raise Exception("HF_TOKEN not set in environment variables")
+        raise Exception("HF_TOKEN not set")
 
     headers = {
         "Authorization"    : f"Bearer {HF_TOKEN}",
@@ -19,26 +25,40 @@ def bert_predict(text: str) -> dict:
         "x-wait-for-model" : "true",
     }
 
-    # This model works best with 6-12 words (headline style)
-    # For long articles, use first 200 words
     words      = text.strip().split()
-    text_input = " ".join(words[:200])
+    text_input = " ".join(words[:300])
 
+    # Try primary model first
+    try:
+        result = call_api(BERT_URL, text_input, headers, "Primary")
+        return result
+    except Exception as e:
+        print(f"  Primary model failed: {e}")
+        print(f"  Trying fallback model...")
+
+    # Try fallback model
+    try:
+        result = call_api(FALLBACK_URL, text_input, headers, "Fallback")
+        return result
+    except Exception as e:
+        raise Exception(f"Both models failed: {e}")
+
+
+def call_api(url: str, text: str, headers: dict, name: str) -> dict:
     last_error = None
-
     for attempt in range(3):
         try:
-            print(f"  BERT attempt {attempt+1}/3...")
+            print(f"  {name} BERT attempt {attempt+1}/3...")
             response = requests.post(
-                BERT_URL,
+                url,
                 headers = headers,
-                json    = {"inputs": text_input},
+                json    = {"inputs": text},
                 timeout = 25
             )
-            print(f"  BERT status: {response.status_code}")
+            print(f"  {name} status: {response.status_code}")
 
             if response.status_code == 503:
-                print("  Model loading, waiting 5s...")
+                print(f"  {name} loading, waiting 5s...")
                 time.sleep(5)
                 continue
 
@@ -46,38 +66,29 @@ def bert_predict(text: str) -> dict:
                 raise Exception("Invalid HF_TOKEN")
 
             if response.status_code == 404:
-                raise Exception("Model not found")
+                raise Exception(f"{name} model not found")
 
             if response.status_code != 200:
-                raise Exception(f"API error {response.status_code}: {response.text[:200]}")
+                raise Exception(f"API {response.status_code}: {response.text[:100]}")
 
             data = response.json()
-            print(f"  BERT raw: {str(data)[:200]}")
+            print(f"  {name} raw: {str(data)[:150]}")
             return parse_bert_response(data)
 
         except requests.exceptions.Timeout:
             last_error = "Timeout"
-            print(f"  Timeout (attempt {attempt+1})")
             time.sleep(3)
-            continue
         except Exception as e:
             last_error = str(e)
-            print(f"  Error (attempt {attempt+1}): {e}")
+            if "HF_TOKEN" in str(e) or "Invalid" in str(e):
+                raise
             time.sleep(2)
-            continue
 
-    raise Exception(f"BERT failed: {last_error}")
+    raise Exception(f"{name} failed: {last_error}")
 
 
 def parse_bert_response(data) -> dict:
-    """
-    omykhailiv model returns:
-    LABEL_0 = FAKE (false news)
-    LABEL_1 = REAL (true news)
-    Score = confidence probability
-    """
     try:
-        # Unwrap nested list
         if isinstance(data, list) and isinstance(data[0], list):
             data = data[0]
 
@@ -88,35 +99,32 @@ def parse_bert_response(data) -> dict:
         for item in items:
             label = str(item.get("label", "")).upper().strip()
             score = float(item.get("score", 0))
-            print(f"  Parsing → Label: {label}  Score: {score:.4f}")
+            print(f"  Label: {label}  Score: {score:.4f}")
 
-            # omykhailiv model specific labels
+            # Arko007 model: LABEL_0=FAKE, LABEL_1=REAL
             if label == "LABEL_0":
-                fake_prob = score * 100    # LABEL_0 = FAKE
-            elif label == "LABEL_1":
-                real_prob = score * 100    # LABEL_1 = REAL
-
-            # Fallback for other formats
-            elif "FAKE" in label or "FALSE" in label:
                 fake_prob = score * 100
-            elif "REAL" in label or "TRUE" in label:
+            elif label == "LABEL_1":
+                real_prob = score * 100
+            # jy46604790 fallback: direct FAKE/REAL
+            elif "FAKE" in label:
+                fake_prob = score * 100
+            elif "REAL" in label:
                 real_prob = score * 100
 
-        # Normalize to 100%
         total = fake_prob + real_prob
         if total > 0:
             fake_prob = round((fake_prob / total) * 100, 2)
             real_prob = round((real_prob / total) * 100, 2)
         else:
-            raise Exception(f"Could not parse labels: {items}")
+            raise Exception(f"Could not parse: {items}")
 
-        # Cap at 95%
         fake_prob  = min(fake_prob, 95.0)
         real_prob  = min(real_prob, 95.0)
         label      = "FAKE" if fake_prob > real_prob else "REAL"
         confidence = round(max(fake_prob, real_prob), 2)
 
-        print(f"  ✅ BERT result: {label} (fake:{fake_prob}% real:{real_prob}%)")
+        print(f"  ✅ BERT: {label} (fake:{fake_prob}% real:{real_prob}%)")
 
         return {
             "label"      : label,
@@ -126,4 +134,4 @@ def parse_bert_response(data) -> dict:
         }
 
     except Exception as e:
-        raise Exception(f"Parse failed: {e} | raw: {str(data)[:300]}")
+        raise Exception(f"Parse failed: {e}")

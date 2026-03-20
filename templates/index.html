@@ -67,9 +67,6 @@
       <section id="results-section" class="results-section hidden">
           <div class="results-header">
               <h2 class="mb-0 fw-bold">Analysis Results</h2>
-              <div id="model-badge" class="model-badge-svm">SVM Active</div>
-          </div>
-
           <div class="dashboard-grid">
               <!-- Verdict Card -->
               <div class="card-v2 verdict-card">
@@ -117,28 +114,24 @@
               </div>
           </div> <!-- End Dashboard Grid -->
 
-          <!-- Model Comparison Table -->
-          <div class="card-v2 full-width" id="fusion-details" style="display:none; margin-top: 1.5rem;">
-               <h3 class="section-title">⚖️ Model Consensus</h3>
+          <!-- Model Details Table -->
+          <div class="card-v2 full-width" id="model-consensus-card" style="display:none; margin-top: 1.5rem;">
+               <h3 class="section-title">⚖️ Model Details</h3>
                <table class="model-table">
                    <thead>
                        <tr>
                            <th>Model</th>
+                           <th>Role</th>
                            <th>Verdict</th>
                            <th>FAKE %</th>
                            <th>REAL %</th>
                            <th>Confidence</th>
                        </tr>
                    </thead>
-                   <tbody id="model-comparison-body">
+                   <tbody id="model-table-body">
                        <!-- Populated via JS -->
                    </tbody>
                </table>
-           
-               <!-- Agreement badge -->
-               <div id="agreement-badge" class="agreement-badge">
-                   <!-- Populated via JS -->
-               </div>
            </div>
 
           <!-- Keyword Highlights Legend -->
@@ -161,7 +154,7 @@
     </main>
 
     <footer>
-      <p>aletheia &copy; 2026 &nbsp;&middot;&nbsp; 4-Layer Hybrid Decision Engine &nbsp;&middot;&nbsp; v5.1</p>
+      <p>aletheia &copy; 2026 &nbsp;&middot;&nbsp; 4-Layer Hybrid Decision Engine &nbsp;&middot;&nbsp; v6.0</p>
       <div class="footer-links">
         <a href="/about" class="footer-link">ABOUT</a>
         <a href="/metrics" target="_blank" class="footer-link">MODEL_METRICS</a>
@@ -279,51 +272,54 @@
         badge.style.color = data.label === 'FAKE' ? 'var(--fake)' : (data.label === 'REAL' ? 'var(--real)' : 'var(--uncertain)');
 
         document.getElementById('verdict-tier').textContent = (data.confidence_level || 'LOW') + ' CERTAINTY';
-        document.getElementById('p-real').textContent = data.real_prob + '%';
-        document.getElementById('p-fake').textContent = data.fake_prob + '%';
+        document.getElementById('p-real').textContent = Math.round(data.real_prob) + '%';
+        document.getElementById('p-fake').textContent = Math.round(data.fake_prob) + '%';
         document.getElementById('bar-real').style.width = data.real_prob + '%';
         document.getElementById('bar-fake').style.width = data.fake_prob + '%';
         document.getElementById('logic-reason').textContent = data.decision_reason || 'ML_CONSENSUS';
         document.getElementById('logic-bar-fill').style.width = data.confidence + '%';
 
         // ── Model Comparison Table ──────────────────────────
-        const fusionBox = document.getElementById('fusion-details');
-        const body = document.getElementById('model-comparison-body');
-        fusionBox.style.display = 'block';
+        const consensusCard = document.getElementById('model-consensus-card');
+        const body = document.getElementById('model-table-body');
+        consensusCard.style.display = 'block';
         
         body.innerHTML = `
-            <tr class="${data.bert_label === 'FAKE' ? 'row-fake' : 'row-real'}">
+            <tr class="${data.bert_ok ? 'row-active' : 'row-inactive'}">
                 <td>🤖 BERT</td>
-                <td><strong>${data.bert_label}</strong></td>
-                <td>${data.bert_fake}%</td>
-                <td>${data.bert_real}%</td>
-                <td>${data.bert_confidence}%</td>
+                <td>
+                    ${data.bert_ok ? '<span class="role-primary">PRIMARY</span>' : '<span class="role-failed">FAILED</span>'}
+                </td>
+                <td class="${data.bert_ok ? (data.bert_label === 'FAKE' ? 'text-fake' : 'text-real') : 'text-dim'}">
+                    ${data.bert_ok ? data.bert_label : '—'}
+                </td>
+                <td>${data.bert_ok ? data.bert_fake + '%' : '—'}</td>
+                <td>${data.bert_ok ? data.bert_real + '%' : '—'}</td>
+                <td>${data.bert_ok ? data.bert_confidence + '%' : '—'}</td>
             </tr>
-            <tr class="${data.svm_label === 'FAKE' ? 'row-fake' : 'row-real'}">
+            <tr class="${!data.bert_ok ? 'row-active' : 'row-secondary'}">
                 <td>⚙️ SVM</td>
-                <td><strong>${data.svm_label}</strong></td>
+                <td>
+                    ${!data.bert_ok ? '<span class="role-fallback">FALLBACK</span>' : '<span class="role-secondary">SECONDARY</span>'}
+                </td>
+                <td class="${data.svm_label === 'FAKE' ? 'text-fake' : 'text-real'}">
+                    ${data.svm_label}
+                </td>
                 <td>${data.svm_fake}%</td>
                 <td>${data.svm_real}%</td>
                 <td>${data.svm_confidence}%</td>
             </tr>
-            <tr class="row-fused">
-                <td>🔀 FUSED</td>
-                <td><strong>${data.label}</strong></td>
+            <tr class="row-final">
+                <td>🎯 FINAL</td>
+                <td><span class="role-engine">DECISION ENGINE</span></td>
+                <td class="${data.label === 'FAKE' ? 'text-fake' : (data.label === 'REAL' ? 'text-real' : 'text-uncertain')}">
+                    <strong>${data.label}</strong>
+                </td>
                 <td>${data.fake_prob}%</td>
                 <td>${data.real_prob}%</td>
-                <td>${data.confidence}%</td>
+                <td><strong>${data.confidence}%</strong></td>
             </tr>
         `;
-
-        const agreBadge = document.getElementById('agreement-badge');
-        const agreType = data.agreement === 'FULL' ? 'badge-agree' : (data.agreement === 'SPLIT' ? 'badge-split' : 'badge-leads');
-        const agreIcon = data.agreement === 'FULL' ? '🤝' : (data.agreement === 'SPLIT' ? '⚡' : '🏆');
-        agreBadge.className = 'agreement-badge ' + agreType;
-        agreBadge.innerHTML = `${agreIcon} ${data.agreement_text}`;
-
-        const modelBadge = document.getElementById('model-badge');
-        modelBadge.innerHTML = `🔀 ${data.model_used}`;
-        modelBadge.className = 'badge-bert';
 
         // Credibility Audit
         const grid = document.getElementById('cred-flags-grid');
@@ -334,13 +330,13 @@
         credFlags.forEach(flag => {
             const b = document.createElement('div');
             b.className = 'cred-flag-item cred-negative';
-            b.textContent = flag.split(' (+')[0].split(' (')[0];
+            b.textContent = flag;
             grid.appendChild(b);
         });
         realFlags.forEach(flag => {
             const b = document.createElement('div');
             b.className = 'cred-flag-item cred-positive';
-            b.textContent = flag.split(' (')[0];
+            b.textContent = flag;
             grid.appendChild(b);
         });
 
@@ -349,13 +345,20 @@
         netVal.className = data.net_score >= 5 ? 'score-high' : (data.net_score >= 2 ? 'score-medium' : 'score-low');
 
         // ── KEYWORD HIGHLIGHTING ──────────────────────────────
-        const keywords = data.keywords || {};
-        const fakeKws = keywords.fake || [];
-        const realKws = keywords.real || [];
-        const allKws = [
-            ...fakeKws.map(p => ({ phrase: p, type: 'fake' })),
-            ...realKws.map(p => ({ phrase: p, type: 'real' }))
-        ];
+        const keywords = data.keywords || {}; // SVM keywords
+        const redFlags = data.red_flags || {};
+        
+        let allKws = [];
+        if (Array.isArray(keywords)) {
+            // Some models return keywords as list
+            keywords.forEach(k => allKws.push({ phrase: k, type: 'real' }));
+        }
+        
+        // SVM specific highlights
+        if (data.keywords && Array.isArray(data.keywords)) {
+            data.keywords.forEach(k => allKws.push({phrase: k, type: 'real'}));
+        }
+
         renderHighlights(text, allKws);
 
         // History
@@ -369,9 +372,11 @@
         overlay.classList.remove('active');
         statusInd.textContent = 'Error';
         statusInd.className = 'status-indicator';
+        console.error(err);
         alert('Priority Audit failed. Error: ' + err.message);
       }
     };
+
 
     // ── KEYWORD HIGHLIGHTING ──────────────────────────────────
     function renderHighlights(text, flags) {

@@ -1,13 +1,9 @@
 """
-decision_engine.py — Context-Aware Credibility Scoring Engine v5.4
-Fixes contextual bugs for 'according to' and 'organization mentions'.
+decision_engine.py — Context-Aware Credibility Scoring Engine v6.0
+Supports Priority Pipeline (BERT Primary -> SVM Fallback)
 """
 
 def score_according_to(text_lower: str) -> int:
-    """
-    'according to' only counts as REAL if followed by credible source.
-    'according to unnamed' or 'according to anonymous' = FAKE signal instead.
-    """
     score = 0
     credible_according = [
         "according to official", "according to the government", "according to the ministry",
@@ -28,10 +24,6 @@ def score_according_to(text_lower: str) -> int:
 
 
 def score_organization_mentions(text_lower: str) -> int:
-    """
-    Org names only count as real signals if used credibly.
-    If paired with 'secretly', 'hiding', 'suppressed' etc = FAKE.
-    """
     score = 0
     trusted_orgs = [
         "world health organization", "nasa", "united nations", "reserve bank",
@@ -62,88 +54,108 @@ STRONG_FAKE_SIGNALS = {
     "experts have rejected"              : 3, "doctors have rejected"              : 3,
     "no scientific basis"                : 4, "no scientific evidence"             : 4,
     "biologically impossible"            : 4, "scientifically impossible"          : 4,
-    "cannot be bypassed"                 : 2, "eliminate the need for sleep"       : 4,
-    "eliminate the need for"             : 3, "completely eliminate"               : 2,
-    "without any negative"               : 2, "without causing any"                : 2,
-    "fully alert for weeks"              : 3, "weeks without rest"                 : 3,
-    "newly discovered"                   : 2, "plant extract"                      : 2,
-    "natural extract"                    : 2, "miracle extract"                    : 3,
-    "early trials showed"                : 2, "early trials"                       : 1,
-    "claimed benefits"                   : 2, "claimed results"                    : 2,
 }
 
-def detect_pseudoscience(text_lower: str) -> int:
-    """
-    Detects pseudoscientific claims that contradict
-    established biology/medicine/physics.
-    These are almost always fake news.
-    """
-    score = 0
+# Added for the 9/10 failure cases
+UNCERTAIN_SIGNALS = [
+    "preliminary study", "suggests that", "more research is needed",
+    "may potentially", "small sample size", "needs verification",
+    "indicates a possibility", "further investigation"
+]
 
-    # Extraordinary biological claims
+
+def detect_pseudoscience(text_lower: str) -> int:
+    score = 0
     bio_impossible = [
         "eliminate the need for sleep", "without sleep", "no sleep needed",
         "cure all diseases", "cures all", "reverses aging completely",
         "regrow organs", "regrow limbs", "unlimited energy",
         "defy gravity", "100% effective cure", "guaranteed cure",
-        "no side effects whatsoever", "completely safe for everyone",
-        "ancient secret cure", "forbidden cure",
     ]
-
-    # Contradiction patterns
-    contradiction_pairs = [
-        ("sleep is a biological necessity", "eliminate"),
-        ("scientists rejected", "claims"),
-        ("experts dismissed", "claims"),
-        ("no evidence", "cure"),
-        ("no evidence", "treatment"),
-        ("rejected by", "researchers"),
-    ]
-
     for claim in bio_impossible:
         if claim in text_lower:
             score += 4
-            print(f"  Pseudoscience detected: '{claim}'")
-
-    for word1, word2 in contradiction_pairs:
-        if word1 in text_lower and word2 in text_lower:
-            score += 3
-            print(f"  Contradiction detected: '{word1}' + '{word2}'")
-
     return score
 
-def run_decision_engine_raw(text: str) -> dict:
+
+def calculate_scores(text: str) -> dict:
     """
-    Returns only the net score and flags for fusion engine.
+    Step 1 of the new analyze() flow.
+    Calculates raw credibility scores before model runs.
     """
     text_lower = text.lower()
     net_score = 0
+    uncertain_score = 0
     fake_flags = []
     real_flags = []
 
-    # Score from contextual functions
     net_score += score_according_to(text_lower)
     net_score += score_organization_mentions(text_lower)
-    
-    pseudo_score = detect_pseudoscience(text_lower)
-    net_score += pseudo_score
-    
-    # Simple flags for UI
+    net_score += detect_pseudoscience(text_lower)
+
     for phrase, val in STRONG_FAKE_SIGNALS.items():
         if phrase in text_lower:
             net_score += val
             fake_flags.append(phrase.title())
 
-    if net_score >= 4:
-        decision_reason = "High negative signals detected"
-    elif net_score <= -3:
-        decision_reason = "Credible source verified"
-    else:
-        decision_reason = "Standard fusion processing"
+    for phrase in UNCERTAIN_SIGNALS:
+        if phrase in text_lower:
+            uncertain_score += 2
 
     return {
         "net_score": net_score,
+        "uncertain_score": uncertain_score,
         "fake_flags": fake_flags,
-        "real_flags": real_flags,
-        "decision_reason": decision_reason
+        "real_flags": real_flags
+    }
+
+
+def run_decision_engine_raw(text: str, ml_label: str, ml_conf: float, fake_prob: float, real_prob: float) -> dict:
+    """
+    Step 5 of the new analyze() flow.
+    Applies overrides and determines final verdict.
+    """
+    scores = calculate_scores(text)
+    net_score = scores["net_score"]
+    uncertain_score = scores["uncertain_score"]
+
+    final_label = ml_label
+    final_conf = ml_conf
+    reason = "ML model prediction"
+
+    # Override: High negative signals
+    if net_score >= 7:
+        final_label = "FAKE"
+        final_conf = min(70 + net_score, 94.0)
+        reason = "Strong credibility flags (FAKE)"
+    elif net_score >= 4 and ml_label == "REAL":
+        final_label = "FAKE"
+        final_conf = 65.0
+        reason = "Credibility flags override REAL prediction"
+    
+    # Override: High positive signals
+    elif net_score <= -5 and ml_label == "FAKE":
+        final_label = "REAL"
+        final_conf = 70.0
+        reason = "Trusted source override FAKE prediction"
+
+    # Override: Uncertainty
+    if uncertain_score >= 4 and final_conf < 85:
+        final_label = "UNCERTAIN"
+        final_conf = 50.0
+        reason = "Preliminary/Uncertain language detected"
+
+    # Confidence Labeling
+    if final_conf >= 85:
+        level = "HIGH"
+    elif final_conf >= 65:
+        level = "MEDIUM"
+    else:
+        level = "LOW"
+
+    return {
+        "final_label": final_label,
+        "final_confidence": round(final_conf, 2),
+        "confidence_level": level,
+        "decision_reason": reason
     }
