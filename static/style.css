@@ -215,16 +215,17 @@ textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 
 /* ── Loading Overlay ── */
 .audit-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(var(--bg), 0.95);
-  backdrop-filter: blur(15px);
+  background: #F8FAFC;
   z-index: 1000;
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 0;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+body.dark .audit-overlay { background: #0B0F19; }
 .audit-overlay.active { display: flex; opacity: 1; pointer-events: all; }
 
 .audit-status-list { width: 280px; margin-top: 2rem; }
