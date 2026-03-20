@@ -1,7 +1,26 @@
 """
-decision_engine.py — Context-Aware Credibility Scoring Engine v6.0
+decision_engine.py — Context-Aware Credibility Scoring Engine v6.1
 Supports Priority Pipeline (BERT Primary -> SVM Fallback)
 """
+
+# Extra uncertainty phrases requested by user
+uncertain_phrases_extra = {
+    "may or may not"            : 3,
+    "it is unclear"             : 3,
+    "remains unclear"           : 3,
+    "no consensus"              : 3,
+    "experts disagree"          : 3,
+    "mixed opinions"            : 2,
+    "some believe"              : 2,
+    "others believe"            : 2,
+    "not yet determined"        : 3,
+    "yet to be confirmed"       : 3,
+    "awaiting confirmation"     : 3,
+    "inconclusive"              : 3,
+    "early days"                : 2,
+    "too early to say"          : 3,
+    "warrants further"          : 3,
+}
 
 def score_according_to(text_lower: str) -> int:
     score = 0
@@ -56,7 +75,6 @@ STRONG_FAKE_SIGNALS = {
     "biologically impossible"            : 4, "scientifically impossible"          : 4,
 }
 
-# Added for the 9/10 failure cases
 UNCERTAIN_SIGNALS = [
     "preliminary study", "suggests that", "more research is needed",
     "may potentially", "small sample size", "needs verification",
@@ -101,6 +119,11 @@ def calculate_scores(text: str) -> dict:
     for phrase in UNCERTAIN_SIGNALS:
         if phrase in text_lower:
             uncertain_score += 2
+            
+    # Add new uncertain phrases
+    for phrase, val in uncertain_phrases_extra.items():
+        if phrase in text_lower:
+            uncertain_score += val
 
     return {
         "net_score": net_score,
@@ -123,6 +146,20 @@ def run_decision_engine(text: str, ml_label: str, ml_conf: float, fake_prob: flo
     final_conf = ml_conf
     reason = "ML model prediction"
 
+    # UNCERTAINTY RULE — trigger when uncertain_score high
+    # AND neither model is very confident
+    if uncertain_score >= 6 and abs(fake_prob - real_prob) < 40:
+        return {
+            "final_label"      : "UNCERTAIN",
+            "final_confidence" : float(round(min(max(fake_prob, real_prob), 72.0), 2)),
+            "confidence_level" : "LOW",
+            "decision_reason"  : "uncertainty_detected",
+            "net_score"        : net_score,
+            "uncertain_score"  : uncertain_score,
+            "fake_flags"       : scores["fake_flags"],
+            "real_flags"       : scores["real_flags"],
+        }
+
     # Override: High negative signals
     if net_score >= 7:
         final_label = "FAKE"
@@ -139,8 +176,8 @@ def run_decision_engine(text: str, ml_label: str, ml_conf: float, fake_prob: flo
         final_conf = 70.0
         reason = "Trusted source override FAKE prediction"
 
-    # Override: Uncertainty
-    if uncertain_score >= 4 and final_conf < 85:
+    # Override: Uncertainty (legacy check)
+    elif uncertain_score >= 4 and final_conf < 85:
         final_label = "UNCERTAIN"
         final_conf = 50.0
         reason = "Preliminary/Uncertain language detected"

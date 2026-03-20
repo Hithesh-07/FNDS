@@ -35,101 +35,185 @@ prediction_logs = []
 def analyze(text: str) -> dict:
     print(f"→ analyze() start len={len(text)}")
 
-    # ── SVM (always runs) ──────────────────────────────────
+    # ── Step 1: Always run SVM ─────────────────────────────
     try:
         svm_result = svm_predict(
             text, svm_model, svm_vectorizer, svm_scaler
         )
-        print(f"→ SVM OK: {svm_result['label']}")
+        print(f"→ SVM: {svm_result['label']} ({svm_result['confidence']}%)")
     except Exception as e:
-        print(f"❌ SVM crashed: {e}")
+        print(f"❌ SVM failed: {e}")
         import traceback
         traceback.print_exc()
-        # Return safe default instead of crashing
-        return {
-            "label"            : "UNCERTAIN",
-            "confidence"       : 50.0,
-            "confidence_level" : "LOW",
-            "fake_prob"        : 50.0,
-            "real_prob"        : 50.0,
-            "model_used"       : "ERROR - SVM failed",
-            "decision_reason"  : "svm_error",
-            "net_score"        : 0,
-            "uncertain_score"  : 0,
-            "credibility_flags": [],
-            "real_flags"       : [],
-            "bert_ok"          : False,
-            "bert_label"       : "N/A",
-            "bert_fake"        : 0,
-            "bert_real"        : 0,
-            "bert_confidence"  : 0,
-            "svm_label"        : "ERROR",
-            "svm_fake"         : 50,
-            "svm_real"         : 50,
-            "svm_confidence"   : 50,
-            "keywords"         : [],
-            "red_flags"        : {},
-            "error"            : str(e),
+        svm_result = {
+            "label": "UNCERTAIN", "confidence": 50.0,
+            "fake_prob": 50.0, "real_prob": 50.0,
+            "keywords": [], "red_flags": {}
         }
 
-    # ── Decision engine ────────────────────────────────────
+    # ── Step 2: Try BERT (PRIMARY) ─────────────────────────
+    bert_ok     = False
+    bert_result = None
+
+    if HF_TOKEN:
+        try:
+            from bert_predict import bert_predict_with_timeout
+            bert_result = bert_predict_with_timeout(text, timeout_seconds=20)
+            bert_ok     = True
+            print(f"→ BERT: {bert_result['label']} ({bert_result['confidence']}%)")
+        except Exception as e:
+            print(f"→ BERT failed: {e}")
+
+    # ── Step 3: Decision engine credibility rules ──────────
     decision = None
     try:
         from decision_engine import run_decision_engine
+        # Feed BERT result if available, else SVM
+        base_label = bert_result["label"] if bert_ok else svm_result["label"]
+        base_conf  = bert_result["confidence"] if bert_ok else svm_result["confidence"]
+        base_fake  = bert_result["fake_prob"] if bert_ok else svm_result["fake_prob"]
+        base_real  = bert_result["real_prob"] if bert_ok else svm_result["real_prob"]
+
         decision = run_decision_engine(
-            text,
-            svm_result["label"],
-            svm_result["confidence"],
-            svm_result["fake_prob"],
-            svm_result["real_prob"]
+            text, base_label, base_conf, base_fake, base_real
         )
-        print(f"→ Decision OK: {decision['final_label']}")
+        print(f"→ Decision: {decision['final_label']} reason={decision['decision_reason']}")
     except Exception as e:
-        print(f"❌ Decision engine crashed: {e}")
+        print(f"❌ Decision engine failed: {e}")
         import traceback
         traceback.print_exc()
-        # Fallback to raw SVM result
         decision = {
-            "final_label"      : svm_result["label"],
-            "final_confidence" : svm_result["confidence"],
+            "final_label"      : base_label if bert_ok else svm_result["label"],
+            "final_confidence" : base_conf if bert_ok else svm_result["confidence"],
             "confidence_level" : "MEDIUM",
-            "decision_reason"  : "svm_direct_fallback",
+            "decision_reason"  : "fallback_direct",
             "net_score"        : 0,
             "fake_flags"       : [],
             "real_flags"       : [],
             "uncertain_score"  : 0,
         }
 
-    # ── BERT (optional) ────────────────────────────────────
-    bert_ok     = False
-    bert_result = None
-    if HF_TOKEN:
-        try:
-            from bert_predict import bert_predict, bert_predict_with_timeout
-            bert_result = bert_predict_with_timeout(text, timeout_seconds=20)
-            bert_ok     = True
-            print(f"→ BERT OK: {bert_result['label']}")
-        except Exception as e:
-            print(f"→ BERT failed: {e}")
-
-    # ── Final probabilities ────────────────────────────────
+    # ── Step 4: BERT-FIRST final verdict ───────────────────
+    #
+    # This is the key logic — BERT dominates
+    #
     if bert_ok and bert_result:
-        final_fake = bert_result["fake_prob"]
-        final_real = bert_result["real_prob"]
-        model_used = "BERT (Primary) ✅"
-    else:
-        final_fake = svm_result["fake_prob"]
-        final_real = svm_result["real_prob"]
-        model_used = "SVM (BERT unavailable)"
+        bert_conf  = bert_result["confidence"]
+        bert_label = bert_result["label"]
+        bert_fake  = bert_result["fake_prob"]
+        bert_real  = bert_result["real_prob"]
 
+        if bert_conf >= 70:
+            # ── BERT is confident → BERT wins completely ───
+            # Check if decision engine also agrees
+            engine_label = decision["final_label"]
+
+            if engine_label == bert_label:
+                # BERT + Rules agree → high confidence
+                final_label = bert_label
+                final_conf  = min(bert_conf + 5, 95.0)
+                final_fake  = bert_fake
+                final_real  = bert_real
+                model_used  = "BERT (Primary) + Rules confirmed"
+                reason      = "bert_rules_agree"
+            else:
+                # BERT confident but rules disagree
+                # Rules override only if very strong (net_score >= 7)
+                net = decision.get("net_score", 0)
+                if abs(net) >= 7:
+                    final_label = decision["final_label"]
+                    final_conf  = decision["final_confidence"]
+                    final_fake  = bert_fake
+                    final_real  = bert_real
+                    model_used  = "Rules Override"
+                    reason      = "rules_override_bert"
+                else:
+                    # BERT wins over weak rule disagreement
+                    final_label = bert_label
+                    final_conf  = bert_conf
+                    final_fake  = bert_fake
+                    final_real  = bert_real
+                    model_used  = "BERT (Primary)"
+                    reason      = "bert_dominant"
+
+        elif bert_conf >= 55:
+            # ── BERT moderately confident → weighted blend ─
+            # BERT 80%, SVM 20%
+            blended_fake = round(bert_fake * 0.80 +
+                                  svm_result["fake_prob"] * 0.20, 2)
+            blended_real = round(bert_real * 0.80 +
+                                  svm_result["real_prob"] * 0.20, 2)
+
+            if blended_fake > blended_real:
+                final_label = "FAKE"
+                final_conf  = round(min(blended_fake, 95.0), 2)
+            else:
+                final_label = "REAL"
+                final_conf  = round(min(blended_real, 95.0), 2)
+
+            final_fake  = blended_fake
+            final_real  = blended_real
+            model_used  = "BERT (80%) + SVM (20%) Blend"
+            reason      = "bert_svm_weighted_blend"
+
+            # Apply decision engine on top of blend
+            net = decision.get("net_score", 0)
+            if abs(net) >= 6:
+                final_label = decision["final_label"]
+                final_conf  = decision["final_confidence"]
+                reason      = "rules_override_blend"
+
+        else:
+            # ── BERT not confident → UNCERTAIN ─────────────
+            # Don't use SVM — show UNCERTAIN honestly
+            gap = abs(bert_fake - bert_real)
+
+            if gap < 20:
+                final_label = "UNCERTAIN"
+                final_conf  = round(bert_conf, 2)
+                final_fake  = bert_fake
+                final_real  = bert_real
+                model_used  = "BERT (Low Confidence → UNCERTAIN)"
+                reason      = "bert_low_confidence_uncertain"
+            else:
+                # Gap is meaningful even if confidence low
+                # Use BERT but show as medium confidence
+                final_label = bert_label
+                final_conf  = round(min(bert_conf, 72.0), 2)
+                final_fake  = bert_fake
+                final_real  = bert_real
+                model_used  = "BERT (Moderate)"
+                reason      = "bert_moderate"
+
+    else:
+        # ── BERT completely failed → SVM fallback ──────────
+        # Apply decision engine on SVM result
+        final_label = decision["final_label"]
+        final_conf  = decision["final_confidence"]
+        final_fake  = svm_result["fake_prob"]
+        final_real  = svm_result["real_prob"]
+        model_used  = "SVM (BERT unavailable)"
+        reason      = decision["decision_reason"]
+
+    # ── Step 5: Final confidence level ────────────────────
+    final_conf = round(min(max(final_conf, 50.0), 95.0), 2)
+
+    if final_conf >= 85:
+        conf_level = "HIGH"
+    elif final_conf >= 68:
+        conf_level = "MEDIUM"
+    else:
+        conf_level = "LOW"
+
+    # ── Step 6: Build result ───────────────────────────────
     result = {
-        "label"            : decision["final_label"],
-        "confidence"       : decision["final_confidence"],
-        "confidence_level" : decision["confidence_level"],
+        "label"            : final_label,
+        "confidence"       : final_conf,
+        "confidence_level" : conf_level,
         "fake_prob"        : final_fake,
         "real_prob"        : final_real,
         "model_used"       : model_used,
-        "decision_reason"  : decision["decision_reason"],
+        "decision_reason"  : reason,
         "net_score"        : decision.get("net_score", 0),
         "uncertain_score"  : decision.get("uncertain_score", 0),
         "credibility_flags": decision.get("fake_flags", []),
@@ -149,14 +233,14 @@ def analyze(text: str) -> dict:
 
     prediction_logs.append({
         "timestamp"   : datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "label"       : result["label"],
-        "confidence"  : result["confidence"],
+        "label"       : final_label,
+        "confidence"  : final_conf,
         "model_used"  : model_used,
         "bert_used"   : bert_ok,
         "text_preview": text[:80],
     })
 
-    print(f"→ Final: {result['label']} {result['confidence']}%")
+    print(f"→ FINAL: {final_label} {final_conf}% via {model_used}")
     return result
 
 
