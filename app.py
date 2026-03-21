@@ -65,18 +65,22 @@ def analyze_page():
     if request.method == "POST":
         try:
             text = request.form.get("news_text", "").strip()
-            if not text or len(text.split()) < 3:
-                error = "Please enter at least a few words to analyze."
-            else:
-                result = run_analysis(text)
-                return render_template("report.html",
-                                       result=result, text=text)
+            if len(text) < 10:
+                error = "Please enter at least 10 characters."
+                return render_template("analyze.html",
+                                       error=error, text=text)
+            
+            result = run_analysis(text)
+            # Show Intelligence Report after analysis
+            return render_template("report.html",
+                                   result=result, text=text)
         except Exception as e:
             import traceback
             traceback.print_exc()
             error = f"Analysis failed: {str(e)}"
-    return render_template("analyze.html",
-                           result=result, text=text, error=error)
+            return render_template("analyze.html",
+                                   error=error, text=text)
+    return render_template("analyze.html", text=text)
 
 @app.route("/predict", methods=["POST"])
 def api_predict():

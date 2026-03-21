@@ -317,174 +317,344 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Main Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-        <!-- LEFT: Verdict + Gauge -->
-        <div class="md:col-span-4 space-y-6">
+        <!-- FIX 1: Verdict Card -->
+        <div class="md:col-span-8 rounded-xl p-8 relative overflow-hidden flex flex-col justify-center min-h-[400px]
+            {% if result.label == 'FAKE' %}
+                bg-surface-container-low border border-error/20
+                style='box-shadow: inset 0 0 60px rgba(255,71,87,0.08), 0 0 40px rgba(147,0,10,0.2)'
+            {% elif result.label == 'REAL' %}
+                bg-surface-container-low border border-secondary/20
+                style='box-shadow: inset 0 0 60px rgba(74,216,240,0.06), 0 0 30px rgba(74,216,240,0.1)'
+            {% else %}
+                bg-surface-container-low border border-tertiary/20
+            {% endif %}">
 
-            <!-- Verdict Card -->
-            <div class="glass-panel p-8 rounded-2xl border relative overflow-hidden group card-interactive {% if result.label == 'FAKE' %}border-error/10 glow-red{% elif result.label == 'REAL' %}border-secondary/10 glow-green{% else %}border-tertiary/10{% endif %}">
-                <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl {% if result.label == 'FAKE' %}bg-error/10 group-hover:bg-error/20{% elif result.label == 'REAL' %}bg-secondary/10 group-hover:bg-secondary/20{% else %}bg-tertiary/10{% endif %} transition-all"></div>
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-8">
-                        <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full border {% if result.label == 'FAKE' %}text-error bg-error-container/30 border-error/20{% elif result.label == 'REAL' %}text-secondary bg-secondary/10 border-secondary/20{% else %}text-tertiary bg-tertiary/10 border-tertiary/20{% endif %}">
-                            {% if result.label == 'FAKE' %}Critical Alert
-                            {% elif result.label == 'REAL' %}Verified Content
-                            {% else %}Uncertain{% endif %}
-                        </span>
-                        <span class="material-symbols-outlined {% if result.label == 'FAKE' %}text-error{% elif result.label == 'REAL' %}text-secondary{% else %}text-tertiary{% endif %}" style="font-variation-settings:'FILL' 1">
+            <!-- Radial background glow -->
+            <div class="absolute inset-0 pointer-events-none
+                {% if result.label == 'FAKE' %}
+                    bg-[radial-gradient(circle_at_center,rgba(147,0,10,0.15)_0%,transparent_70%)]
+                {% elif result.label == 'REAL' %}
+                    bg-[radial-gradient(circle_at_center,rgba(74,216,240,0.08)_0%,transparent_70%)]
+                {% else %}
+                    bg-[radial-gradient(circle_at_center,rgba(255,165,2,0.08)_0%,transparent_70%)]
+                {% endif %}">
+            </div>
+
+            <div class="relative z-10">
+                <!-- Badge + Icon row -->
+                <div class="flex items-center justify-between mb-6">
+                    <span class="font-bold tracking-[0.2em] uppercase text-sm flex items-center gap-2 px-3 py-1 rounded-full border
+                        {% if result.label == 'FAKE' %}
+                            text-error bg-error/10 border-error/20
+                        {% elif result.label == 'REAL' %}
+                            text-secondary bg-secondary/10 border-secondary/20
+                        {% else %}
+                            text-tertiary bg-tertiary/10 border-tertiary/20
+                        {% endif %}">
+                        <span class="material-symbols-outlined text-sm"
+                            style="font-variation-settings:'FILL' 1">
                             {% if result.label == 'FAKE' %}warning
                             {% elif result.label == 'REAL' %}verified
                             {% else %}help{% endif %}
                         </span>
+                        {% if result.label == 'FAKE' %}Critical Alert
+                        {% elif result.label == 'REAL' %}Verified Content
+                        {% else %}Uncertain{% endif %}
+                    </span>
+                </div>
+
+                <!-- Giant verdict text -->
+                <h2 class="text-9xl font-headline font-black leading-none tracking-tighter mb-6
+                    {% if result.label == 'FAKE' %}text-error
+                    style='filter: drop-shadow(0 0 20px rgba(255,71,87,0.5))'
+                    {% elif result.label == 'REAL' %}text-secondary
+                    style='filter: drop-shadow(0 0 20px rgba(74,216,240,0.4))'
+                    {% else %}text-tertiary
+                    style='filter: drop-shadow(0 0 20px rgba(255,165,2,0.4))'
+                    {% endif %}">
+                    {{ result.label }}
+                </h2>
+
+                <!-- Confidence + Model badge -->
+                <div class="flex items-center gap-6 flex-wrap">
+                    <div class="flex flex-col">
+                        <span id="confidenceNum"
+                            class="text-4xl font-headline font-extrabold text-on-surface"
+                            data-target="{{ result.confidence }}">
+                            0%
+                        </span>
+                        <span class="text-on-surface-variant uppercase text-[10px] tracking-[0.1em] font-bold">
+                            {{ result.confidence_level }} Confidence
+                        </span>
                     </div>
-                    <h2 class="text-7xl font-black tracking-tighter mb-2 {% if result.label == 'FAKE' %}text-error{% elif result.label == 'REAL' %}text-secondary{% else %}text-tertiary{% endif %}" style="font-family:'Manrope',sans-serif;">
-                        {{ result.label }}
-                    </h2>
-                    <div class="flex items-end gap-2">
-                        <p class="text-4xl font-bold text-on-surface" style="font-family:'Manrope',sans-serif;">{{ result.confidence }}%</p>
-                        <p class="text-on-surface-variant mb-1 text-sm">{{ result.confidence_level }} Confidence</p>
-                    </div>
-                    <!-- Model badge -->
-                    <div class="mt-4">
-                        <span class="text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full {% if result.bert_ok %}bg-primary-container/20 text-primary border border-primary/20{% else %}bg-surface-container-high text-on-surface-variant border border-outline-variant{% endif %}">
-                            {% if result.bert_ok %}🤖 BERT Primary{% else %}⚙️ SVM Fallback{% endif %}
+                    <div class="h-12 w-px bg-outline-variant/30"></div>
+                    <div class="bg-surface-container-highest/50 px-4 py-2 rounded-lg flex items-center gap-3">
+                        <span class="material-symbols-outlined
+                            {% if result.bert_ok %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+                            {% if result.bert_ok %}smart_toy{% else %}analytics{% endif %}
+                        </span>
+                        <span class="font-headline font-bold text-sm tracking-tight">
+                            {% if result.bert_ok %}BERT Primary Engine{% else %}SVM Fallback Engine{% endif %}
                         </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Confidence Gauge -->
-            <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
-                <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-8">Confidence Gauge</h3>
-                <div class="relative w-full h-40 flex items-end justify-center overflow-hidden">
-                    <div class="absolute bottom-0 w-64 h-32 border-[12px] border-surface-container-highest rounded-t-full"></div>
-                    <div class="absolute bottom-0 w-64 h-32 border-[12px] border-transparent rounded-t-full transition-transform duration-1000 {% if result.label == 'FAKE' %}border-t-error border-r-error{% elif result.label == 'REAL' %}border-t-secondary border-r-secondary{% else %}border-t-tertiary border-r-tertiary{% endif %}" style="transform: rotate({{ ((result.confidence / 100) * 168) | int }}deg)">
-                    </div>
-                    <div class="absolute bottom-0 w-1 h-28 bg-on-surface origin-bottom transition-transform duration-1000" style="transform: rotate({{ (((result.fake_prob / 100) * 168) - 84) | int }}deg)">
-                        <div class="absolute -top-1 -left-1 w-3 h-3 bg-on-surface rounded-full shadow-lg"></div>
-                    </div>
-                    <div class="absolute bottom-2 left-4 text-[10px] text-secondary font-bold">REAL</div>
-                    <div class="absolute bottom-2 right-4 text-[10px] text-error font-bold">FAKE</div>
-                    <div class="absolute bottom-0 flex flex-col items-center">
-                        <span class="text-3xl font-black text-on-surface" style="font-family:'Manrope',sans-serif;">{{ result.confidence }}%</span>
-                        <span class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Probability</span>
+            <!-- Radar background decoration -->
+            <div class="absolute right-[-10%] bottom-[-10%] opacity-10">
+                <div class="w-96 h-96 rounded-full border border-primary animate-pulse flex items-center justify-center">
+                    <div class="w-64 h-64 rounded-full border border-primary/50 flex items-center justify-center">
+                        <div class="w-32 h-32 rounded-full border border-primary/20"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT: Probability + Risk + Model Breakdown -->
-        <div class="md:col-span-8 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- FIX 2: Confidence Gauge -->
+        <div class="md:col-span-4 bg-surface-container rounded-xl p-8 flex flex-col items-center justify-between">
+            <h3 class="w-full text-xs font-bold text-on-surface-variant tracking-widest uppercase mb-4">
+                Probability Gauge
+            </h3>
 
-                <!-- Probability Bars -->
-                <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
-                    <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Class Probability</h3>
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm font-medium">
-                                <span class="text-error">Fake Score</span>
-                                <span>{{ result.fake_prob }}%</span>
-                            </div>
-                            <div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                                <div class="h-full bg-error rounded-full transition-all duration-1000" style="width: {{ result.fake_prob }}%"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-sm font-medium">
-                                <span class="text-secondary">Real Score</span>
-                                <span>{{ result.real_prob }}%</span>
-                            </div>
-                            <div class="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                                <div class="h-full bg-secondary rounded-full transition-all duration-1000" style="width: {{ result.real_prob }}%"></div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="relative w-64 h-36 mt-8">
+                <!-- Track -->
+                <div class="absolute inset-0 border-[16px] border-surface-container-highest rounded-t-full"
+                     style="clip-path: inset(0 0 50% 0)"></div>
+
+                <!-- Colored arc -->
+                <div class="absolute inset-0 border-[16px] rounded-t-full"
+                     style="clip-path: inset(0 0 50% 0);
+                            border-color: transparent;
+                            border-top-color:
+                            {% if result.label == 'FAKE' %}#ff4757
+                            {% elif result.label == 'REAL' %}#4ad8f0
+                            {% else %}#ffa502{% endif %};
+                            border-right-color:
+                            {% if result.label == 'FAKE' %}#ff4757
+                            {% elif result.label == 'REAL' %}#4ad8f0
+                            {% else %}#ffa502{% endif %};">
                 </div>
 
-                <!-- Risk Indicators -->
-                <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
-                    <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Risk Indicators</h3>
-                    <div class="flex flex-wrap gap-3">
-                        {% if result.credibility_flags %}
-                            {% for flag in result.credibility_flags[:4] %}
-                            <div class="flex items-center gap-2 px-4 py-2 bg-error-container/20 border border-error/20 rounded-xl">
-                                <span class="material-symbols-outlined text-sm text-error">warning</span>
-                                <span class="text-sm font-medium text-on-surface">{{ flag[:25] }}</span>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-xl">
-                                <span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
-                                <span class="text-sm font-medium text-on-surface">No risk flags detected</span>
-                            </div>
-                        {% endif %}
-                        {% if result.red_flags and result.red_flags.exclamation_marks > 0 %}
-                        <div class="flex items-center gap-2 px-4 py-2 bg-error-container/20 border border-error/20 rounded-xl">
-                            <span class="material-symbols-outlined text-sm text-error">priority_high</span>
-                            <span class="text-sm font-medium text-on-surface">Exclamation Marks ({{ result.red_flags.exclamation_marks }})</span>
-                        </div>
-                        {% endif %}
-                        {% if result.red_flags and result.red_flags.caps_ratio > 5 %}
-                        <div class="flex items-center gap-2 px-4 py-2 bg-error-container/20 border border-error/20 rounded-xl">
-                            <span class="material-symbols-outlined text-sm text-error">text_fields</span>
-                            <span class="text-sm font-medium text-on-surface">High CAPS Ratio ({{ result.red_flags.caps_ratio }}%)</span>
-                        </div>
-                        {% endif %}
-                    </div>
+                <!-- Needle — rotates based on fake_prob -->
+                <!-- -90deg = all REAL, 0deg = 50/50, +90deg = all FAKE -->
+                <div class="absolute bottom-0 left-1/2 w-1 h-28 origin-bottom -translate-x-1/2 transition-transform duration-1000"
+                     id="gaugeNeedle"
+                     data-rotation="{{ ((result.fake_prob / 100 * 180) - 90) | int }}"
+                     style="transform: rotate(-90deg)">
+                    <div class="w-2 h-24 bg-on-surface rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)] mx-auto"></div>
+                </div>
+
+                <!-- Center number -->
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2 text-center">
+                    <span class="text-3xl font-headline font-black text-on-surface">
+                        {{ result.confidence }}%
+                    </span>
+                    <span class="block text-[10px] text-on-surface-variant uppercase tracking-tighter">
+                        Probability
+                    </span>
                 </div>
             </div>
 
-            <!-- Model Engine Breakdown -->
-            <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Model Engine Breakdown</h3>
-                    <div class="flex items-center gap-2 text-[10px] text-on-surface-variant">
-                        <span class="w-2 h-2 rounded-full bg-secondary"></span> Primary AI
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                    <!-- BERT -->
-                    <div class="flex flex-col items-center p-4 bg-surface-container-high rounded-2xl border border-white/5">
-                        <span class="text-xs text-on-surface-variant mb-1">BERT Engine</span>
-                        {% if result.bert_ok %}
-                        <span class="text-2xl font-bold {{ 'text-error' if result.bert_label == 'FAKE' else 'text-secondary' }}" style="font-family:'Manrope',sans-serif;">
-                            {{ result.bert_confidence }}% <span class="text-xs opacity-50">{{ result.bert_label }}</span>
-                        </span>
-                        {% else %}
-                        <span class="text-lg font-bold text-on-surface-variant">Unavailable</span>
-                        {% endif %}
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="material-symbols-outlined text-on-surface-variant">add</span>
-                    </div>
-                    <!-- SVM -->
-                    <div class="flex flex-col items-center p-4 bg-surface-container-high rounded-2xl border border-white/5">
-                        <span class="text-xs text-on-surface-variant mb-1">SVM Classifier</span>
-                        <span class="text-2xl font-bold {{ 'text-error' if result.svm_label == 'FAKE' else 'text-secondary' }}" style="font-family:'Manrope',sans-serif;">
-                            {{ result.svm_confidence }}% <span class="text-xs opacity-50">{{ result.svm_label }}</span>
+            <!-- Labels -->
+            <div class="w-full flex justify-between px-4 mt-6">
+                <span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Real</span>
+                <span class="text-[10px] font-bold text-error uppercase tracking-tighter">Fake</span>
+            </div>
+        </div>
+
+        <!-- FIX 3: Probability Bars -->
+        <div class="md:col-span-4 bg-surface-container rounded-xl p-6">
+            <h3 class="text-xs font-mono text-on-surface-variant tracking-widest uppercase mb-6">
+                CLASS PROBABILITY
+            </h3>
+            <div class="space-y-6">
+
+                <!-- Fake bar -->
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-error">Fake Probability</span>
+                        <span class="text-lg font-headline font-bold text-on-surface">
+                            {{ result.fake_prob }}%
                         </span>
                     </div>
+                    <div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-error rounded-full shadow-[0_0_10px_rgba(255,71,87,0.5)] transition-all duration-1000"
+                             id="fakeBar"
+                             data-width="{{ result.fake_prob }}"
+                             style="width: 0%">
+                        </div>
+                    </div>
                 </div>
-                <!-- Final verdict row -->
-                <div class="mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+
+                <!-- Real bar -->
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-secondary">Real Probability</span>
+                        <span class="text-lg font-headline font-bold text-on-surface">
+                            {{ result.real_prob }}%
+                        </span>
+                    </div>
+                    <div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                        <div class="h-full bg-secondary rounded-full shadow-[0_0_10px_rgba(74,216,240,0.5)] transition-all duration-1000"
+                             id="realBar"
+                             data-width="{{ result.real_prob }}"
+                             style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FIX 4: Risk Indicators -->
+        <div class="md:col-span-8 bg-surface-container-low rounded-xl p-6">
+            <h3 class="text-xs font-bold text-on-surface-variant tracking-widest uppercase mb-6">
+                Risk Indicators
+            </h3>
+            <div class="flex flex-wrap gap-3">
+
+                <!-- Credibility flags from decision engine -->
+                {% if result.credibility_flags %}
+                    {% for flag in result.credibility_flags[:5] %}
+                    <div class="risk-pill bg-error/10 border border-error/20 px-4 py-2 rounded-full flex items-center gap-2 hover:bg-error/20 transition-colors opacity-0 translate-y-2">
+                        <span class="material-symbols-outlined text-error text-base"
+                              style="font-variation-settings:'FILL' 1">warning</span>
+                        <span class="text-sm font-medium text-error">{{ flag[:35] }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Exclamation marks flag -->
+                {% if result.red_flags and result.red_flags.exclamation_marks > 2 %}
+                <div class="risk-pill bg-error/10 border border-error/20 px-4 py-2 rounded-full flex items-center gap-2 hover:bg-error/20 transition-colors opacity-0 translate-y-2">
+                    <span class="material-symbols-outlined text-error text-base"
+                          style="font-variation-settings:'FILL' 1">priority_high</span>
+                    <span class="text-sm font-medium text-error">
+                        Exclamation Abuse ({{ result.red_flags.exclamation_marks }})
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- CAPS abuse flag -->
+                {% if result.red_flags and result.red_flags.caps_ratio > 5 %}
+                <div class="risk-pill bg-error/10 border border-error/20 px-4 py-2 rounded-full flex items-center gap-2 hover:bg-error/20 transition-colors opacity-0 translate-y-2">
+                    <span class="material-symbols-outlined text-error text-base"
+                          style="font-variation-settings:'FILL' 1">text_fields</span>
+                    <span class="text-sm font-medium text-error">
+                        CAPS Overuse ({{ result.red_flags.caps_ratio }}%)
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Uncertain score flag -->
+                {% if result.uncertain_score and result.uncertain_score >= 4 %}
+                <div class="risk-pill bg-tertiary/10 border border-tertiary/20 px-4 py-2 rounded-full flex items-center gap-2 opacity-0 translate-y-2">
+                    <span class="material-symbols-outlined text-tertiary text-base">help</span>
+                    <span class="text-sm font-medium text-tertiary">Hedging Language Detected</span>
+                </div>
+                {% endif %}
+
+                <!-- If no flags at all -->
+                {% if not result.credibility_flags
+                     and (not result.red_flags or result.red_flags.exclamation_marks <= 2)
+                     and (not result.red_flags or result.red_flags.caps_ratio <= 5) %}
+                <div class="risk-pill bg-secondary/10 border border-secondary/20 px-4 py-2 rounded-full flex items-center gap-2 opacity-0 translate-y-2">
+                    <span class="material-symbols-outlined text-secondary text-base"
+                          style="font-variation-settings:'FILL' 1">check_circle</span>
+                    <span class="text-sm font-medium text-secondary">No Risk Signals Detected</span>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- FIX 5: Model Engine Breakdown -->
+        <div class="md:col-span-6 bg-surface-container rounded-xl p-8 flex flex-col items-center">
+            <h3 class="w-full text-xs font-bold text-on-surface-variant tracking-widest uppercase mb-8">
+                Model Engine Architecture
+            </h3>
+
+            <div class="flex items-center gap-8 w-full justify-center">
+
+                <!-- BERT Card -->
+                <div class="relative bg-surface-container-high border border-outline-variant/30 p-5 rounded-xl w-44 text-center">
+                    <span class="text-[10px] font-black tracking-widest uppercase block mb-2
+                        {% if result.bert_ok %}text-secondary{% else %}text-error{% endif %}">
+                        {% if result.bert_ok %}PRIMARY{% else %}FAILED{% endif %}
+                    </span>
+                    <div class="material-symbols-outlined text-3xl mb-2
+                        {% if result.bert_ok %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+                        {% if result.bert_ok %}memory{% else %}memory_off{% endif %}
+                    </div>
+                    <p class="font-headline font-bold text-sm mb-1">BERT Engine</p>
+                    {% if result.bert_ok %}
+                    <p class="text-xl font-headline font-black
+                        {{ 'text-error' if result.bert_label == 'FAKE' else 'text-secondary' }}">
+                        {{ result.bert_confidence }}%
+                    </p>
+                    <p class="text-[10px] font-bold
+                        {{ 'text-error' if result.bert_label == 'FAKE' else 'text-secondary' }}">
+                        {{ result.bert_label }}
+                    </p>
+                    {% else %}
+                    <p class="text-xs text-on-surface-variant mt-1">Unavailable</p>
+                    {% endif %}
+                </div>
+
+                <!-- Plus connector -->
+                <div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-on-surface flex-shrink-0">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                </div>
+
+                <!-- SVM Card -->
+                <div class="relative bg-surface-container-high border border-outline-variant/30 p-5 rounded-xl w-44 text-center">
+                    <span class="text-[10px] font-black tracking-widest uppercase block mb-2
+                        {{ 'text-secondary' if not result.bert_ok else 'text-on-surface-variant' }}">
+                        {{ 'FALLBACK' if not result.bert_ok else 'SECONDARY' }}
+                    </span>
+                    <div class="material-symbols-outlined text-3xl text-on-surface-variant mb-2">
+                        analytics
+                    </div>
+                    <p class="font-headline font-bold text-sm mb-1">SVM Classifier</p>
+                    <p class="text-xl font-headline font-black
+                        {{ 'text-error' if result.svm_label == 'FAKE' else 'text-secondary' }}">
+                        {{ result.svm_confidence }}%
+                    </p>
+                    <p class="text-[10px] font-bold
+                        {{ 'text-error' if result.svm_label == 'FAKE' else 'text-secondary' }}">
+                        {{ result.svm_label }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Final verdict row -->
+            <div class="mt-10 w-full pt-6 border-t border-outline-variant/10">
+                <div class="bg-primary-container/10 border border-primary-container/20 p-4 rounded-lg flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
-                            <span class="material-symbols-outlined text-primary">token</span>
+                        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-sm">token</span>
                         </div>
                         <div>
-                            <div class="text-xs text-on-surface-variant">Neural Aggregate</div>
-                            <div class="text-sm font-bold">{{ result.decision_reason }}</div>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                                Neural Aggregate
+                            </p>
+                            <p class="text-sm font-bold font-mono text-primary">
+                                {{ result.decision_reason }}
+                            </p>
                         </div>
                     </div>
-                    <div class="text-3xl font-black {% if result.label == 'FAKE' %}text-error{% elif result.label == 'REAL' %}text-secondary{% else %}text-tertiary{% endif %}" style="font-family:'Manrope',sans-serif;">
+                    <span class="text-3xl font-headline font-black
+                        {% if result.label == 'FAKE' %}text-error
+                        {% elif result.label == 'REAL' %}text-secondary
+                        {% else %}text-tertiary{% endif %}">
                         {{ result.label }}
-                    </div>
+                    </span>
                 </div>
             </div>
         </div>
 
-        <!-- Credibility Matrix -->
-        <div class="md:col-span-5 bg-surface-container-low p-8 rounded-2xl card-interactive">
+        <!-- Credibility Matrix (Updated to col-span-6) -->
+        <div class="md:col-span-6 bg-surface-container-low p-8 rounded-2xl card-interactive">
             <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-8">Credibility Matrix</h3>
             <div class="space-y-6">
                 <div class="space-y-3">
@@ -498,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="h-full rounded-full {{ 'bg-error' if result.net_score > 0 else 'bg-secondary' }}" style="width: {{ [result.net_score * 5, 100] | min | abs }}%"></div>
                     </div>
                 </div>
-                <!-- other prob metrics skipped to save space / identical -->
+                <!-- other prob metrics display omitted or kept identical -->
             </div>
             {% if result.net_score > 3 %}
             <div class="mt-8 p-4 bg-surface-container-highest/30 rounded-xl border border-white/5">
@@ -512,32 +682,68 @@ document.addEventListener('DOMContentLoaded', () => {
             {% endif %}
         </div>
 
-        <!-- Content Forensics / Keywords -->
-        <div class="md:col-span-7 glass-panel p-8 rounded-2xl border border-white/5 card-interactive">
-            <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Content Forensics</h3>
+        <!-- FIX 6: Content Forensics -->
+        <div class="md:col-span-12 bg-surface-container-lowest/60 backdrop-blur-md border border-outline-variant/10 rounded-xl p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xs font-bold text-on-surface-variant tracking-widest uppercase flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">search</span>
+                    Content Forensics
+                </h3>
+                <div class="flex gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-error"></span>
+                        <span class="text-[10px] text-on-surface-variant font-bold uppercase">Risk Signal</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        <span class="text-[10px] text-on-surface-variant font-bold uppercase">Verified</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                        <span class="text-[10px] text-on-surface-variant font-bold uppercase">Uncertain</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keywords row -->
             {% if result.keywords %}
-            <div class="flex flex-wrap gap-3 mb-6">
+            <div class="flex flex-wrap gap-2 mb-6">
                 {% for kw in result.keywords %}
-                <span class="px-3 py-1.5 bg-surface-container-highest/50 border border-outline-variant/20 rounded-xl text-sm text-on-surface-variant">
+                <span class="px-3 py-1 bg-surface-container-high border border-outline-variant/20 rounded-full text-xs font-mono text-on-surface-variant hover:text-on-surface hover:border-secondary/30 transition-all cursor-default">
                     {{ kw }}
                 </span>
                 {% endfor %}
             </div>
             {% endif %}
-            <div class="bg-surface-container-lowest/50 p-6 rounded-xl font-body leading-loose text-on-surface/80 relative">
-                <p class="text-sm">
+
+            <!-- Article text preview -->
+            <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/20 relative">
+                <p class="text-base leading-relaxed text-on-surface/80 font-light">
                     {% if text %}
-                        {{ text[:300] }}{% if text|length > 300 %}...{% endif %}
+                        {{ text[:400] }}{% if text|length > 400 %}
+                        <span class="text-on-surface-variant">...</span>
+                        {% endif %}
                     {% else %}
-                        No article text available for forensic display.
+                        <span class="text-on-surface-variant italic">No article text available.</span>
                     {% endif %}
                 </p>
+                <div class="absolute bottom-3 right-4 text-[10px] font-mono text-outline-variant">
+                    {{ text|length if text else 0 }} chars analyzed
+                </div>
             </div>
-            <div class="mt-4 flex gap-4 text-[10px] font-bold uppercase tracking-widest">
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-error"></span> Risk Signal</div>
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span> Verified</div>
-                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-tertiary"></span> Uncertain</div>
+
+            <!-- Net score info box -->
+            {% if result.net_score and result.net_score >= 4 %}
+            <div class="mt-4 p-4 bg-error/5 border border-error/10 rounded-lg flex gap-3">
+                <span class="material-symbols-outlined text-error text-xl flex-shrink-0">info</span>
+                <p class="text-xs text-on-surface-variant leading-relaxed">
+                    <strong class="text-error">High risk detected.</strong>
+                    Multiple credibility signals flagged (Net Score: +{{ result.net_score }}).
+                    Unnamed sources, unverified claims, or suppression language detected.
+                    Always verify from BBC, Reuters, or AP News before sharing.
+                </p>
             </div>
+            {% endif %}
         </div>
 
     {% endif %}
@@ -554,5 +760,67 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 VerifAI Inc.</div>
     </div>
 </footer>
+<script>
+// ── Animate confidence number counting up ─────────────────
+function animateCount(el, target, duration = 1200) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+        start += step;
+        if (start >= target) {
+            start = target;
+            clearInterval(timer);
+        }
+        el.textContent = start.toFixed(1) + '%';
+    }, 16);
+}
+
+// ── Animate gauge needle sweeping in ─────────────────────
+function animateGauge() {
+    const needle = document.getElementById('gaugeNeedle');
+    if (!needle) return;
+    const target = parseInt(needle.dataset.rotation);
+    setTimeout(() => {
+        needle.style.transform = `rotate(${target}deg)`;
+    }, 300);
+}
+
+// ── Animate probability bars filling ─────────────────────
+function animateBars() {
+    const fakeBar = document.getElementById('fakeBar');
+    const realBar = document.getElementById('realBar');
+    setTimeout(() => {
+        if (fakeBar) fakeBar.style.width = fakeBar.dataset.width + '%';
+        if (realBar) realBar.style.width = realBar.dataset.width + '%';
+    }, 500);
+}
+
+// ── Staggered risk pills fade in ──────────────────────────
+function animatePills() {
+    const pills = document.querySelectorAll('.risk-pill');
+    pills.forEach((pill, i) => {
+        pill.style.opacity = '0';
+        pill.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+            pill.style.transition = 'all 0.3s ease';
+            pill.style.opacity = '1';
+            pill.style.transform = 'translateY(0)';
+        }, 600 + (i * 100));
+    });
+}
+
+// ── Run all animations on load ────────────────────────────
+window.addEventListener('load', () => {
+    // Confidence counter
+    const confEl = document.getElementById('confidenceNum');
+    if (confEl) {
+        const target = parseFloat(confEl.dataset.target);
+        animateCount(confEl, target);
+    }
+    animateGauge();
+    animateBars();
+    animatePills();
+});
+</script>
 </body>
 </html>
