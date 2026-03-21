@@ -12,12 +12,77 @@
       theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
     }
     </script>
+    <script>
+    (function() {
+        const theme = localStorage.getItem('aletheia_theme') || 'dark';
+        if (theme === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    })();
+    </script>
     <style>
         body { font-family:'Inter',sans-serif; background:#0b1326; }
         .glass-card { background:rgba(45,52,73,0.4); backdrop-filter:blur(24px); }
         .hover-glow { transition:all 0.3s ease; }
         .hover-glow:hover { transform:translateY(-3px); box-shadow:0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(93,230,255,0.2); }
         .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+
+/* Dark mode (default) */
+html.dark {
+    --bg-color     : #0b1326;
+    --surface      : #171f33;
+    --surface-high : #222a3d;
+    --text-primary : #dae2fd;
+    --text-muted   : #c3c6d7;
+    --border-color : rgba(255,255,255,0.05);
+}
+
+/* Light mode */
+html.light {
+    --bg-color     : #f0f4ff;
+    --surface      : #ffffff;
+    --surface-high : #e8edf8;
+    --text-primary : #1a1f33;
+    --text-muted   : #4a5068;
+    --border-color : rgba(0,0,0,0.08);
+}
+
+html.light body {
+    background-color : var(--bg-color) !important;
+    color            : var(--text-primary) !important;
+}
+html.light .glass-card,
+html.light .glass-panel {
+    background       : rgba(255,255,255,0.8) !important;
+    border-color     : rgba(0,0,0,0.08) !important;
+}
+html.light nav,
+html.light header {
+    background       : rgba(240,244,255,0.85) !important;
+}
+html.light .bg-surface-container-low,
+html.light .bg-surface-container-high,
+html.light .bg-surface-container-lowest {
+    background-color : var(--surface-high) !important;
+}
+html.light .text-on-surface,
+html.light .text-on-background {
+    color: var(--text-primary) !important;
+}
+html.light .text-on-surface-variant {
+    color: var(--text-muted) !important;
+}
+html.light .text-slate-400 {
+    color: #4a5068 !important;
+}
+html.light footer {
+    background: #e0e8f8 !important;
+}
+
 
 /* Button ripple effect */
 .btn-interactive {
@@ -103,10 +168,11 @@
             <a href="/about" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">About</a>
         </nav>
         <div class="hidden md:flex items-center gap-4">
-            <button id="themeToggle" onclick="toggleTheme()"
-                    class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all hover:text-secondary icon-bounce"
-                    title="Toggle theme">
-                <span class="material-symbols-outlined">dark_mode</span>
+            <button id="themeToggle"
+                    class="p-2 rounded-lg transition-all hover:bg-white/10 hover:text-secondary icon-bounce"
+                    title="Toggle light/dark mode"
+                    onclick="toggleTheme()">
+                <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
             </button>
         </div>
         <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
@@ -135,14 +201,28 @@ function toggleMenu() {
 }
 
 function toggleTheme() {
-    document.documentElement.classList.toggle('dark');
-    const icon = document.querySelector('#themeToggle .material-symbols-outlined');
-    icon.textContent = document.documentElement.classList.contains('dark') ? 'dark_mode' : 'light_mode';
-    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+
+    if (isDark) {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        document.getElementById('themeIcon').textContent = 'light_mode';
+        localStorage.setItem('aletheia_theme', 'light');
+    } else {
+        html.classList.remove('light');
+        html.classList.add('dark');
+        document.getElementById('themeIcon').textContent = 'dark_mode';
+        localStorage.setItem('aletheia_theme', 'dark');
+    }
 }
-if (localStorage.getItem('theme') === 'light') {
-    document.documentElement.classList.remove('dark');
-}
+
+// Set correct icon on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const theme = localStorage.getItem('aletheia_theme') || 'dark';
+    document.getElementById('themeIcon').textContent =
+        theme === 'light' ? 'light_mode' : 'dark_mode';
+});
 </script>
 
 <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
