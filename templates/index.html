@@ -1,407 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Aletheia — AI-powered fake news detection using BERT and SVM ensemble with credibility analysis"/>
-    <title>Aletheia — AI Fake News Detector</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Aletheia | Detect Truth. Instantly.</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
+    }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
+        .headline-font { font-family: 'Manrope', sans-serif; }
+        .glass-card { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+        .glow-button { box-shadow: 0 0 20px rgba(37,99,235,0.4); }
+        .glow-cyan { box-shadow: 0 0 16px rgba(93,230,255,0.2); }
+    </style>
 </head>
-<body>
+<body class="text-on-background selection:bg-secondary selection:text-on-secondary">
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay" style="display:none;">
-    <div class="loading-spinner"></div>
-    <div class="loading-text" id="loadingText">ANALYZING...</div>
-    <div class="loading-steps">
-        <div class="loading-step" id="ls1">
-            <div class="step-indicator"></div>
-            AI PATTERN RECOGNITION
+<!-- Navbar -->
+<nav class="bg-[#0b1326]/40 backdrop-blur-3xl top-0 sticky z-50">
+    <div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+        <div class="text-2xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400 headline-font">Aletheia</div>
+        <div class="hidden md:flex items-center space-x-8">
+            <a href="/" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-sm uppercase tracking-widest">Home</a>
+            <a href="/about" class="text-slate-400 font-medium text-sm uppercase tracking-widest hover:text-cyan-400 transition-all">About</a>
+            <a href="/how-it-works" class="text-slate-400 font-medium text-sm uppercase tracking-widest hover:text-cyan-400 transition-all">How it Works</a>
         </div>
-        <div class="loading-step" id="ls2">
-            <div class="step-indicator"></div>
-            CREDIBILITY SIGNAL AUDIT
-        </div>
-        <div class="loading-step" id="ls3">
-            <div class="step-indicator"></div>
-            UNCERTAINTY LOGIC SCAN
-        </div>
-        <div class="loading-step" id="ls4">
-            <div class="step-indicator"></div>
-            FINAL CONSENSUS ENGINE
-        </div>
+        <a href="/analyze" class="bg-gradient-to-r from-primary-container to-secondary text-white font-bold px-6 py-2 rounded-xl text-sm glow-button hover:scale-105 transition-all">Analyze Now →</a>
     </div>
-</div>
+</nav>
 
-<div class="page-wrapper">
-
-    <!-- Header -->
-    <header class="site-header">
-        <div class="badge-row">
-            <span class="badge">AI-POWERED</span>
-            <span class="badge">RULES-FIRST</span>
-            <span class="badge">PRODUCTION</span>
-            <span class="badge badge-green">98.2% ACCURACY</span>
-        </div>
-        <button class="dark-toggle" id="darkToggle" title="Toggle theme">🌙</button>
-    </header>
-
-    <!-- Hero -->
-    <div class="hero">
-        <h1 class="hero-logo">aletheia</h1>
-        <p class="hero-tagline">
-            The world's most transparent misinformation detection engine.
+<main>
+<!-- Hero -->
+<section class="relative pt-32 pb-24 px-6 overflow-hidden min-h-[921px] flex flex-col items-center justify-center">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary-container/10 blur-[120px] rounded-full -z-10"></div>
+    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/5 blur-[100px] rounded-full -z-10"></div>
+    <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-6xl md:text-8xl headline-font font-extrabold tracking-tight mb-6 text-on-background leading-[1.1]">
+            Detect Truth.<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Instantly.</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-on-surface-variant mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+            Identify fake news with our advanced AI-powered detection tool. Forensic precision for the digital information age.
         </p>
-    </div>
-
-    <!-- Input -->
-    <div class="input-section">
-        <div class="input-header">
-            <span class="input-title">Article Analysis</span>
-            <span class="input-status">
-                <span class="status-dot"></span>
-                {% if result %}ANALYSIS COMPLETE{% else %}READY{% endif %}
-            </span>
-        </div>
-
-        {% if error %}
-        <div class="error-msg">⚠ {{ error }}</div>
-        {% endif %}
-
-        <form id="analysisForm" method="POST" action="/">
-            <textarea
-                id="newsText"
-                name="news_text"
-                class="news-textarea"
-                placeholder="Paste a news headline, article, or social media post here..."
-                spellcheck="false"
-            >{{ text }}</textarea>
-            <div class="input-footer">
-                <span class="char-count" id="charCount">0 words | 0 / 50,000 chars</span>
-                <button type="submit" class="analyze-btn" id="analyzeBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2.5">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    Analyze
+        <div class="max-w-3xl mx-auto w-full group">
+            <div class="glass-card p-2 rounded-2xl flex flex-col md:flex-row gap-2 transition-all duration-500 hover:glow-cyan border border-white/5">
+                <input id="heroInput" class="flex-1 bg-surface-container-highest border-none rounded-xl px-6 py-4 text-on-surface focus:ring-1 focus:ring-secondary/40 placeholder:text-on-surface-variant/50 transition-all outline-none" placeholder="Paste news article or text here..." type="text"/>
+                <button onclick="window.location.href='/analyze?text='+encodeURIComponent(document.getElementById('heroInput').value)" class="bg-gradient-to-r from-primary-container to-secondary text-on-primary-container font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 glow-button hover:scale-[1.02] active:scale-95 transition-all duration-300">
+                    <span>Analyze Now</span>
+                    <span class="material-symbols-outlined">analytics</span>
                 </button>
             </div>
-        </form>
+            <div class="mt-4 flex items-center justify-center gap-6 text-on-surface-variant/60">
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check_circle</span><span class="text-xs uppercase tracking-widest">Real-time Analysis</span></div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">shield</span><span class="text-xs uppercase tracking-widest">Privacy Protected</span></div>
+                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">neurology</span><span class="text-xs uppercase tracking-widest">BERT + SVM AI</span></div>
+            </div>
+        </div>
     </div>
+</section>
 
-    <!-- Results -->
-    {% if result %}
-    <div class="result-section">
-
-        <!-- Verdict -->
-        <div class="verdict-card
-            {% if result.label == 'FAKE' %}card-fake
-            {% elif result.label == 'REAL' %}card-real
-            {% else %}card-uncertain{% endif %}">
-            <div>
-                <div class="verdict-label
-                    {% if result.label == 'FAKE' %}verdict-fake
-                    {% elif result.label == 'REAL' %}verdict-real
-                    {% else %}verdict-uncertain{% endif %}">
-                    {{ result.label }}
+<!-- Bento Grid Features -->
+<section class="py-24 px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- BERT Card - Large -->
+        <div class="md:col-span-8 glass-card rounded-2xl p-10 flex flex-col justify-between border border-white/5 relative overflow-hidden group">
+            <div class="relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">neurology</span>
                 </div>
-                <div style="font-size:0.7rem; letter-spacing:0.15em;
-                            color:var(--text-dim); margin-top:0.5rem;">
-                    AI CONFIDENCE LEVEL
-                </div>
+                <h3 class="text-3xl headline-font font-bold mb-4">BERT Neural Analysis</h3>
+                <p class="text-on-surface-variant max-w-md leading-relaxed">Utilizing Bidirectional Encoder Representations from Transformers to understand the deep semantic context and nuanced linguistic patterns of disinformation.</p>
             </div>
-            <div class="verdict-right">
-                <div class="confidence-pct">{{ result.confidence }}%</div>
-                <span class="confidence-lbl">{{ result.confidence_level }} CERTAINTY</span>
-                <div>
-                    <span class="model-badge
-                        {% if result.bert_ok %}badge-bert{% else %}badge-svm{% endif %}">
-                        {% if result.bert_ok %}🤖 BERT Active{% else %}⚙️ SVM Active{% endif %}
-                    </span>
-                </div>
+            <div class="absolute top-0 right-0 w-1/2 h-full -z-0 opacity-20 group-hover:opacity-40 transition-opacity">
+                <div class="absolute inset-0 bg-gradient-to-l from-primary/20 to-transparent"></div>
             </div>
         </div>
-
-        <!-- Two column -->
-        <div class="two-col">
-
-            <!-- Priority Engine -->
-            <div class="info-card">
-                <div class="card-title">⚡ Priority Engine Logic</div>
-                <div style="font-family:var(--font-mono); font-size:0.78rem;
-                            color:var(--blue); margin-bottom:1.2rem;">
-                    {{ result.decision_reason }}
+        <!-- SVM Card -->
+        <div class="md:col-span-4 bg-surface-container-high rounded-2xl p-10 border border-white/5 flex flex-col justify-center">
+            <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6">
+                <span class="material-symbols-outlined">data_exploration</span>
+            </div>
+            <h3 class="text-2xl headline-font font-bold mb-4">SVM Analysis</h3>
+            <p class="text-on-surface-variant text-sm leading-relaxed">Support Vector Machines categorize content based on historical veracity markers and 50,000+ vocabulary patterns.</p>
+        </div>
+        <!-- Credibility Card -->
+        <div class="md:col-span-4 bg-surface-container-low rounded-2xl p-10 border border-white/5">
+            <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6">
+                <span class="material-symbols-outlined">verified_user</span>
+            </div>
+            <h3 class="text-2xl headline-font font-bold mb-4">Credibility Score</h3>
+            <p class="text-on-surface-variant text-sm leading-relaxed">A proprietary veracity index providing an instant verdict on content integrity using source signals and evidence analysis.</p>
+        </div>
+        <!-- Veracity Layer Card -->
+        <div class="md:col-span-8 glass-card rounded-2xl p-10 border border-white/5 flex items-center gap-12 relative overflow-hidden">
+            <div class="flex-1">
+                <h3 class="text-3xl headline-font font-bold mb-4">The Veracity Layer</h3>
+                <p class="text-on-surface-variant leading-relaxed mb-6">Our system adds a thin layer of truth to the internet, scanning for inconsistencies before you share.</p>
+                <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden mb-2">
+                    <div class="h-full w-[84%] bg-gradient-to-r from-primary to-secondary glow-cyan"></div>
                 </div>
-                <div class="prob-row">
-                    <span class="prob-label">FAKE</span>
-                    <div class="prob-track">
-                        <div class="prob-fill fill-fake"
-                             style="width:{{ result.fake_prob }}%"></div>
-                    </div>
-                    <span class="prob-pct">{{ result.fake_prob }}%</span>
-                </div>
-                <div class="prob-row">
-                    <span class="prob-label">REAL</span>
-                    <div class="prob-track">
-                        <div class="prob-fill fill-real"
-                             style="width:{{ result.real_prob }}%"></div>
-                    </div>
-                    <span class="prob-pct">{{ result.real_prob }}%</span>
+                <div class="flex justify-between text-[10px] uppercase tracking-tighter font-bold text-secondary">
+                    <span>Deep Fake Detected</span><span>84% Confidence</span>
                 </div>
             </div>
-
-            <!-- Credibility -->
-            <div class="info-card">
-                <div class="card-title">🔍 Credibility Signals</div>
-                <div style="font-size:0.65rem; letter-spacing:0.15em;
-                            color:var(--text-dim); margin-bottom:0.4rem;">
-                    NET SCORE
-                </div>
-                <div class="net-score-value
-                    {% if result.net_score > 0 %}score-pos
-                    {% elif result.net_score < 0 %}score-neg
-                    {% else %}score-zero{% endif %}">
-                    {% if result.net_score > 0 %}+{% endif %}{{ result.net_score }}
-                </div>
-                {% if result.credibility_flags %}
-                <div style="margin-top:1rem;">
-                    {% for flag in result.credibility_flags[:4] %}
-                    <div class="cred-flag">⚠ {{ flag }}</div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-
         </div>
-
-        <!-- Model table -->
-        <div class="model-table-wrap">
-            <div class="card-title">⚖️ Model Details</div>
-            <table class="model-table">
-                <thead>
-                    <tr>
-                        <th>MODEL</th>
-                        <th>ROLE</th>
-                        <th>VERDICT</th>
-                        <th>FAKE %</th>
-                        <th>REAL %</th>
-                        <th>CONF %</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="{% if result.bert_ok %}{% else %}row-failed{% endif %}">
-                        <td>🤖 BERT</td>
-                        <td>
-                            {% if result.bert_ok %}
-                            <span class="role-pill pill-primary">PRIMARY</span>
-                            {% else %}
-                            <span class="role-pill pill-failed">FAILED</span>
-                            {% endif %}
-                        </td>
-                        <td class="{% if result.bert_ok %}{% if result.bert_label == 'FAKE' %}text-fake{% else %}text-real{% endif %}{% else %}text-muted{% endif %}">
-                            {{ result.bert_label if result.bert_ok else '—' }}
-                        </td>
-                        <td>{% if result.bert_ok %}{{ result.bert_fake }}%{% else %}—{% endif %}</td>
-                        <td>{% if result.bert_ok %}{{ result.bert_real }}%{% else %}—{% endif %}</td>
-                        <td>{% if result.bert_ok %}{{ result.bert_confidence }}%{% else %}—{% endif %}</td>
-                    </tr>
-                    <tr class="row-svm">
-                        <td>⚙️ SVM</td>
-                        <td>
-                            {% if not result.bert_ok %}
-                            <span class="role-pill pill-fallback">FALLBACK</span>
-                            {% else %}
-                            <span class="role-pill pill-secondary">SECONDARY</span>
-                            {% endif %}
-                        </td>
-                        <td class="{% if result.svm_label == 'FAKE' %}text-fake{% else %}text-real{% endif %}">
-                            {{ result.svm_label }}
-                        </td>
-                        <td>{{ result.svm_fake }}%</td>
-                        <td>{{ result.svm_real }}%</td>
-                        <td>{{ result.svm_confidence }}%</td>
-                    </tr>
-                    <tr class="row-final">
-                        <td>🎯 FINAL</td>
-                        <td><span class="role-pill pill-engine">DECISION ENGINE</span></td>
-                        <td class="{% if result.label == 'FAKE' %}text-fake{% elif result.label == 'REAL' %}text-real{% else %}text-uncertain{% endif %}">
-                            <strong>{{ result.label }}</strong>
-                        </td>
-                        <td>{{ result.fake_prob }}%</td>
-                        <td>{{ result.real_prob }}%</td>
-                        <td><strong>{{ result.confidence }}%</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Keywords -->
-        {% if result.keywords %}
-        <div class="info-card">
-            <div class="card-title">🔑 Key Signals Detected</div>
-            <div class="kw-wrap">
-                {% for kw in result.keywords %}
-                <span class="kw-tag">{{ kw }}</span>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Disclaimer -->
-        <div class="disclaimer">
-            Always verify important news from trusted sources like BBC, Reuters, or AP News.
-            AI analysis is not a substitute for human judgment.
-            · <a href="/metrics">Model Metrics</a>
-            · <a href="/logs">Prediction Logs</a>
-        </div>
-
     </div>
-    {% endif %}
+</section>
 
-    <!-- Recent checks -->
-    <div class="recent-section" id="recentSection" style="display:none;">
-        <div class="recent-title">Recent Checks</div>
-        <div id="recentList"></div>
+<!-- Trust Section -->
+<section class="py-24 bg-surface-container-lowest">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <span class="text-on-surface-variant/40 uppercase tracking-[0.3em] font-bold block mb-12 text-xs">Trusted by Forensics & Media Agencies</span>
+        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-4xl">news</span><span class="headline-font font-bold text-xl tracking-tighter">GlobalTimes</span></div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-4xl">security</span><span class="headline-font font-bold text-xl tracking-tighter">SENTRY.AI</span></div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-4xl">policy</span><span class="headline-font font-bold text-xl tracking-tighter">VERITAS</span></div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-4xl">gavel</span><span class="headline-font font-bold text-xl tracking-tighter">LegalNode</span></div>
+        </div>
     </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="site-footer">
-        <span>Aletheia © 2026</span>
-        <span>·</span>
-        <span>4-Layer Hybrid Decision Engine</span>
-        <span>·</span>
-        <span>BERT + SVM Ensemble</span>
-        <span>·</span>
-        <a href="/metrics" class="footer-link">MODEL METRICS</a>
-        <span>·</span>
-        <a href="/logs" class="footer-link">PREDICTION LOGS</a>
-    </footer>
+<!-- CTA -->
+<section class="py-32 px-6">
+    <div class="max-w-5xl mx-auto glass-card rounded-[2.5rem] p-16 text-center border border-white/10 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent -z-10"></div>
+        <h2 class="text-4xl md:text-5xl headline-font font-bold mb-6">Ready to clear the fog?</h2>
+        <p class="text-xl text-on-surface-variant mb-10 max-w-xl mx-auto">Join researchers and journalists using Aletheia to combat misinformation.</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/analyze" class="bg-primary text-on-primary font-bold px-10 py-4 rounded-2xl hover:scale-105 transition-transform glow-button">Get Started for Free</a>
+            <a href="/how-it-works" class="bg-white/5 border border-white/10 backdrop-blur-md text-on-surface font-bold px-10 py-4 rounded-2xl hover:bg-white/10 transition-all">How it Works</a>
+        </div>
+    </div>
+</section>
+</main>
 
-</div>
-
-<script>
-// ── Char counter ─────────────────────────────────────────
-const textarea  = document.getElementById('newsText');
-const charCount = document.getElementById('charCount');
-
-function updateCount() {
-    const text  = textarea.value;
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const chars = text.length;
-    charCount.textContent = `${words} words | ${chars.toLocaleString()} / 50,000 chars`;
-    charCount.style.color = chars > 45000 ? '#ff4757' : '';
-}
-textarea.addEventListener('input', updateCount);
-updateCount();
-
-// ── Loading animation ────────────────────────────────────
-const steps    = ['ls1','ls2','ls3','ls4'];
-const stepTexts = [
-    'SCANNING PATTERNS...',
-    'AUDITING CREDIBILITY...',
-    'CHECKING UNCERTAINTY...',
-    'GENERATING VERDICT...',
-];
-
-function showLoading() {
-    document.getElementById('loadingOverlay').style.display = 'flex';
-    document.getElementById('analyzeBtn').disabled = true;
-    steps.forEach(s => document.getElementById(s).classList.remove('active'));
-
-    let i = 0;
-    const interval = setInterval(() => {
-        if (i > 0) document.getElementById(steps[i-1]).classList.remove('active');
-        if (i < steps.length) {
-            document.getElementById(steps[i]).classList.add('active');
-            document.getElementById('loadingText').textContent = stepTexts[i];
-            i++;
-        } else {
-            clearInterval(interval);
-        }
-    }, 600);
-}
-
-document.getElementById('analysisForm')
-    .addEventListener('submit', showLoading);
-
-// ── Recent checks ────────────────────────────────────────
-{% if result %}
-try {
-    const history = JSON.parse(localStorage.getItem('aletheia_history') || '[]');
-    history.unshift({
-        label     : '{{ result.label }}',
-        confidence: '{{ result.confidence }}',
-        text      : '{{ text[:60]|replace("'", "") }}',
-        time      : new Date().toISOString(),
-    });
-    localStorage.setItem('aletheia_history',
-        JSON.stringify(history.slice(0, 5)));
-} catch(e) {}
-{% endif %}
-
-function loadRecent() {
-    try {
-        const history = JSON.parse(
-            localStorage.getItem('aletheia_history') || '[]'
-        );
-        if (!history.length) return;
-
-        const section = document.getElementById('recentSection');
-        const list    = document.getElementById('recentList');
-        section.style.display = 'block';
-        list.innerHTML = '';
-
-        history.forEach(item => {
-            const dot   = item.label === 'REAL' ? 'dot-real' :
-                          item.label === 'FAKE' ? 'dot-fake' : 'dot-uncertain';
-            const color = item.label === 'REAL' ? '#00ff88' :
-                          item.label === 'FAKE' ? '#ff4757' : '#ffa502';
-            const ago   = timeAgo(new Date(item.time));
-            list.innerHTML += `
-                <div class="recent-item">
-                    <div class="recent-dot ${dot}"></div>
-                    <span class="recent-label" style="color:${color}">
-                        ${item.label} (${item.confidence}%)
-                    </span>
-                    <span class="recent-text">${item.text}...</span>
-                    <span class="recent-time">${ago}</span>
-                </div>`;
-        });
-    } catch(e) {}
-}
-
-function timeAgo(date) {
-    const s = Math.floor((new Date() - date) / 1000);
-    if (s < 60)  return 'Just now';
-    if (s < 3600) return Math.floor(s/60) + 'm ago';
-    return Math.floor(s/3600) + 'h ago';
-}
-
-loadRecent();
-
-// ── Dark mode ─────────────────────────────────────────────
-const toggle = document.getElementById('darkToggle');
-if (localStorage.getItem('darkMode') === 'light') {
-    document.body.style.background = '#f0f2f5';
-    document.body.style.color = '#1a1a2e';
-    toggle.textContent = '☀️';
-}
-toggle.addEventListener('click', () => {
-    const isLight = document.body.style.background === 'rgb(240, 242, 245)';
-    if (isLight) {
-        document.body.style.background = '';
-        document.body.style.color = '';
-        toggle.textContent = '🌙';
-        localStorage.setItem('darkMode', 'dark');
-    } else {
-        document.body.style.background = '#f0f2f5';
-        document.body.style.color = '#1a1a2e';
-        toggle.textContent = '☀️';
-        localStorage.setItem('darkMode', 'light');
-    }
-});
-</script>
-
+<!-- Footer -->
+<footer class="bg-[#060e20] py-12 border-t border-white/5">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 w-full max-w-7xl mx-auto gap-8">
+        <div><span class="font-black text-blue-500 text-xl tracking-tighter headline-font">Aletheia</span><p class="text-xs font-light text-slate-500 max-w-[200px] mt-1">© 2026 Aletheia AI. The Veracity Layer.</p></div>
+        <div class="flex gap-8">
+            <a href="/analyze" class="text-xs text-slate-500 hover:text-white transition-colors">Analyze</a>
+            <a href="/how-it-works" class="text-xs text-slate-500 hover:text-white transition-colors">How it Works</a>
+            <a href="/about" class="text-xs text-slate-500 hover:text-white transition-colors">About</a>
+            <a href="/metrics" class="text-xs text-slate-500 hover:text-white transition-colors">Metrics</a>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

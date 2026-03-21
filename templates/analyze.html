@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Aletheia | Verify Truth</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
+    }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
+        .glass-panel { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); }
+        .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
+        .glow-pulse { box-shadow: 0 0 15px rgba(93,230,255,0.2); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-secondary/30">
+
+<!-- Fixed Navbar -->
+<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+    <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
+        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Home</a>
+            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg">Analyze</a>
+            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">How it Works</a>
+        </nav>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
+        </div>
+    </div>
+    <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
+</header>
+
+<main class="relative min-h-screen pt-20 overflow-hidden hero-gradient">
+    <div class="absolute top-40 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px]"></div>
+
+    <section class="max-w-7xl mx-auto px-8 py-20 lg:py-32 relative z-10">
+        <div class="flex flex-col items-center text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/15 mb-8">
+                <span class="w-2 h-2 rounded-full bg-secondary glow-pulse"></span>
+                <span class="text-xs uppercase tracking-widest font-medium text-on-surface-variant">Designed for journalists & analysts</span>
+            </div>
+            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight max-w-4xl" style="font-family:'Manrope',sans-serif;">
+                Before you believe it, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">verify it.</span>
+            </h1>
+            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-12">
+                Aletheia uses advanced AI models to analyze news credibility, detect misinformation, and reveal hidden biases in seconds.
+            </p>
+
+            <!-- Analysis Tool -->
+            <div class="w-full max-w-4xl">
+                <div class="glass-panel p-1 rounded-[1.6rem] border border-outline-variant/10 shadow-2xl relative">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-container/20 to-secondary/20 rounded-[1.6rem] blur opacity-30"></div>
+                    <div class="relative bg-surface-container-lowest rounded-2xl overflow-hidden p-6 border border-white/5">
+                        <form id="analysisForm" method="POST" action="/analyze">
+                            <div class="flex flex-col gap-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex gap-4">
+                                        <button type="button" onclick="document.getElementById('newsInput').value='The Federal Reserve raised interest rates by 0.25 percent to combat rising inflation amid global economic uncertainty.'" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors text-sm font-medium">
+                                            <span class="material-symbols-outlined text-secondary text-sm">history_edu</span> Try sample
+                                        </button>
+                                        <button type="button" onclick="document.getElementById('newsInput').value=''" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors text-sm font-medium">
+                                            <span class="material-symbols-outlined text-secondary text-sm">clear</span> Clear
+                                        </button>
+                                    </div>
+                                    <span id="charCount" class="text-xs text-on-surface-variant font-mono">0 / 50,000</span>
+                                </div>
+                                <textarea id="newsInput" name="news_text" rows="8"
+                                    class="w-full bg-surface-container-low/50 border border-outline-variant/20 rounded-2xl p-6 text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-secondary/30 resize-none text-sm leading-relaxed transition-all"
+                                    placeholder="Paste your news article, headline, or social media post here for forensic analysis...">{{ text if text else '' }}</textarea>
+                                {% if error %}
+                                <div class="bg-error-container/30 border border-error/30 rounded-xl p-4 text-error text-sm">⚠ {{ error }}</div>
+                                {% endif %}
+                                <div class="flex justify-between items-center pt-2">
+                                    <div class="flex items-center gap-4 text-xs text-on-surface-variant/60">
+                                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">lock</span> Private</span>
+                                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Instant</span>
+                                    </div>
+                                    <button id="analyzeBtn" type="submit"
+                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary-container/20 text-sm">
+                                        <span class="material-symbols-outlined text-sm">search</span>
+                                        Run Forensic Analysis
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="bg-[#060e20] w-full py-12 border-t border-white/5">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
+        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
+        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence. The Veracity Layer.</div>
+    </div>
+</footer>
+
+<script>
+const textarea = document.getElementById('newsInput');
+const charCount = document.getElementById('charCount');
+textarea.addEventListener('input', () => {
+    charCount.textContent = textarea.value.length.toLocaleString() + ' / 50,000';
+});
+
+// Load text from URL param if coming from home page
+const urlParams = new URLSearchParams(window.location.search);
+const urlText = urlParams.get('text');
+if (urlText) textarea.value = urlText;
+
+document.getElementById('analysisForm').addEventListener('submit', () => {
+    document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span> Analyzing...';
+    document.getElementById('analyzeBtn').disabled = true;
+});
+</script>
+</body>
+</html>

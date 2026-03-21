@@ -14,15 +14,15 @@ app = Flask(__name__)
 # ── Check HF Token ─────────────────────────────────────────
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
 if HF_TOKEN:
-    print(f"✅ HF_TOKEN loaded: {HF_TOKEN[:8]}...")
+    print(f"HF_TOKEN loaded: {HF_TOKEN[:8]}...")
 else:
-    print("⚠️  HF_TOKEN missing — will use SVM only")
+    print("HF_TOKEN missing - will use SVM only")
 
 # ── Load SVM (always loaded as fallback) ───────────────────
 try:
     from predict import load_model, predict as svm_predict
     svm_model, svm_vectorizer, svm_scaler = load_model()
-    print("✅ SVM loaded successfully")
+    print("SVM loaded successfully")
     SVM_OK = True
 except Exception as e:
     print(f"❌ SVM load failed: {e}")
@@ -279,8 +279,12 @@ def api_predict():
         }), 500
 
 
-@app.route("/", methods=["GET", "POST"])
-def index():
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/analyze", methods=["GET", "POST"])
+def analyze_page():
     result = None
     error  = None
     text   = ""
@@ -291,13 +295,23 @@ def index():
                 error = "Please enter at least 10 characters."
             else:
                 result = analyze(text)
+                # Redirect to report page with result
+                return render_template("report.html",
+                                       result=result, text=text)
         except Exception as e:
             import traceback
             traceback.print_exc()
             error = f"Analysis failed: {str(e)}"
-    return render_template("index.html",
+    return render_template("analyze.html",
                            result=result, text=text, error=error)
 
+@app.route("/how-it-works")
+def how_it_works():
+    return render_template("how_it_works.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 @app.route("/health")
 def health():

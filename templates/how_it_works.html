@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Aletheia | How it Works</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
+    }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
+        .glass-panel { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); }
+        .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-secondary/30">
+
+<!-- Fixed Navbar -->
+<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+    <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
+        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Home</a>
+            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Analyze</a>
+            <a href="/how-it-works" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg">How it Works</a>
+        </nav>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
+        </div>
+    </div>
+    <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
+</header>
+
+<main class="relative min-h-screen pt-32 pb-24 overflow-hidden hero-gradient">
+    <div class="max-w-7xl mx-auto px-8">
+        
+        <!-- Hero Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
+            <div>
+                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">The Veracity Layer</span>
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]" style="font-family:'Manrope',sans-serif;">
+                    The Science of <br/><span class="text-secondary">Certainty.</span>
+                </h1>
+                <p class="text-on-surface-variant text-lg font-light leading-relaxed max-w-lg">
+                    Aletheia utilizes advanced forensic linguistics and neural networking to strip away layers of digital deception, providing a clear window into factual integrity.
+                </p>
+            </div>
+            <div class="relative h-96 rounded-3xl overflow-hidden glass-panel border border-white/5 flex items-center justify-center group">
+                <div class="absolute inset-0 bg-gradient-to-tr from-secondary/10 to-primary/5"></div>
+                <!-- Abstract verification wave visual -->
+                <div class="flex items-end gap-1 h-32 px-12 w-full opacity-60">
+                    <div class="w-2 h-full bg-secondary rounded-t-sm group-hover:h-3/4 transition-all duration-700"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-1/2 group-hover:h-full transition-all duration-500"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-3/4 group-hover:h-1/3 transition-all duration-1000"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-1/3 group-hover:h-2/3 transition-all duration-300"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-full group-hover:h-1/2 transition-all duration-700"></div>
+                    <!-- repeating -->
+                    <div class="w-2 h-full bg-secondary rounded-t-sm group-hover:h-3/4 transition-all duration-700"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-1/2 group-hover:h-full transition-all duration-500 delay-75"></div>
+                    <div class="w-2 bg-secondary rounded-t-sm h-3/4 group-hover:h-1/3 transition-all duration-1000 delay-100"></div>
+                    <div class="w-2 bg-primary rounded-t-sm h-1/3 group-hover:h-2/3 transition-all duration-300"></div>
+                    <div class="w-2 bg-primary rounded-t-sm h-full group-hover:h-1/2 transition-all duration-700 delay-150"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3-Step Process Flow -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24 relative">
+            <div class="hidden md:block absolute top-12 left-20 right-20 h-0.5 bg-gradient-to-r from-primary-container/20 via-secondary/20 to-tertiary/20 z-0"></div>
+            
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover:-translate-y-2 transition-transform">
+                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6">
+                    <span class="material-symbols-outlined">text_snippet</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Input Text</h3>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                    Submit any article, transcript, or document. Our system ingests unstructured text for deep semantic parsing.
+                </p>
+            </div>
+
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover:-translate-y-2 transition-transform delay-75">
+                <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6">
+                    <span class="material-symbols-outlined">model_training</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">AI Analysis</h3>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                    Neural engines cross-reference logical consistency, sentiment variance, and factual anchor points against global datasets.
+                </p>
+            </div>
+
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover:-translate-y-2 transition-transform delay-150">
+                <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6">
+                    <span class="material-symbols-outlined">verified</span>
+                </div>
+                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Credibility Result</h3>
+                <p class="text-sm text-on-surface-variant leading-relaxed">
+                    Receive a weighted veracity score backed by forensic evidence, bias detection, and source credibility rankings.
+                </p>
+            </div>
+        </div>
+
+        <!-- Mission + Science Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24">
+            
+            <!-- Our Mission -->
+            <div class="glass-panel p-12 rounded-3xl border border-white/5 relative overflow-hidden">
+                <span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] text-white/[0.02] rotate-12">public</span>
+                <span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4 block">The Purpose</span>
+                <h2 class="text-4xl font-extrabold mb-6" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
+                <p class="text-on-surface-variant leading-relaxed max-w-sm">
+                    In an era of hyper-optimized misinformation, Aletheia aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
+                </p>
+            </div>
+
+            <!-- Science of Veracity Breakdown -->
+            <div class="bg-surface-container-low p-12 rounded-3xl border border-white/5 flex flex-col justify-center">
+                <h3 class="text-xl font-bold mb-8" style="font-family:'Manrope',sans-serif;">The Science of Veracity</h3>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-sm text-primary">polyline</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold mb-1">BERT Architecture</h4>
+                            <p class="text-xs text-on-surface-variant">Bidirectional Encoder Representations allow us to understand deep linguistic context and nuance in complex sentences.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-sm text-secondary">insights</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold mb-1">SVM Classification</h4>
+                            <p class="text-xs text-on-surface-variant">Support Vector Machines process high-dimensional features to classify text veracity with forensic precision.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="w-8 h-8 rounded-lg bg-tertiary/20 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-sm text-tertiary">fork_right</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold mb-1">Lexical Variance</h4>
+                            <p class="text-xs text-on-surface-variant">Analysis of vocabulary richness and stylistic patterns often associated with deceptive narratives.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Journalists & Analysts CTA -->
+                <div class="glass-panel p-10 rounded-2xl border border-white/5 md:col-span-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">For Journalists and Analysts</h3>
+                        <p class="text-xs text-on-surface-variant leading-relaxed mb-6">
+                            Empower your newsroom with industrial-grade fact-checking. Aletheia's API integrates directly into publishing workflows, flagging potential misinformation before it reaches the audience.
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="bg-secondary text-on-secondary px-4 py-2 rounded-xl text-xs font-bold hover:scale-105 transition-all w-full">Request Access</button>
+                        <button class="bg-surface-container-high px-4 py-2 rounded-xl text-xs font-bold hover:bg-surface-container-highest transition-all w-full">View API Docs</button>
+                    </div>
+                </div>
+                
+                <!-- Stat grids -->
+                <div class="md:col-span-2 grid grid-cols-2 gap-6">
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center">
+                        <div class="text-3xl lg:text-5xl font-black text-primary mb-2" style="font-family:'Manrope',sans-serif;">99.4%</div>
+                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Model Accuracy</div>
+                    </div>
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center">
+                        <div class="text-3xl lg:text-5xl font-black text-secondary mb-2" style="font-family:'Manrope',sans-serif;">&lt; 200ms</div>
+                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Analysis Latency</div>
+                    </div>
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center">
+                        <div class="text-3xl lg:text-5xl font-black text-tertiary mb-2" style="font-family:'Manrope',sans-serif;">50M+</div>
+                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Factual Anchors</div>
+                    </div>
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center">
+                        <div class="text-3xl lg:text-5xl font-black text-white mb-2" style="font-family:'Manrope',sans-serif;">24/7</div>
+                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Live Monitoring</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<footer class="bg-[#060e20] w-full py-12 border-t border-white/5">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
+        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
+        <div class="flex gap-8 mb-6 md:mb-0">
+            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Analyze</a>
+            <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Metrics</a>
+        </div>
+        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence.</div>
+    </div>
+</footer>
+</body>
+</html>
