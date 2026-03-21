@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Aletheia | Intelligence Report</title>
+    <title>VerifAI | Intelligence Report</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -72,25 +72,134 @@
 }
 .icon-glow { transition: all 0.3s ease; }
 .icon-glow:hover { filter: drop-shadow(0 0 8px rgba(93,230,255,0.8)); transform: scale(1.1) rotate(5deg); }
+
+/* Button ripple effect */
+.btn-interactive {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-interactive::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.05);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+}
+.btn-interactive:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+}
+.btn-interactive:hover::after { opacity: 1; }
+.btn-interactive:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Card hover glow border */
+.card-interactive {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: rgba(93,230,255,0.25);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(93,230,255,0.15),
+        0 0 30px rgba(93,230,255,0.08);
+}
+
+/* Nav link hover effect */
+.nav-hover {
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
+    transition: width 0.25s ease;
+    border-radius: 1px;
+}
+.nav-hover:hover::after  { width: 100%; }
+.nav-hover:hover { color: #5de6ff; }
+
+/* Icon bounce on hover */
+.icon-bounce {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.icon-bounce:hover { transform: scale(1.15) rotate(-5deg); }
+
+/* Pulse dot (live indicator) */
+.pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(93,230,255,0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(93,230,255,0); }
+}
     </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-secondary/30">
 
 <!-- Navbar -->
-<nav class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50 relative">
     <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
+        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400 headline-font">VerifAI</a>
         <div class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Home</a>
-            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-link-animated">Intelligence</a>
-            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">How it Works</a>
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Home</a>
+            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-hover">Intelligence</a>
+            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">How it Works</a>
         </div>
-        <div class="flex items-center gap-4">
-            <a href="/analyze" class="bg-gradient-to-r from-primary-container to-secondary text-white px-6 py-2 rounded-xl font-bold text-sm transition-all btn-pop">Verify New Source</a>
+        <div class="hidden md:flex items-center gap-4">
+            <button id="themeToggle" onclick="toggleTheme()"
+                    class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all hover:text-secondary icon-bounce"
+                    title="Toggle theme">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <a href="/analyze" class="bg-gradient-to-r from-primary-container to-secondary text-white px-6 py-2 rounded-xl font-bold text-sm transition-all btn-interactive">Verify New Source</a>
+        </div>
+        <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
+                onclick="toggleMenu()">
+            <span class="material-symbols-outlined" id="menuIcon">menu</span>
+        </button>
+    </div>
+    <!-- Mobile menu dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-[#0b1326]/95 backdrop-blur-xl border-b border-white/5 z-50">
+        <div class="flex flex-col px-8 py-6 gap-4">
+            <a href="/"            class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Home</a>
+            <a href="/analyze"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Analyze</a>
+            <a href="/how-it-works"class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">How it Works</a>
+            <a href="/about"       class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">About</a>
+            <a href="/metrics"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Metrics</a>
         </div>
     </div>
     <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
 </nav>
+
+<script>
+function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const icon = document.getElementById('menuIcon');
+    menu.classList.toggle('hidden');
+    icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+}
+
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const icon = document.querySelector('#themeToggle .material-symbols-outlined');
+    icon.textContent = document.documentElement.classList.contains('dark') ? 'dark_mode' : 'light_mode';
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.remove('dark');
+}
+</script>
 
 <main class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
 
@@ -98,18 +207,31 @@
     <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
             <span class="text-xs uppercase tracking-widest text-secondary font-semibold mb-2 block">
-                Analysis Result · {{ result.model_used }}
+                {% if result %}Analysis Result · {{ result.model_used }}{% else %}Analysis Result{% endif %}
             </span>
             <h1 class="text-5xl font-extrabold tracking-tight" style="font-family:'Manrope',sans-serif;">
                 Intelligence Report
             </h1>
         </div>
         <div class="flex gap-3">
-            <a href="/analyze" class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-6 py-3 rounded-2xl font-medium transition-all flex items-center gap-2 text-sm btn-pop">
+            <a href="/analyze" class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-6 py-3 rounded-2xl font-medium transition-all flex items-center gap-2 text-sm btn-interactive">
                 <span class="material-symbols-outlined text-sm">add</span> New Analysis
             </a>
         </div>
     </header>
+
+    {% if not result %}
+    <div class="glass-panel p-12 rounded-2xl border border-white/5 text-center fade-in-up">
+        <span class="material-symbols-outlined text-6xl text-on-surface-variant/50 mb-6 block">receipt_long</span>
+        <h2 class="text-2xl font-bold mb-4 font-headline">No Report Generated</h2>
+        <p class="text-on-surface-variant max-w-md mx-auto mb-8">
+            We couldn't find an analysis result. Please submit an article link or text snippet to generate an intelligence report.
+        </p>
+        <a href="/analyze" class="bg-gradient-to-r from-primary-container to-secondary text-white px-8 py-3 rounded-xl font-bold text-sm transition-all btn-interactive inline-block">
+            Start Analysis
+        </a>
+    </div>
+    {% else %}
 
     <!-- Main Bento Grid -->
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -118,7 +240,7 @@
         <div class="md:col-span-4 space-y-6">
 
             <!-- Verdict Card -->
-            <div class="glass-panel p-8 rounded-2xl border relative overflow-hidden group hover-glow {% if result.label == 'FAKE' %}border-error/10 glow-red{% elif result.label == 'REAL' %}border-secondary/10 glow-green{% else %}border-tertiary/10{% endif %}">
+            <div class="glass-panel p-8 rounded-2xl border relative overflow-hidden group card-interactive {% if result.label == 'FAKE' %}border-error/10 glow-red{% elif result.label == 'REAL' %}border-secondary/10 glow-green{% else %}border-tertiary/10{% endif %}">
                 <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl {% if result.label == 'FAKE' %}bg-error/10 group-hover:bg-error/20{% elif result.label == 'REAL' %}bg-secondary/10 group-hover:bg-secondary/20{% else %}bg-tertiary/10{% endif %} transition-all"></div>
                 <div class="relative z-10">
                     <div class="flex items-center justify-between mb-8">
@@ -150,7 +272,7 @@
             </div>
 
             <!-- Confidence Gauge -->
-            <div class="bg-surface-container-low p-8 rounded-2xl hover-glow">
+            <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
                 <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-8">Confidence Gauge</h3>
                 <div class="relative w-full h-40 flex items-end justify-center overflow-hidden">
                     <div class="absolute bottom-0 w-64 h-32 border-[12px] border-surface-container-highest rounded-t-full"></div>
@@ -174,7 +296,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 <!-- Probability Bars -->
-                <div class="bg-surface-container-low p-8 rounded-2xl hover-glow">
+                <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
                     <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Class Probability</h3>
                     <div class="space-y-6">
                         <div class="space-y-2">
@@ -199,7 +321,7 @@
                 </div>
 
                 <!-- Risk Indicators -->
-                <div class="bg-surface-container-low p-8 rounded-2xl hover-glow">
+                <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
                     <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Risk Indicators</h3>
                     <div class="flex flex-wrap gap-3">
                         {% if result.credibility_flags %}
@@ -232,7 +354,7 @@
             </div>
 
             <!-- Model Engine Breakdown -->
-            <div class="bg-surface-container-low p-8 rounded-2xl hover-glow">
+            <div class="bg-surface-container-low p-8 rounded-2xl card-interactive">
                 <div class="flex items-center justify-between mb-8">
                     <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold">Model Engine Breakdown</h3>
                     <div class="flex items-center gap-2 text-[10px] text-on-surface-variant">
@@ -281,7 +403,7 @@
         </div>
 
         <!-- Credibility Matrix -->
-        <div class="md:col-span-5 bg-surface-container-low p-8 rounded-2xl hover-glow">
+        <div class="md:col-span-5 bg-surface-container-low p-8 rounded-2xl card-interactive">
             <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-8">Credibility Matrix</h3>
             <div class="space-y-6">
                 <div class="space-y-3">
@@ -310,7 +432,7 @@
         </div>
 
         <!-- Content Forensics / Keywords -->
-        <div class="md:col-span-7 glass-panel p-8 rounded-2xl border border-white/5 hover-glow">
+        <div class="md:col-span-7 glass-panel p-8 rounded-2xl border border-white/5 card-interactive">
             <h3 class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-6">Content Forensics</h3>
             {% if result.keywords %}
             <div class="flex flex-wrap gap-3 mb-6">
@@ -337,17 +459,18 @@
             </div>
         </div>
 
+    {% endif %}
     </div>
 </main>
 
-<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 mt-12">
+<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 mt-auto relative z-10">
     <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
-        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
+        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0 headline-font">VerifAI Intelligence</div>
         <div class="flex gap-8 mb-6 md:mb-0">
-            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">New Analysis</a>
-            <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Metrics</a>
+            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors nav-hover">New Analysis</a>
+            <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors nav-hover">Metrics</a>
         </div>
-        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence.</div>
+        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 VerifAI Inc.</div>
     </div>
 </footer>
 </body>

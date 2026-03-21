@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Aletheia | Verify Truth</title>
+    <title>VerifAI | Verify Truth</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -70,25 +70,144 @@
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 8px 25px rgba(37,99,235,0.4);
 }
+
+/* Button ripple effect */
+.btn-interactive {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-interactive::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.05);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+}
+.btn-interactive:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+}
+.btn-interactive:hover::after { opacity: 1; }
+.btn-interactive:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Card hover glow border */
+.card-interactive {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: rgba(93,230,255,0.25);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(93,230,255,0.15),
+        0 0 30px rgba(93,230,255,0.08);
+}
+
+/* Nav link hover effect */
+.nav-hover {
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
+    transition: width 0.25s ease;
+    border-radius: 1px;
+}
+.nav-hover:hover::after  { width: 100%; }
+.nav-hover:hover { color: #5de6ff; }
+
+/* Icon bounce on hover */
+.icon-bounce {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.icon-bounce:hover { transform: scale(1.15) rotate(-5deg); }
+
+/* Pulse dot (live indicator) */
+.pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(93,230,255,0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(93,230,255,0); }
+}
+
+/* Fade in on load */
+@keyframes fadeInUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+.fade-delay-1 { animation-delay: 0.1s; opacity:0; }
+.fade-delay-2 { animation-delay: 0.2s; opacity:0; }
+.fade-delay-3 { animation-delay: 0.3s; opacity:0; }
+.fade-delay-4 { animation-delay: 0.4s; opacity:0; }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-secondary/30">
 
 <!-- Fixed Navbar -->
-<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50 relative">
     <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
+        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400 headline-font">VerifAI</a>
         <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Home</a>
-            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-link-animated">Analyze</a>
-            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">How it Works</a>
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Home</a>
+            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-hover">Analyze</a>
+            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">How it Works</a>
         </nav>
-        <div class="flex items-center gap-4">
-            <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
+        <div class="hidden md:flex items-center gap-4">
+            <button id="themeToggle" onclick="toggleTheme()"
+                    class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all hover:text-secondary icon-bounce"
+                    title="Toggle theme">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+        </div>
+        <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
+                onclick="toggleMenu()">
+            <span class="material-symbols-outlined" id="menuIcon">menu</span>
+        </button>
+    </div>
+    <!-- Mobile menu dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-[#0b1326]/95 backdrop-blur-xl border-b border-white/5 z-50">
+        <div class="flex flex-col px-8 py-6 gap-4">
+            <a href="/"            class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Home</a>
+            <a href="/analyze"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Analyze</a>
+            <a href="/how-it-works"class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">How it Works</a>
+            <a href="/about"       class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">About</a>
+            <a href="/metrics"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Metrics</a>
         </div>
     </div>
     <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
 </header>
+<script>
+function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const icon = document.getElementById('menuIcon');
+    menu.classList.toggle('hidden');
+    icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+}
+
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const icon = document.querySelector('#themeToggle .material-symbols-outlined');
+    icon.textContent = document.documentElement.classList.contains('dark') ? 'dark_mode' : 'light_mode';
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.remove('dark');
+}
+</script>
 
 <main class="relative min-h-screen pt-20 overflow-hidden hero-gradient">
     <div class="absolute top-40 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px]"></div>
@@ -96,15 +215,15 @@
 
     <section class="max-w-7xl mx-auto px-8 py-20 lg:py-32 relative z-10">
         <div class="flex flex-col items-center text-center mb-16">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/15 mb-8">
-                <span class="w-2 h-2 rounded-full bg-secondary glow-pulse"></span>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/15 mb-8 fade-in-up fade-delay-1">
+                <span class="w-2 h-2 rounded-full bg-secondary glow-pulse pulse-dot"></span>
                 <span class="text-xs uppercase tracking-widest font-medium text-on-surface-variant">Designed for journalists & analysts</span>
             </div>
-            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight max-w-4xl" style="font-family:'Manrope',sans-serif;">
+            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight max-w-4xl fade-in-up fade-delay-2" style="font-family:'Manrope',sans-serif;">
                 Before you believe it, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">verify it.</span>
             </h1>
-            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-12">
-                Aletheia uses advanced AI models to analyze news credibility, detect misinformation, and reveal hidden biases in seconds.
+            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-12 fade-in-up fade-delay-3">
+                VerifAI uses advanced AI models to analyze news credibility, detect misinformation, and reveal hidden biases in seconds.
             </p>
 
             <!-- Analysis Tool -->
@@ -137,7 +256,7 @@
                                         <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Instant</span>
                                     </div>
                                     <button id="analyzeBtn" type="submit"
-                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary-container/20 text-sm btn-pop">
+                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary-container/20 text-sm btn-interactive">
                                         <span class="material-symbols-outlined text-sm">search</span>
                                         Run Forensic Analysis
                                     </button>
@@ -151,18 +270,24 @@
     </section>
 </main>
 
-<footer class="bg-[#060e20] w-full py-12 border-t border-white/5">
-    <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
-        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
-        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence. The Veracity Layer.</div>
+<footer class="bg-[#060e20] py-12 border-t border-white/5 mt-auto w-full z-10 relative">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 w-full max-w-7xl mx-auto gap-8">
+        <div><span class="font-black text-blue-500 text-xl tracking-tighter headline-font">VerifAI</span><p class="text-xs font-light text-slate-500 max-w-[200px] mt-1">© 2026 VerifAI Inc. The Veracity Layer.</p></div>
+        <div class="flex gap-8">
+            <a href="/analyze" class="text-xs text-slate-500 hover:text-white transition-colors">Analyze</a>
+            <a href="/how-it-works" class="text-xs text-slate-500 hover:text-white transition-colors">How it Works</a>
+            <a href="/about" class="text-xs text-slate-500 hover:text-white transition-colors">About</a>
+            <a href="/metrics" class="text-xs text-slate-500 hover:text-white transition-colors">Metrics</a>
+        </div>
     </div>
 </footer>
 
 <script>
 const textarea = document.getElementById('newsInput');
 const charCount = document.getElementById('charCount');
-textarea.addEventListener('input', () => {
-    charCount.textContent = textarea.value.length.toLocaleString() + ' / 50,000';
+textarea.addEventListener('input', function() {
+    charCount.textContent = this.value.length.toLocaleString() + ' / 50,000';
+    this.classList.remove('border-error/50', 'ring-1', 'ring-error/30');
 });
 
 // Load text from URL param if coming from home page
@@ -193,9 +318,42 @@ function activateStep(index) {
     }
 }
 
-document.getElementById('analysisForm').addEventListener('submit', function() {
+function showToast(msg) {
+    document.getElementById('toastMsg').textContent = msg;
+    const toast = document.getElementById('toast');
+    toast.classList.remove('hidden');
+    toast.style.animation = 'slideUp 0.3s ease forwards';
+    setTimeout(() => hideToast(), 4000);
+}
+
+function hideToast() {
+    document.getElementById('toast').classList.add('hidden');
+}
+
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    const text = document.getElementById('newsInput').value.trim();
+    const words = text.split(/\s+/).filter(w => w.length > 0);
+
+    if (!text) {
+        e.preventDefault();
+        document.getElementById('newsInput').classList.add('border-error/50', 'ring-1', 'ring-error/30');
+        showToast('Please enter some text to analyze');
+        return;
+    }
+
+    if (words.length < 3) {
+        e.preventDefault();
+        document.getElementById('newsInput').classList.add('border-error/50', 'ring-1', 'ring-error/30');
+        showToast('Please enter at least 3 words for accurate analysis');
+        return;
+    }
+
+    document.getElementById('newsInput').classList.remove('border-error/50', 'ring-1', 'ring-error/30');
+
     document.getElementById('loadingOverlay').style.display = 'flex';
     document.getElementById('analyzeBtn').disabled = true;
+    document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span> Analyzing...';
+
     let i = 0;
     const interval = setInterval(() => {
         if (i < steps.length) { activateStep(i); i++; }
@@ -206,6 +364,7 @@ document.getElementById('analysisForm').addEventListener('submit', function() {
     window.addEventListener("pageshow", function(){
         document.getElementById('loadingOverlay').style.display = 'none';
         document.getElementById('analyzeBtn').disabled = false;
+        document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm">search</span> Run Forensic Analysis';
     });
 });
 </script>
@@ -267,8 +426,23 @@ document.getElementById('analysisForm').addEventListener('submit', function() {
     </div>
 </div>
 
+<!-- Toast HTML -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden">
+    <div class="flex items-center gap-3 bg-error-container/90 backdrop-blur-xl border border-error/30 text-on-error-container px-6 py-4 rounded-2xl shadow-2xl">
+        <span class="material-symbols-outlined text-error" style="font-variation-settings:'FILL' 1">error</span>
+        <span id="toastMsg" class="text-sm font-medium">Please enter text to analyze</span>
+        <button onclick="hideToast()" class="ml-2 text-on-surface-variant hover:text-white">
+            <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+    </div>
+</div>
+
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideUp {
+    from { opacity:0; transform:translate(-50%, 20px); }
+    to   { opacity:1; transform:translate(-50%, 0); }
+}
 </style>
 </body>
 </html>

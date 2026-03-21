@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Aletheia | How it Works</title>
+    <title>VerifAI | How it Works</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -71,25 +71,144 @@
 }
 .icon-glow { transition: all 0.3s ease; }
 .icon-glow:hover { filter: drop-shadow(0 0 8px rgba(93,230,255,0.8)); transform: scale(1.1) rotate(5deg); }
+
+/* Button ripple effect */
+.btn-interactive {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-interactive::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.05);
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+}
+.btn-interactive:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.35);
+}
+.btn-interactive:hover::after { opacity: 1; }
+.btn-interactive:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Card hover glow border */
+.card-interactive {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: rgba(93,230,255,0.25);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(93,230,255,0.15),
+        0 0 30px rgba(93,230,255,0.08);
+}
+
+/* Nav link hover effect */
+.nav-hover {
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
+    transition: width 0.25s ease;
+    border-radius: 1px;
+}
+.nav-hover:hover::after  { width: 100%; }
+.nav-hover:hover { color: #5de6ff; }
+
+/* Icon bounce on hover */
+.icon-bounce {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.icon-bounce:hover { transform: scale(1.15) rotate(-5deg); }
+
+/* Pulse dot (live indicator) */
+.pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(93,230,255,0.4); }
+    50%      { box-shadow: 0 0 0 6px rgba(93,230,255,0); }
+}
+
+/* Fade in on load */
+@keyframes fadeInUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+.fade-delay-1 { animation-delay: 0.1s; opacity:0; }
+.fade-delay-2 { animation-delay: 0.2s; opacity:0; }
+.fade-delay-3 { animation-delay: 0.3s; opacity:0; }
+.fade-delay-4 { animation-delay: 0.4s; opacity:0; }
     </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-secondary/30">
 
 <!-- Fixed Navbar -->
-<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50 relative">
     <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
+        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400 headline-font">VerifAI</a>
         <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Home</a>
-            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Analyze</a>
-            <a href="/how-it-works" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-link-animated">How it Works</a>
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Home</a>
+            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Analyze</a>
+            <a href="/how-it-works" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-hover">How it Works</a>
         </nav>
-        <div class="flex items-center gap-4">
-            <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
+        <div class="hidden md:flex items-center gap-4">
+            <button id="themeToggle" onclick="toggleTheme()"
+                    class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all hover:text-secondary icon-bounce"
+                    title="Toggle theme">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+        </div>
+        <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
+                onclick="toggleMenu()">
+            <span class="material-symbols-outlined" id="menuIcon">menu</span>
+        </button>
+    </div>
+    <!-- Mobile menu dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-[#0b1326]/95 backdrop-blur-xl border-b border-white/5 z-50">
+        <div class="flex flex-col px-8 py-6 gap-4">
+            <a href="/"            class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Home</a>
+            <a href="/analyze"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Analyze</a>
+            <a href="/how-it-works"class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">How it Works</a>
+            <a href="/about"       class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">About</a>
+            <a href="/metrics"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Metrics</a>
         </div>
     </div>
     <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
 </header>
+<script>
+function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const icon = document.getElementById('menuIcon');
+    menu.classList.toggle('hidden');
+    icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+}
+
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    const icon = document.querySelector('#themeToggle .material-symbols-outlined');
+    icon.textContent = document.documentElement.classList.contains('dark') ? 'dark_mode' : 'light_mode';
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.remove('dark');
+}
+</script>
 
 <main class="relative min-h-screen pt-32 pb-24 overflow-hidden hero-gradient">
     <div class="max-w-7xl mx-auto px-8">
@@ -98,11 +217,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
             <div>
                 <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">The Veracity Layer</span>
-                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]" style="font-family:'Manrope',sans-serif;">
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] fade-in-up md:max-w-xl" style="font-family:'Manrope',sans-serif;">
                     The Science of <br/><span class="text-secondary">Certainty.</span>
                 </h1>
-                <p class="text-on-surface-variant text-lg font-light leading-relaxed max-w-lg">
-                    Aletheia utilizes advanced forensic linguistics and neural networking to strip away layers of digital deception, providing a clear window into factual integrity.
+                <p class="text-on-surface-variant text-lg font-light leading-relaxed max-w-lg fade-in-up fade-delay-1">
+                    VerifAI utilizes advanced forensic linguistics and neural networking to strip away layers of digital deception, providing a clear window into factual integrity.
                 </p>
             </div>
             <div class="relative h-96 rounded-3xl overflow-hidden glass-panel border border-white/5 flex items-center justify-center group hover-glow">
@@ -125,11 +244,11 @@
         </div>
 
         <!-- 3-Step Process Flow -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24 relative">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24 relative fade-in-up fade-delay-2">
             <div class="hidden md:block absolute top-12 left-20 right-20 h-0.5 bg-gradient-to-r from-primary-container/20 via-secondary/20 to-tertiary/20 z-0"></div>
             
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover-glow">
-                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-glow">
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
+                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-bounce">
                     <span class="material-symbols-outlined">text_snippet</span>
                 </div>
                 <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Input Text</h3>
@@ -138,8 +257,8 @@
                 </p>
             </div>
 
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover-glow" style="transition-delay: 75ms">
-                <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6 icon-glow">
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
+                <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6 icon-bounce">
                     <span class="material-symbols-outlined">model_training</span>
                 </div>
                 <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">AI Analysis</h3>
@@ -148,8 +267,8 @@
                 </p>
             </div>
 
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 hover-glow" style="transition-delay: 150ms">
-                <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6 icon-glow">
+            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
+                <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6 icon-bounce">
                     <span class="material-symbols-outlined">verified</span>
                 </div>
                 <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Credibility Result</h3>
@@ -163,17 +282,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24">
             
             <!-- Our Mission -->
-            <div class="glass-panel p-12 rounded-3xl border border-white/5 relative overflow-hidden hover-glow">
+            <div class="glass-panel p-12 rounded-3xl border border-white/5 relative overflow-hidden card-interactive">
                 <span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] text-white/[0.02] rotate-12">public</span>
                 <span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4 block">The Purpose</span>
                 <h2 class="text-4xl font-extrabold mb-6" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
                 <p class="text-on-surface-variant leading-relaxed max-w-sm">
-                    In an era of hyper-optimized misinformation, Aletheia aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
+                    In an era of hyper-optimized misinformation, VerifAI aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
                 </p>
             </div>
 
             <!-- Science of Veracity Breakdown -->
-            <div class="bg-surface-container-low p-12 rounded-3xl border border-white/5 flex flex-col justify-center hover-glow">
+            <div class="bg-surface-container-low p-12 rounded-3xl border border-white/5 flex flex-col justify-center card-interactive">
                 <h3 class="text-xl font-bold mb-8" style="font-family:'Manrope',sans-serif;">The Science of Veracity</h3>
                 <div class="space-y-6">
                     <div class="flex gap-4">
@@ -209,34 +328,39 @@
             <!-- Stats -->
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Journalists & Analysts CTA -->
-                <div class="glass-panel p-10 rounded-2xl border border-white/5 md:col-span-1 flex flex-col justify-between hover-glow">
+                <div class="glass-panel p-10 rounded-2xl border border-white/5 md:col-span-1 flex flex-col justify-between card-interactive">
                     <div>
                         <h3 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">For Journalists and Analysts</h3>
                         <p class="text-xs text-on-surface-variant leading-relaxed mb-6">
-                            Empower your newsroom with industrial-grade fact-checking. Aletheia's API integrates directly into publishing workflows, flagging potential misinformation before it reaches the audience.
+                            Empower your newsroom with industrial-grade fact-checking. VerifAI's API integrates directly into publishing workflows, flagging potential misinformation before it reaches the audience.
                         </p>
                     </div>
-                    <div class="flex gap-3">
-                        <button class="bg-secondary text-on-secondary px-4 py-2 rounded-xl text-xs font-bold transition-all w-full btn-pop">Request Access</button>
-                        <button class="bg-surface-container-high px-4 py-2 rounded-xl text-xs font-bold hover:bg-surface-container-highest transition-all w-full btn-pop">View API Docs</button>
+                    <div class="flex flex-col gap-3">
+                        <button class="bg-secondary/40 text-on-secondary/80 px-4 py-3 rounded-xl text-xs font-bold transition-all w-full opacity-70 cursor-not-allowed relative" disabled>
+                            Request Access
+                            <span class="absolute -top-2 -right-2 bg-tertiary-container text-on-tertiary-container text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-lg">Soon</span>
+                        </button>
+                        <a href="/metrics/json" target="_blank" class="bg-surface-container-high px-4 py-3 rounded-xl text-xs font-bold hover:bg-surface-container-highest transition-all w-full btn-interactive text-center flex justify-center items-center">
+                            View API Docs ↗
+                        </a>
                     </div>
                 </div>
                 
                 <!-- Stat grids -->
                 <div class="md:col-span-2 grid grid-cols-2 gap-6">
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center hover-glow">
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
                         <div class="text-3xl lg:text-5xl font-black text-primary mb-2" style="font-family:'Manrope',sans-serif;">99.4%</div>
                         <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Model Accuracy</div>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center hover-glow">
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
                         <div class="text-3xl lg:text-5xl font-black text-secondary mb-2" style="font-family:'Manrope',sans-serif;">&lt; 200ms</div>
                         <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Analysis Latency</div>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center hover-glow">
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
                         <div class="text-3xl lg:text-5xl font-black text-tertiary mb-2" style="font-family:'Manrope',sans-serif;">50M+</div>
                         <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Factual Anchors</div>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center hover-glow">
+                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
                         <div class="text-3xl lg:text-5xl font-black text-white mb-2" style="font-family:'Manrope',sans-serif;">24/7</div>
                         <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Live Monitoring</div>
                     </div>
@@ -248,14 +372,14 @@
     </div>
 </main>
 
-<footer class="bg-[#060e20] w-full py-12 border-t border-white/5">
+<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 mt-auto relative z-10">
     <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
-        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
+        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0 headline-font">VerifAI Intelligence</div>
         <div class="flex gap-8 mb-6 md:mb-0">
             <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Analyze</a>
             <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Metrics</a>
         </div>
-        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence.</div>
+        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 VerifAI Inc. The Veracity Layer.</div>
     </div>
 </footer>
 </body>

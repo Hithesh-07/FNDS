@@ -309,6 +309,11 @@ def analyze_page():
 def how_it_works():
     return render_template("how_it_works.html")
 
+@app.route("/how_it_works")
+def how_it_works_redirect():
+    from flask import redirect
+    return redirect("/how-it-works", code=301)
+
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -320,11 +325,30 @@ def health():
 
 @app.route("/metrics")
 def metrics():
+    # Return proper metrics page not JSON
+    metrics_data = {
+        "bert_model"     : "Monk3ydluffy/truthlens-bert",
+        "bert_accuracy"  : "99.2%",
+        "svm_accuracy"   : "98.2%",
+        "training_data"  : "44,000+ articles",
+        "layers"         : "4 (BERT + SVM + Credibility + Decision Engine)",
+        "ngram_range"    : "1-3",
+        "tfidf_features" : "50,000",
+        "dataset_sources": "ISOT + Kaggle + FakeNet",
+    }
+    return render_template("metrics.html", metrics=metrics_data)
+
+# Also keep JSON endpoint for API users
+@app.route("/metrics/json")
+def metrics_json():
+    import json
     return jsonify([{
-        "model_type"    : "BERT Primary + SVM Fallback",
-        "bert_model"    : "Arko007/fake-news-roberta-5M (99.28%)",
+        "timestamp"     : "2026-03-18 15:04:00",
+        "model_type"    : "BERT Primary + SVM Ensemble Fallback",
+        "bert_model"    : "Monk3ydluffy/truthlens-bert (99.2%)",
         "svm_accuracy"  : 98.2,
-        "bert_accuracy" : 99.28,
+        "bert_accuracy" : 99.2,
+        "dataset_size"  : 44000,
         "architecture"  : "BERT → SVM Fallback → Decision Engine",
     }])
 
