@@ -5,71 +5,290 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Aletheia | About</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
-    }
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#040b16',
+              surface: '#0a1428',
+              'surface-container-low': '#111b33',
+              'surface-container': '#182441',
+              'surface-container-high': '#1f2d50',
+              'surface-container-highest': '#273760',
+              'on-surface': '#e2e8f0',
+              'on-surface-variant': '#94a3b8',
+              outline: '#334155',
+              'outline-variant': '#1e293b',
+              primary: '#3b82f6',
+              'on-primary': '#ffffff',
+              'primary-container': '#1d4ed8',
+              'on-primary-container': '#eff6ff',
+              secondary: '#14b8a6',
+              tertiary: '#8b5cf6',
+              error: '#ef4444',
+            }
+          }
+        }
+      }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
-        .glass-panel { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); }
-        .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { font-family:'Inter',sans-serif; background:#0b1326; display:flex; flex-direction:column; min-height:100vh; }
+        main { flex: 1; }
+        .glass-card { background:rgba(45,52,73,0.4); backdrop-filter:blur(24px); }
+        .hover-glow { transition:all 0.3s ease; }
+        .hover-glow:hover { transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(93,230,255,0.2); }
+        .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
     </style>
 </head>
-<body class="bg-background text-on-surface font-body selection:bg-secondary/30">
+<body class="bg-background text-on-surface">
 
-<!-- Fixed Navbar -->
-<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50">
+<!-- Navbar (same as all pages) -->
+<nav class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl border-b border-white/5">
     <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
         <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
         <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Home</a>
-            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Analyze</a>
-            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">How it Works</a>
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Home</a>
+            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Analyze</a>
+            <a href="/how_it_works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">How it Works</a>
+            <a href="/about" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-link-animated">About</a>
         </nav>
-        <div class="flex items-center gap-4">
-            <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
-        </div>
     </div>
-    <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
-</header>
+</nav>
 
-<main class="relative min-h-screen pt-32 pb-24 overflow-hidden hero-gradient">
-    <div class="max-w-4xl mx-auto px-8 text-center">
-        <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">About Us</span>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6" style="font-family:'Manrope',sans-serif;">
-            Protecting the<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Open Web.</span>
+<main class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+
+    <!-- Hero -->
+    <div class="text-center mb-20 fade-in-up">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-container/10 blur-[120px] rounded-full -z-10 float-anim"></div>
+        <span class="text-xs uppercase tracking-widest text-secondary font-semibold mb-4 block">Independent Research Project</span>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight" style="font-family:'Manrope',sans-serif;">
+            Protecting the<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Open Web.</span>
         </h1>
-        <p class="text-on-surface-variant text-lg font-light leading-relaxed mb-12">
+        <p class="text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
             Aletheia is an independent research project dedicated to building AI tools that combat the spread of systemic misinformation and fabricated content.
         </p>
+    </div>
 
-        <div class="glass-panel p-12 rounded-3xl border border-white/5 text-left mb-12">
+    <!-- Cards grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+
+        <!-- Team card -->
+        <div class="glass-card rounded-2xl p-10 border border-white/5 hover-glow fade-in-up">
+            <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-glow">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">group</span>
+            </div>
             <h2 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">The Team</h2>
-            <p class="text-on-surface-variant mb-6 leading-relaxed">
+            <p class="text-on-surface-variant leading-relaxed mb-4">
                 We are a small team of machine learning engineers and journalists who believe that AI can be used to protect rather than pollute the digital ecosystem.
             </p>
-            <h2 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">Open Source Core</h2>
             <p class="text-on-surface-variant leading-relaxed">
-                The core analytical engine behind Aletheia relies on fine-tuned open-source language models. The platform is designed to offer a verifiable "Veracity Layer" on top of unverified claims across the globe.
+                The platform is designed to offer a verifiable "Veracity Layer" on top of unverified claims across the globe.
             </p>
         </div>
+
+        <!-- Mission card -->
+        <div class="bg-surface-container-high rounded-2xl p-10 border border-white/5 hover-glow fade-in-up">
+            <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6 icon-glow">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">target</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
+            <p class="text-on-surface-variant leading-relaxed mb-4">
+                In an era of hyper-optimized disinformation, Aletheia aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem.
+            </p>
+            <p class="text-on-surface-variant leading-relaxed">
+                Where facts are verifiable and accountability is algorithmic.
+            </p>
+        </div>
+
+        <!-- Tech card -->
+        <div class="bg-surface-container-low rounded-2xl p-10 border border-white/5 hover-glow fade-in-up">
+            <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6 icon-glow">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">neurology</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">The Technology</h2>
+            <div class="space-y-3 text-on-surface-variant text-sm">
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span>
+                    <span>BERT (RoBERTa) fine-tuned on <span class="stat-animate inline-block">44,000+</span> news articles</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span>
+                    <span>SVM Ensemble — LinearSVC + Logistic Regression + PAC</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span>
+                    <span>4-Layer Decision Engine with credibility scoring</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span>
+                    <span>Uncertainty detection with hedge word analysis</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0"></span>
+                    <span>Published model at huggingface.co/Monk3ydluffy/truthlens-bert</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats card -->
+        <div class="glass-card rounded-2xl p-10 border border-white/5 hover-glow fade-in-up">
+            <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-glow">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">analytics</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-6" style="font-family:'Manrope',sans-serif;">Project Stats</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-surface-container-highest/50 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-black text-secondary stat-animate" style="font-family:'Manrope',sans-serif;">99.2%</div>
+                    <div class="text-xs text-on-surface-variant mt-1">BERT Accuracy</div>
+                </div>
+                <div class="bg-surface-container-highest/50 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-black text-primary stat-animate" style="font-family:'Manrope',sans-serif;">98.2%</div>
+                    <div class="text-xs text-on-surface-variant mt-1">SVM Accuracy</div>
+                </div>
+                <div class="bg-surface-container-highest/50 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-black text-tertiary stat-animate" style="font-family:'Manrope',sans-serif;">44K+</div>
+                    <div class="text-xs text-on-surface-variant mt-1">Training Articles</div>
+                </div>
+                <div class="bg-surface-container-highest/50 rounded-xl p-4 text-center">
+                    <div class="text-2xl font-black text-secondary stat-animate" style="font-family:'Manrope',sans-serif;">4</div>
+                    <div class="text-xs text-on-surface-variant mt-1">AI Layers</div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- College project note -->
+    <div class="bg-surface-container-low rounded-2xl p-8 border border-white/5 text-center hover-glow fade-in-up">
+        <span class="material-symbols-outlined text-primary text-3xl mb-4 block icon-glow">school</span>
+        <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Academic Project</h3>
+        <p class="text-on-surface-variant max-w-lg mx-auto text-sm leading-relaxed">
+            This is a 2nd year AI/ML college project built to demonstrate real-world application of Natural Language Processing, deep learning, and intelligent decision systems in the fight against misinformation.
+        </p>
+        <div class="mt-6 flex justify-center gap-4">
+            <a href="/analyze" class="bg-gradient-to-r from-primary-container to-secondary text-white font-bold px-8 py-3 rounded-2xl transition-all text-sm btn-pop">
+                Try Aletheia →
+            </a>
+            <a href="https://huggingface.co/Monk3ydluffy/truthlens-bert" target="_blank"
+               class="bg-surface-container-high border border-white/10 text-on-surface font-bold px-8 py-3 rounded-2xl hover:bg-surface-container-highest transition-all text-sm btn-pop">
+                View on HuggingFace ↗
+            </a>
+        </div>
+    </div>
+
 </main>
 
-<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 absolute bottom-0 w-full">
+<!-- Footer -->
+<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 relative z-10">
     <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
         <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0">Aletheia Intelligence</div>
         <div class="flex gap-8 mb-6 md:mb-0">
-            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Analyze</a>
-            <a href="/how-it-works" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">How it Works</a>
+            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors nav-link-animated">Analyze</a>
+            <a href="/how_it_works" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors nav-link-animated">How it Works</a>
+            <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors nav-link-animated">Metrics</a>
         </div>
         <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 Aletheia Intelligence.</div>
     </div>
 </footer>
+
+<style>
+/* ── Hover glow effects ─────────────────────────────── */
+
+/* Card hover glow */
+.hover-glow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border-radius: 1rem;
+}
+.hover-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(180,197,255,0.1), rgba(93,230,255,0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.hover-glow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(93,230,255,0.2),
+                0 0 30px rgba(93,230,255,0.1);
+}
+.hover-glow:hover::after { opacity: 1; }
+
+/* Nav link hover underline slide */
+.nav-link-animated {
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-link-animated::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+.nav-link-animated:hover::after { width: 100%; }
+.nav-link-animated:hover { color: #5de6ff; }
+
+/* Button pop */
+.btn-pop {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+.btn-pop:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+}
+
+/* Icon glow on hover */
+.icon-glow {
+    transition: all 0.3s ease;
+}
+.icon-glow:hover {
+    filter: drop-shadow(0 0 8px rgba(93,230,255,0.8));
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Stat number counter animation */
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.stat-animate {
+    animation: countUp 0.6s ease forwards;
+}
+
+/* Fade in up for sections */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.7s ease forwards;
+}
+.fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-up:nth-child(4) { animation-delay: 0.4s; }
+
+/* Particle float animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-10px); }
+}
+.float-anim { animation: float 4s ease-in-out infinite; }
+</style>
 </body>
 </html>

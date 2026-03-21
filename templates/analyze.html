@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Aletheia | Verify Truth</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -19,6 +20,56 @@
         .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
         .glow-pulse { box-shadow: 0 0 15px rgba(93,230,255,0.2); }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+/* ── Hover glow effects ─────────────────────────────── */
+.hover-glow {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border-radius: inherit;
+}
+.hover-glow::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(180,197,255,0.1), rgba(93,230,255,0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.hover-glow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(93,230,255,0.2),
+                0 0 30px rgba(93,230,255,0.1);
+}
+.hover-glow:hover::after { opacity: 1; }
+
+.nav-link-animated {
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-link-animated::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+.nav-link-animated:hover::after { width: 100%; }
+.nav-link-animated:hover { color: #5de6ff; }
+
+.btn-pop {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+.btn-pop:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+}
     </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-secondary/30">
@@ -28,9 +79,9 @@
     <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
         <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400">Aletheia</a>
         <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">Home</a>
-            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg">Analyze</a>
-            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg">How it Works</a>
+            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">Home</a>
+            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-link-animated">Analyze</a>
+            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-link-animated">How it Works</a>
         </nav>
         <div class="flex items-center gap-4">
             <button class="p-2 text-slate-400 hover:bg-white/5 rounded-lg transition-all"><span class="material-symbols-outlined">settings</span></button>
@@ -58,7 +109,7 @@
 
             <!-- Analysis Tool -->
             <div class="w-full max-w-4xl">
-                <div class="glass-panel p-1 rounded-[1.6rem] border border-outline-variant/10 shadow-2xl relative">
+                <div class="glass-panel p-1 rounded-[1.6rem] border border-outline-variant/10 shadow-2xl relative hover-glow">
                     <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-container/20 to-secondary/20 rounded-[1.6rem] blur opacity-30"></div>
                     <div class="relative bg-surface-container-lowest rounded-2xl overflow-hidden p-6 border border-white/5">
                         <form id="analysisForm" method="POST" action="/analyze">
@@ -86,7 +137,7 @@
                                         <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Instant</span>
                                     </div>
                                     <button id="analyzeBtn" type="submit"
-                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary-container/20 text-sm">
+                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary-container/20 text-sm btn-pop">
                                         <span class="material-symbols-outlined text-sm">search</span>
                                         Run Forensic Analysis
                                     </button>
@@ -119,10 +170,105 @@ const urlParams = new URLSearchParams(window.location.search);
 const urlText = urlParams.get('text');
 if (urlText) textarea.value = urlText;
 
-document.getElementById('analysisForm').addEventListener('submit', () => {
-    document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span> Analyzing...';
+const steps = [
+    { id: 'step_1', headline: 'Running BERT Neural Analysis...', sub: 'Deep semantic context processing', pct: 25 },
+    { id: 'step_2', headline: 'SVM Pattern Recognition...', sub: 'Scanning 50,000+ vocabulary patterns', pct: 50 },
+    { id: 'step_3', headline: 'Auditing Credibility Signals...', sub: 'Checking source reliability markers', pct: 75 },
+    { id: 'step_4', headline: 'Generating Intelligence Report...', sub: 'Compiling final verdict', pct: 95 },
+];
+
+function activateStep(index) {
+    const el = document.getElementById(steps[index].id);
+    el.classList.remove('opacity-30');
+    el.classList.add('opacity-100');
+    el.style.borderLeft = '2px solid rgba(93,230,255,0.5)';
+    el.style.paddingLeft = '8px';
+    document.getElementById('loadingHeadline').textContent = steps[index].headline;
+    document.getElementById('loadingSubtext').textContent  = steps[index].sub;
+    document.getElementById('loadingProgress').style.width = steps[index].pct + '%';
+    document.getElementById('loadingPct').textContent      = steps[index].pct + '%';
+    if (index > 0) {
+        const prev = document.getElementById(steps[index-1].id);
+        prev.querySelector('.step-check').classList.remove('hidden');
+    }
+}
+
+document.getElementById('analysisForm').addEventListener('submit', function() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
     document.getElementById('analyzeBtn').disabled = true;
+    let i = 0;
+    const interval = setInterval(() => {
+        if (i < steps.length) { activateStep(i); i++; }
+        else clearInterval(interval);
+    }, 700);
+
+    // clear loading state on pageshow (when user clicks back button)
+    window.addEventListener("pageshow", function(){
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('analyzeBtn').disabled = false;
+    });
 });
 </script>
+
+<!-- Epic Loading Overlay -->
+<div id="loadingOverlay" style="display:none;"
+     class="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex-col items-center justify-center gap-8">
+
+    <!-- Animated radar/scanner -->
+    <div class="relative w-32 h-32">
+        <div class="absolute inset-0 rounded-full border-2 border-secondary/20 animate-ping"></div>
+        <div class="absolute inset-4 rounded-full border-2 border-primary/30" style="animation: spin 3s linear infinite;"></div>
+        <div class="absolute inset-8 rounded-full border-2 border-secondary/50" style="animation: spin 1.5s linear infinite reverse;"></div>
+        <div class="absolute inset-14 rounded-full bg-secondary" style="animation: pulse 1s ease-in-out infinite; box-shadow: 0 0 20px rgba(93,230,255,0.8);"></div>
+        <div class="absolute inset-0 rounded-full overflow-hidden">
+            <div class="absolute top-1/2 left-1/2 w-full h-0.5 origin-left bg-gradient-to-r from-secondary to-transparent" style="animation: spin 2s linear infinite;"></div>
+        </div>
+    </div>
+
+    <!-- Typewriter headline -->
+    <div class="text-center">
+        <h2 class="text-2xl font-bold tracking-tight mb-2" style="font-family:'Manrope',sans-serif;" id="loadingHeadline">Initializing Analysis...</h2>
+        <p class="text-on-surface-variant text-sm" id="loadingSubtext">Preparing forensic engines</p>
+    </div>
+
+    <!-- Step progress -->
+    <div class="flex flex-col gap-3 w-full max-w-sm">
+        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_1">
+            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">neurology</span></div>
+            <div><div class="text-sm font-medium">BERT Neural Analysis</div><div class="text-xs text-on-surface-variant">Deep semantic processing</div></div>
+            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
+        </div>
+        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_2">
+            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">data_exploration</span></div>
+            <div><div class="text-sm font-medium">SVM Pattern Match</div><div class="text-xs text-on-surface-variant">50,000+ vocabulary scan</div></div>
+            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
+        </div>
+        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_3">
+            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">verified_user</span></div>
+            <div><div class="text-sm font-medium">Credibility Audit</div><div class="text-xs text-on-surface-variant">Source signal analysis</div></div>
+            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
+        </div>
+        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_4">
+            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">gavel</span></div>
+            <div><div class="text-sm font-medium">Final Verdict</div><div class="text-xs text-on-surface-variant">Generating intelligence report</div></div>
+            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
+        </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="w-full max-w-sm">
+        <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
+            <div id="loadingProgress" class="h-full bg-gradient-to-r from-primary-container to-secondary rounded-full transition-all duration-700" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between mt-2">
+            <span class="text-xs text-on-surface-variant" id="loadingPct">0%</span>
+            <span class="text-xs text-on-surface-variant">Forensic Analysis</span>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </body>
 </html>
