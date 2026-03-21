@@ -291,162 +291,127 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <main class="relative min-h-screen pt-32 pb-24 overflow-hidden hero-gradient">
-    <div class="max-w-7xl mx-auto px-8">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
         
-        <!-- Hero Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
-            <div>
-                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">The Veracity Layer</span>
-                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] fade-in-up md:max-w-xl" style="font-family:'Manrope',sans-serif;">
-                    The Science of <br/><span class="text-secondary">Certainty.</span>
-                </h1>
-                <p class="text-on-surface-variant text-lg font-light leading-relaxed max-w-lg fade-in-up fade-delay-1">
-                    VerifAI utilizes advanced forensic linguistics and neural networking to strip away layers of digital deception, providing a clear window into factual integrity.
-                </p>
-            </div>
-            <div class="relative h-96 rounded-3xl overflow-hidden glass-panel border border-white/5 flex items-center justify-center group hover-glow">
-                <div class="absolute inset-0 bg-gradient-to-tr from-secondary/10 to-primary/5"></div>
-                <!-- Abstract verification wave visual -->
-                <div class="flex items-end gap-1 h-32 px-12 w-full opacity-60">
-                    <div class="w-2 h-full bg-secondary rounded-t-sm group-hover:h-3/4 transition-all duration-700"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-1/2 group-hover:h-full transition-all duration-500"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-3/4 group-hover:h-1/3 transition-all duration-1000"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-1/3 group-hover:h-2/3 transition-all duration-300"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-full group-hover:h-1/2 transition-all duration-700"></div>
-                    <!-- repeating -->
-                    <div class="w-2 h-full bg-secondary rounded-t-sm group-hover:h-3/4 transition-all duration-700"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-1/2 group-hover:h-full transition-all duration-500 delay-75"></div>
-                    <div class="w-2 bg-secondary rounded-t-sm h-3/4 group-hover:h-1/3 transition-all duration-1000 delay-100"></div>
-                    <div class="w-2 bg-primary rounded-t-sm h-1/3 group-hover:h-2/3 transition-all duration-300"></div>
-                    <div class="w-2 bg-primary rounded-t-sm h-full group-hover:h-1/2 transition-all duration-700 delay-150"></div>
-                </div>
-            </div>
+        <!-- Hero Section (Centered) -->
+        <div class="text-center mb-24 max-w-4xl mx-auto">
+            <span class="text-[10px] uppercase tracking-[0.3em] font-bold text-secondary mb-6 block fade-in-up">Forensic Methodology</span>
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] fade-in-up fade-delay-1 text-on-surface" style="font-family:'Manrope',sans-serif;">
+                The Science of Certainty.
+            </h1>
+            <p class="text-on-surface-variant text-lg md:text-xl font-light leading-relaxed fade-in-up fade-delay-2 mx-auto">
+                Behind every verification is a multi-layered forensic architecture. We don't just detect—we dissect lexical DNA to isolate the markers of synthesized intent.
+            </p>
         </div>
 
         <!-- 3-Step Process Flow -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24 relative fade-in-up fade-delay-2">
-            <div class="hidden md:block absolute top-12 left-20 right-20 h-0.5 bg-gradient-to-r from-primary-container/20 via-secondary/20 to-tertiary/20 z-0"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32 relative fade-in-up fade-delay-3">
+            <div class="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-secondary/30 to-transparent z-0"></div>
             
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
-                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-bounce">
-                    <span class="material-symbols-outlined">text_snippet</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Input Text</h3>
+            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
+                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">01</div>
+                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">Input Text</h3>
                 <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Submit any article, transcript, or document. Our system ingests unstructured text for deep semantic parsing.
+                    Ingestion of suspect URL or raw text into isolating chambers for deep semantic parsing and initial heuristic checks.
                 </p>
             </div>
 
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
-                <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6 icon-bounce">
-                    <span class="material-symbols-outlined">model_training</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">AI Analysis</h3>
+            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
+                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">02</div>
+                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">AI Analysis</h3>
                 <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Neural engines cross-reference logical consistency, sentiment variance, and factual anchor points against global datasets.
+                    Parallel processing through BERT transformers and SVM classifiers to detect systemic logic flaws and synthetic phrasing.
                 </p>
             </div>
 
-            <div class="glass-panel p-8 rounded-2xl border border-white/5 relative z-10 card-interactive">
-                <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6 icon-bounce">
-                    <span class="material-symbols-outlined">verified</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3" style="font-family:'Manrope',sans-serif;">Credibility Result</h3>
+            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
+                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">03</div>
+                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">Credibility Result</h3>
                 <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Receive a weighted veracity score backed by forensic evidence, bias detection, and source credibility rankings.
+                    Synthesis of confidence indexes into a unified veracity report, highlighting specific manipulated indicators.
                 </p>
             </div>
         </div>
 
-        <!-- Mission + Science Bento Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24">
-            
-            <!-- Our Mission -->
-            <div class="glass-panel p-12 rounded-3xl border border-white/5 relative overflow-hidden card-interactive">
-                <span class="material-symbols-outlined absolute -top-10 -right-10 text-[200px] text-white/[0.02] rotate-12">public</span>
+        <!-- Mission Section (Full Width Card) -->
+        <div class="mb-32 fade-in-up fade-delay-4">
+            <div class="glass-panel p-12 md:p-16 rounded-[2.5rem] border border-white/5 relative overflow-hidden card-interactive bg-[#131b2e]">
+                <!-- Decorative background elements -->
+                <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 blur-[100px] rounded-full"></div>
+                
                 <span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4 block">The Purpose</span>
-                <h2 class="text-4xl font-extrabold mb-6" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
-                <p class="text-on-surface-variant leading-relaxed max-w-sm">
-                    In an era of hyper-optimized misinformation, VerifAI aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
-                </p>
-            </div>
-
-            <!-- Science of Veracity Breakdown -->
-            <div class="bg-surface-container-low p-12 rounded-3xl border border-white/5 flex flex-col justify-center card-interactive">
-                <h3 class="text-xl font-bold mb-8" style="font-family:'Manrope',sans-serif;">The Science of Veracity</h3>
-                <div class="space-y-6">
-                    <div class="flex gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-sm text-primary">polyline</span>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold mb-1">BERT Architecture</h4>
-                            <p class="text-xs text-on-surface-variant">Bidirectional Encoder Representations allow us to understand deep linguistic context and nuance in complex sentences.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-sm text-secondary">insights</span>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold mb-1">SVM Classification</h4>
-                            <p class="text-xs text-on-surface-variant">Support Vector Machines process high-dimensional features to classify text veracity with forensic precision.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-tertiary/20 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-sm text-tertiary">fork_right</span>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold mb-1">Lexical Variance</h4>
-                            <p class="text-xs text-on-surface-variant">Analysis of vocabulary richness and stylistic patterns often associated with deceptive narratives.</p>
-                        </div>
-                    </div>
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-8 text-on-surface" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                    <p class="text-on-surface-variant text-lg leading-relaxed">
+                        In an era of hyper-optimized misinformation, VerifAI aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
+                    </p>
+                    <p class="text-on-surface-variant text-lg leading-relaxed">
+                        By democratizing access to military-grade linguistic forensics, we empower journalists, researchers, and the public to filter out manufactured narratives before they take root in societal discourse.
+                    </p>
                 </div>
             </div>
+        </div>
+
+        <!-- Science of Veracity (2x2 Grid) -->
+        <div class="mb-32 relative">
+            <div class="mb-12 text-center">
+                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">Deep Logic</span>
+                <h2 class="text-4xl font-extrabold text-on-surface" style="font-family:'Manrope',sans-serif;">Science of Veracity</h2>
+            </div>
             
-            <!-- Stats -->
-            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Journalists & Analysts CTA -->
-                <div class="glass-panel p-10 rounded-2xl border border-white/5 md:col-span-1 flex flex-col justify-between card-interactive">
-                    <div>
-                        <h3 class="text-2xl font-bold mb-4" style="font-family:'Manrope',sans-serif;">For Journalists and Analysts</h3>
-                        <p class="text-xs text-on-surface-variant leading-relaxed mb-6">
-                            Empower your newsroom with industrial-grade fact-checking. VerifAI's API integrates directly into publishing workflows, flagging potential misinformation before it reaches the audience.
-                        </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: BERT -->
+                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-8 group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary">adjust</span>
                     </div>
-                    <div class="flex flex-col gap-3">
-                        <button class="bg-secondary/40 text-on-secondary/80 px-4 py-3 rounded-xl text-xs font-bold transition-all w-full opacity-70 cursor-not-allowed relative" disabled>
-                            Request Access
-                            <span class="absolute -top-2 -right-2 bg-tertiary-container text-on-tertiary-container text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-lg">Soon</span>
-                        </button>
-                        <a href="/metrics/json" target="_blank" class="bg-surface-container-high px-4 py-3 rounded-xl text-xs font-bold hover:bg-surface-container-highest transition-all w-full btn-interactive text-center flex justify-center items-center">
-                            View API Docs ↗
-                        </a>
-                    </div>
+                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">BERT Architecture</h4>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Bidirectional Encoder Representations allow us to understand deep linguistic context and nuance in complex sentences, identifying unnatural patterns typical of LLMs.
+                    </p>
                 </div>
                 
-                <!-- Stat grids -->
-                <div class="md:col-span-2 grid grid-cols-2 gap-6">
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
-                        <div class="text-3xl lg:text-5xl font-black text-primary mb-2" style="font-family:'Manrope',sans-serif;">99.4%</div>
-                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Model Accuracy</div>
+                <!-- Card 2: SVM -->
+                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
+                    <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-8 group-hover:bg-secondary/20 transition-colors">
+                        <span class="material-symbols-outlined text-secondary">monitoring</span>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
-                        <div class="text-3xl lg:text-5xl font-black text-secondary mb-2" style="font-family:'Manrope',sans-serif;">&lt; 200ms</div>
-                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Analysis Latency</div>
+                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">SVM Classification</h4>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Support Vector Machines process high-dimensional features to classify text veracity with forensic precision against large historical databases of known disinformation.
+                    </p>
+                </div>
+
+                <!-- Card 3: Lexical Variance -->
+                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
+                    <div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center mb-8 group-hover:bg-tertiary/20 transition-colors">
+                        <span class="material-symbols-outlined text-tertiary">fork_right</span>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
-                        <div class="text-3xl lg:text-5xl font-black text-tertiary mb-2" style="font-family:'Manrope',sans-serif;">50M+</div>
-                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Factual Anchors</div>
+                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">Lexical Variance</h4>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Analysis of vocabulary richness, stylistic repetition, and syntax abnormalities often associated with deceptive narratives or machine generated loops.
+                    </p>
+                </div>
+
+                <!-- Card 4: Global Signal -->
+                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-8 group-hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-white">public</span>
                     </div>
-                    <div class="bg-surface-container-low p-8 rounded-2xl border border-white/5 flex flex-col justify-center card-interactive">
-                        <div class="text-3xl lg:text-5xl font-black text-white mb-2" style="font-family:'Manrope',sans-serif;">24/7</div>
-                        <div class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Live Monitoring</div>
-                    </div>
+                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">Global Signal Network</h4>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Cross-referencing claims against a real-time web of 50M+ verified factual anchors and trusted nodes to evaluate contextual plausibility.
+                    </p>
                 </div>
             </div>
+        </div>
 
+        <!-- Bottom CTA -->
+        <div class="flex flex-col items-center justify-center text-center py-16">
+            <h2 class="text-3xl font-bold text-on-surface mb-8 font-headline">Ready to see the forensic layer?</h2>
+            <a href="/analyze" class="bg-secondary text-[#0b1326] font-bold px-10 py-4 rounded-xl transition-transform hover:scale-105 shadow-xl hover:shadow-secondary/20 btn-interactive">
+                Deploy TruthLens Layer
+            </a>
         </div>
 
     </div>

@@ -291,114 +291,234 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<main>
+<main class="overflow-hidden">
 <!-- Hero -->
-<section class="relative pt-32 pb-24 px-6 overflow-hidden min-h-[921px] flex flex-col items-center justify-center">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary-container/10 blur-[120px] rounded-full -z-10"></div>
-    <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/5 blur-[100px] rounded-full -z-10"></div>
-    <div class="max-w-4xl mx-auto text-center">
-        <!-- VerifAI Demo Logo & Title -->
-        <div class="flex items-center justify-center gap-4 mb-8 fade-in-up fade-delay-1">
-            <div class="w-14 h-14 rounded-[1.2rem] bg-gradient-to-br from-primary-container to-secondary flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.4)] icon-bounce relative">
-                <span class="material-symbols-outlined text-white text-3xl pulse-dot">verified</span>
+<section class="relative pt-32 pb-24 px-6 min-h-[90vh] flex items-center">
+    <!-- Background glows -->
+    <div class="absolute top-0 right-0 w-[800px] h-[600px] bg-secondary/5 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
+    <div class="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary-container/10 blur-[150px] rounded-full -z-10 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <!-- Left Column: Copy & Input -->
+        <div class="flex flex-col fade-in-up">
+            <h1 class="text-5xl md:text-7xl headline-font font-bold tracking-tight mb-6 text-on-surface leading-[1.05]">
+                Truth is no longer <span class="text-primary font-black">obvious.</span><br/>
+                VerifAI makes it <span class="text-on-surface font-black">undeniable.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-on-surface-variant mb-12 max-w-xl font-light leading-relaxed">
+                Advanced AI forensics for journalists, analysts, and anyone who refuses to be deceived by the growing tide of synthetic misinformation.
+            </p>
+
+            <!-- Input Card -->
+            <div class="bg-surface-container rounded-2xl p-6 border border-white/5 relative shadow-2xl shadow-black/50 mb-6">
+                <!-- Top bar -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-1.5 opacity-50">
+                            <div class="w-2.5 h-2.5 rounded-full bg-error"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+                        </div>
+                        <span class="ml-4 text-[10px] uppercase font-bold tracking-[0.2em] text-on-surface-variant">
+                            Neural Forensic Engine V4.2
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20">
+                        <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+                        <span class="text-[9px] uppercase font-bold tracking-widest text-secondary">AI Ready</span>
+                    </div>
+                </div>
+
+                <!-- Input box -->
+                <form action="/analyze" method="GET" class="relative group">
+                    <textarea name="text" id="heroAutoTextarea" 
+                              class="w-full h-32 bg-[#0b1326] border border-outline-variant/30 rounded-xl p-4 text-sm text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 resize-none transition-all outline-none pb-16 shadow-inner relative z-10" 
+                              placeholder="Paste a news headline, article excerpt, or social media link..."></textarea>
+                    
+                    <div class="absolute bottom-4 right-4 z-20">
+                        <button type="submit" class="bg-secondary text-on-secondary font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 hover:bg-white hover:text-[#0b1326] transition-all shadow-lg hover:shadow-secondary/30 btn-interactive">
+                            <span class="material-symbols-outlined text-sm">view_comfy_alt</span>
+                            <span class="text-sm">Run Forensic Analysis</span>
+                        </button>
+                    </div>
+                </form>
             </div>
-            <span class="text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400 headline-font">VerifAI</span>
+
+            <!-- Features small -->
+            <div class="flex flex-wrap items-center gap-6 text-on-surface-variant text-[11px] font-bold uppercase tracking-widest">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-[16px]" style="font-variation-settings:'FILL' 1">bolt</span>
+                    Real-time Analysis
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-[16px]" style="font-variation-settings:'FILL' 1">lock</span>
+                    Privacy Protected
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-on-surface text-[16px]" style="font-variation-settings:'FILL' 1">smart_toy</span>
+                    BERT + SVM AI
+                </div>
+            </div>
         </div>
 
-        <h1 class="text-6xl md:text-8xl headline-font font-extrabold tracking-tight mb-6 text-on-background leading-[1.1] fade-in-up fade-delay-2">
-            Detect Truth.<br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Instantly.</span>
-        </h1>
-        <p class="text-xl md:text-2xl text-on-surface-variant mb-12 max-w-2xl mx-auto font-light leading-relaxed fade-in-up fade-delay-3">
-            Identify fake news with our advanced AI-powered detection tool. Forensic precision for the digital information age.
-        </p>
-        <div class="max-w-3xl mx-auto w-full group fade-in-up fade-delay-4">
-            <div class="glass-card p-2 rounded-2xl flex flex-col md:flex-row gap-2 transition-all duration-500 border border-white/5 card-interactive">
-                <input id="heroInput" class="flex-1 bg-surface-container-highest border-none rounded-xl px-6 py-4 text-on-surface focus:ring-1 focus:ring-secondary/40 placeholder:text-on-surface-variant/50 transition-all outline-none" placeholder="Paste news article or text here..." type="text"/>
-                <button onclick="window.location.href='/analyze?text='+encodeURIComponent(document.getElementById('heroInput').value)" class="bg-gradient-to-r from-primary-container to-secondary text-on-primary-container font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 btn-interactive">
-                    <span>Analyze Now</span>
-                    <span class="material-symbols-outlined">analytics</span>
-                </button>
-            </div>
-            <div class="mt-4 flex items-center justify-center gap-6 text-on-surface-variant/60">
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">check_circle</span><span class="text-xs uppercase tracking-widest">Real-time Analysis</span></div>
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">shield</span><span class="text-xs uppercase tracking-widest">Privacy Protected</span></div>
-                <div class="flex items-center gap-2"><span class="material-symbols-outlined text-sm">neurology</span><span class="text-xs uppercase tracking-widest">BERT + SVM AI</span></div>
+        <!-- Right Column: Card Graphic -->
+        <div class="fade-in-up fade-delay-2 flex justify-end">
+            <div class="w-full max-w-md bg-[#131b2e] rounded-2xl p-8 border border-white/5 relative shadow-2xl">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-8 border-b border-white/5 pb-4">
+                    <h3 class="text-sm font-bold tracking-wider text-on-surface">Forensic Scan</h3>
+                    <div class="flex items-center gap-2 px-3 py-1 bg-secondary/10 border border-secondary/20 rounded-full text-secondary text-[10px] font-bold uppercase tracking-widest">
+                        <span>Scanning...</span>
+                        <div class="w-3 h-3 border-2 border-secondary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+
+                <!-- Verdict Box -->
+                <div class="bg-[#0b1326] rounded-xl p-5 border border-secondary/30 relative overflow-hidden mb-8 group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 blur-2xl rounded-full"></div>
+                    <div class="flex justify-between items-end mb-4 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-secondary">Verdict: Real</span>
+                        </div>
+                        <span class="text-4xl font-headline font-black text-secondary">94.2%</span>
+                    </div>
+                    <p class="text-xs text-on-surface-variant/80 italic leading-relaxed relative z-10 border-t border-white/5 pt-4">
+                        "Source analysis indicates high linguistic consistency with verified human-authored reporting. No synthetic patterns detected."
+                    </p>
+                </div>
+
+                <!-- Stats list -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                            <span class="text-xs font-bold text-on-surface">BERT Neural Model</span>
+                        </div>
+                        <span class="text-[10px] font-mono text-on-surface-variant">0.904 F-VAL</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span>
+                            <span class="text-xs font-bold text-on-surface">SVM Pattern Analysis</span>
+                        </div>
+                        <span class="text-[10px] font-mono text-on-surface-variant">IDENTIFIED</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span>
+                            <span class="text-xs font-bold text-on-surface">Meta-Data Integrity</span>
+                        </div>
+                        <span class="text-[10px] font-mono text-on-surface-variant">VERIFIED</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Bento Grid Features -->
-<section class="py-24 px-6 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <!-- BERT Card - Large -->
-        <div class="md:col-span-8 glass-card rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden group card-interactive">
-            <div class="relative z-10">
-                <div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary mb-6 icon-bounce">
-                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">neurology</span>
-                </div>
-                <h3 class="text-3xl headline-font font-bold mb-4">BERT Neural Analysis</h3>
-                <p class="text-on-surface-variant max-w-md leading-relaxed">Utilizing Bidirectional Encoder Representations from Transformers to understand the deep semantic context and nuanced linguistic patterns of disinformation.</p>
-            </div>
-            <div class="absolute top-0 right-0 w-1/2 h-full -z-0 opacity-20 group-hover:opacity-40 transition-opacity">
-                <div class="absolute inset-0 bg-gradient-to-l from-primary/20 to-transparent"></div>
-            </div>
-        </div>
-        <!-- SVM Card -->
-        <div class="md:col-span-4 bg-surface-container-high rounded-2xl p-10 flex flex-col justify-center card-interactive">
-            <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary mb-6 icon-bounce">
-                <span class="material-symbols-outlined">data_exploration</span>
-            </div>
-            <h3 class="text-2xl headline-font font-bold mb-4">SVM Analysis</h3>
-            <p class="text-on-surface-variant text-sm leading-relaxed">Support Vector Machines categorize content based on historical veracity markers and 50,000+ vocabulary patterns.</p>
-        </div>
-        <!-- Credibility Card -->
-        <div class="md:col-span-4 bg-surface-container-low rounded-2xl p-10 card-interactive">
-            <div class="w-12 h-12 rounded-xl bg-tertiary/20 flex items-center justify-center text-tertiary mb-6 icon-bounce">
-                <span class="material-symbols-outlined">verified_user</span>
-            </div>
-            <h3 class="text-2xl headline-font font-bold mb-4">Credibility Score</h3>
-            <p class="text-on-surface-variant text-sm leading-relaxed">A proprietary veracity index providing an instant verdict on content integrity using source signals and evidence analysis.</p>
-        </div>
-        <!-- Veracity Layer Card -->
-        <div class="md:col-span-8 glass-card rounded-2xl p-10 flex items-center gap-12 relative overflow-hidden card-interactive">
-            <div class="flex-1">
-                <h3 class="text-3xl headline-font font-bold mb-4">The Veracity Layer</h3>
-                <p class="text-on-surface-variant leading-relaxed mb-6">Our system adds a thin layer of truth to the internet, scanning for inconsistencies before you share.</p>
-                <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden mb-2">
-                    <div class="h-full w-[84%] bg-gradient-to-r from-primary to-secondary glow-cyan"></div>
-                </div>
-                <div class="flex justify-between text-[10px] uppercase tracking-tighter font-bold text-secondary">
-                    <span>Deep Fake Detected</span><span>84% Confidence</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Trust Section -->
-<section class="py-24 bg-surface-container-lowest">
+<!-- Trusted By section from image -->
+<section class="py-16">
     <div class="max-w-7xl mx-auto px-6 text-center">
-        <span class="text-on-surface-variant/40 uppercase tracking-[0.3em] font-bold block mb-12 text-xs">Trusted by Forensics & Media Agencies</span>
-        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-30 grayscale hover:grayscale-0 transition-all duration-700">
-            <div class="flex items-center gap-2 icon-glow"><span class="material-symbols-outlined text-4xl">news</span><span class="headline-font font-bold text-xl tracking-tighter">GlobalTimes</span></div>
-            <div class="flex items-center gap-2 icon-glow"><span class="material-symbols-outlined text-4xl">security</span><span class="headline-font font-bold text-xl tracking-tighter">SENTRY.AI</span></div>
-            <div class="flex items-center gap-2 icon-glow"><span class="material-symbols-outlined text-4xl">policy</span><span class="headline-font font-bold text-xl tracking-tighter">VERITAS</span></div>
-            <div class="flex items-center gap-2 icon-glow"><span class="material-symbols-outlined text-4xl">gavel</span><span class="headline-font font-bold text-xl tracking-tighter">LegalNode</span></div>
+        <span class="text-outline-variant/60 uppercase tracking-[0.2em] font-bold block mb-10 text-[10px]">Trusted by Forensics & Media Agencies</span>
+        <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale">
+            <div class="headline-font font-black italic text-2xl tracking-tighter">GlobalTimes</div>
+            <div class="headline-font font-bold text-xl tracking-[0.2em]">SENTRY.AI</div>
+            <div class="headline-font font-black italic text-2xl tracking-widest">VERITAS</div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-3xl">account_balance</span>
+                <span class="headline-font font-bold text-xl tracking-tight">LegalNode</span>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- CTA -->
-<section class="py-32 px-6">
-    <div class="max-w-5xl mx-auto glass-card rounded-[2.5rem] p-16 text-center border border-white/10 relative overflow-hidden hover-glow">
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 to-transparent -z-10"></div>
-        <h2 class="text-4xl md:text-5xl headline-font font-bold mb-6">Ready to clear the fog?</h2>
-        <p class="text-xl text-on-surface-variant mb-10 max-w-xl mx-auto">Join researchers and journalists using VerifAI to combat misinformation.</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="/analyze" class="bg-primary text-on-primary font-bold px-10 py-4 rounded-2xl transition-transform glow-button btn-interactive">Get Started for Free</a>
-            <a href="/how-it-works" class="bg-white/5 border border-white/10 backdrop-blur-md text-on-surface font-bold px-10 py-4 rounded-2xl transition-all btn-interactive">How it Works</a>
+<!-- Deep Logic / Feature Grid -->
+<section class="py-24 px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[280px]">
+        
+        <!-- Feature 1: BERT Neural Analysis (2 cols) -->
+        <div class="lg:col-span-2 bg-[#131b2e] rounded-2xl p-10 flex flex-col justify-between border border-white/5 relative overflow-hidden group hover:border-white/10 transition-colors">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-primary text-xl">adjust</span>
+                </div>
+                <h3 class="text-2xl font-bold mb-4 font-headline text-on-surface">BERT Neural Analysis</h3>
+                <p class="text-sm text-on-surface-variant max-w-md leading-relaxed">
+                    Our proprietary BERT implementation scans semantic structures to identify unnatural linguistic shifts typical of LLM generation.
+                </p>
+            </div>
+            <!-- decorative visual -->
+            <div class="flex items-end gap-1.5 opacity-60">
+                <div class="w-1.5 h-12 bg-primary/40 rounded-t-sm"></div>
+                <div class="w-1.5 h-8 bg-primary/40 rounded-t-sm"></div>
+                <div class="w-1.5 h-6 bg-primary/40 rounded-t-sm"></div>
+            </div>
+        </div>
+
+        <!-- Feature 2: SVM Analysis -->
+        <div class="bg-[#131b2e] rounded-2xl p-10 flex flex-col justify-center border border-white/5 relative group hover:border-white/10 transition-colors">
+            <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                <span class="material-symbols-outlined text-secondary text-xl">monitoring</span>
+            </div>
+            <h3 class="text-lg font-bold mb-3 font-headline text-on-surface">SVM Analysis</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                Advanced support vector machines for outlier detection in massive data sets.
+            </p>
+        </div>
+
+        <!-- Feature 3: Credibility Score -->
+        <div class="bg-[#131b2e] rounded-2xl p-10 flex flex-col justify-center border border-white/5 relative group hover:border-white/10 transition-colors">
+            <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                <span class="material-symbols-outlined text-tertiary text-xl" style="font-variation-settings:'FILL' 1">verified_user</span>
+            </div>
+            <h3 class="text-lg font-bold mb-3 font-headline text-on-surface">Credibility Score</h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                Instant quantification of truthfulness based on cross-referenced source patterns.
+            </p>
+        </div>
+
+        <!-- Feature 4: The Veracity Layer (2 cols) -->
+        <div class="lg:col-span-2 bg-[#131b2e] rounded-2xl p-10 flex flex-col justify-center border border-white/5 relative overflow-hidden group hover:border-white/10 transition-colors">
+            <h3 class="text-2xl font-bold mb-8 font-headline text-on-surface">The Veracity Layer</h3>
+            
+            <div class="w-full mb-6">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Global Confidence Index</span>
+                    <span class="text-xl font-headline font-black text-secondary">84%</span>
+                </div>
+                <div class="h-2 w-full bg-[#0b1326] rounded-full overflow-hidden">
+                    <div class="h-full bg-secondary rounded-full" style="width: 84%"></div>
+                </div>
+            </div>
+
+            <p class="text-sm text-on-surface-variant max-w-lg leading-relaxed relative z-10">
+                Our system cross-references billions of historical data points in milliseconds to provide a unified truth score.
+            </p>
+
+            <span class="material-symbols-outlined absolute -bottom-10 -right-4 text-[180px] text-white/[0.02] -rotate-12 pointer-events-none" style="font-variation-settings:'FILL' 1">shield</span>
+        </div>
+
+    </div>
+</section>
+
+<!-- Bottom CTA Section -->
+<section class="py-32 px-6 flex justify-center">
+    <div class="max-w-4xl w-full bg-gradient-to-b from-[#131b2e] to-[#0b1326] border border-white/5 p-16 rounded-[2.5rem] text-center relative overflow-hidden shadow-2xl">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-primary/10 blur-[80px] rounded-full -z-10 pointer-events-none"></div>
+        
+        <h2 class="text-4xl md:text-5xl headline-font font-bold mb-6 text-on-surface">Ready to clear the fog?</h2>
+        <p class="text-on-surface-variant mb-12 max-w-xl mx-auto font-light leading-relaxed">
+            Join thousands of researchers and intelligence analysts using VerifAI to separate manufactured narratives from reality.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <a href="/analyze" class="bg-secondary text-[#0b1326] font-bold px-8 py-3.5 rounded-xl transition-transform hover:scale-105 shadow-lg hover:shadow-secondary/20 btn-interactive">
+                Get Started for Free
+            </a>
+            <a href="/how-it-works" class="bg-surface-container-high border border-white/5 text-on-surface font-bold px-8 py-3.5 rounded-xl transition-all hover:bg-white/5 btn-interactive">
+                How it Works
+            </a>
         </div>
     </div>
 </section>

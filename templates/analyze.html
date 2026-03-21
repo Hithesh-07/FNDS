@@ -290,60 +290,93 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <main class="relative min-h-screen pt-20 overflow-hidden hero-gradient">
-    <div class="absolute top-40 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px]"></div>
-    <div class="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px]"></div>
+    <div class="absolute top-40 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <section class="max-w-7xl mx-auto px-8 py-20 lg:py-32 relative z-10">
-        <div class="flex flex-col items-center text-center mb-16">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/15 mb-8 fade-in-up fade-delay-1">
-                <span class="w-2 h-2 rounded-full bg-secondary glow-pulse pulse-dot"></span>
-                <span class="text-xs uppercase tracking-widest font-medium text-on-surface-variant">Designed for journalists & analysts</span>
-            </div>
-            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight max-w-4xl fade-in-up fade-delay-2" style="font-family:'Manrope',sans-serif;">
-                Before you believe it, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">verify it.</span>
+    <section class="max-w-4xl mx-auto px-6 py-20 lg:py-24 relative z-10 flex flex-col items-center flex-grow">
+        <div class="text-center mb-12">
+            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] fade-in-up" style="font-family:'Manrope',sans-serif;">
+                Before you believe it, <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">verify it.</span>
             </h1>
-            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-12 fade-in-up fade-delay-3">
-                VerifAI uses advanced AI models to analyze news credibility, detect misinformation, and reveal hidden biases in seconds.
+            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed fade-in-up fade-delay-1">
+                Deploy the veracity layer on any suspect article, social media post, or news headline.
             </p>
+        </div>
 
-            <!-- Analysis Tool -->
-            <div class="w-full max-w-4xl">
-                <div class="glass-panel p-1 rounded-[1.6rem] border border-outline-variant/10 shadow-2xl relative hover-glow">
-                    <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-container/20 to-secondary/20 rounded-[1.6rem] blur opacity-30"></div>
-                    <div class="relative bg-surface-container-lowest rounded-2xl overflow-hidden p-6 border border-white/5">
-                        <form id="analysisForm" method="POST" action="/analyze">
-                            <div class="flex flex-col gap-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <div class="flex gap-4">
-                                        <button type="button" onclick="document.getElementById('newsInput').value='The Federal Reserve raised interest rates by 0.25 percent to combat rising inflation amid global economic uncertainty.'" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors text-sm font-medium">
-                                            <span class="material-symbols-outlined text-secondary text-sm">history_edu</span> Try sample
-                                        </button>
-                                        <button type="button" onclick="document.getElementById('newsInput').value=''" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors text-sm font-medium">
-                                            <span class="material-symbols-outlined text-secondary text-sm">clear</span> Clear
-                                        </button>
-                                    </div>
-                                    <span id="charCount" class="text-xs text-on-surface-variant font-mono">0 / 50,000</span>
-                                </div>
-                                <textarea id="newsInput" name="news_text" rows="8"
-                                    class="w-full bg-surface-container-low/50 border border-outline-variant/20 rounded-2xl p-6 text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-secondary/30 resize-none text-sm leading-relaxed transition-all"
-                                    placeholder="Paste your news article, headline, or social media post here for forensic analysis...">{{ text if text else '' }}</textarea>
-                                {% if error %}
-                                <div class="bg-error-container/30 border border-error/30 rounded-xl p-4 text-error text-sm">⚠ {{ error }}</div>
-                                {% endif %}
-                                <div class="flex justify-between items-center pt-2">
-                                    <div class="flex items-center gap-4 text-xs text-on-surface-variant/60">
-                                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">lock</span> Private</span>
-                                        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">bolt</span> Instant</span>
-                                    </div>
-                                    <button id="analyzeBtn" type="submit"
-                                        class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary-container to-cyan-500 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary-container/20 text-sm btn-interactive">
-                                        <span class="material-symbols-outlined text-sm">search</span>
-                                        Run Forensic Analysis
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+        <!-- Input Card -->
+        <div class="w-full fade-in-up fade-delay-2 mb-8">
+            <div class="bg-surface-container rounded-[1.5rem] p-6 border border-white/5 relative shadow-2xl shadow-black/50 w-full">
+                <!-- Top bar -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-1.5 opacity-50">
+                            <div class="w-2.5 h-2.5 rounded-full bg-error"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+                        </div>
+                        <span class="ml-4 text-[10px] uppercase font-bold tracking-[0.2em] text-on-surface-variant">
+                            Neural Forensic Engine V4.2
+                        </span>
                     </div>
+                    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20">
+                        <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+                        <span class="text-[9px] uppercase font-bold tracking-widest text-secondary">AI Ready</span>
+                    </div>
+                </div>
+
+                <!-- Input form -->
+                <form id="analysisForm" method="POST" action="/analyze" class="relative group w-full">
+                    <textarea id="newsInput" name="news_text" rows="8"
+                              class="w-full h-48 bg-[#0b1326] border border-outline-variant/30 rounded-xl p-5 text-sm md:text-base text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 resize-none transition-all outline-none pb-20 shadow-inner relative z-10" 
+                              placeholder="Paste suspicious text, news excerpt, or social media claim here...">{{ text if text else '' }}</textarea>
+                    
+                    {% if error %}
+                    <div class="absolute top-0 left-0 w-full z-20 bg-error/10 text-error text-xs p-3 rounded-t-xl border-b border-error/20 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">warning</span>
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Submit Button Overlay -->
+                    <div class="absolute bottom-5 right-5 z-20 flex gap-4 items-center">
+                        <span id="charCount" class="text-[10px] text-on-surface-variant font-mono uppercase tracking-widest hidden md:block">0 / 50,000</span>
+                        <button id="analyzeBtn" type="submit" 
+                                class="bg-secondary text-[#0b1326] font-bold px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-white transition-all shadow-lg hover:shadow-secondary/30 btn-interactive shrink-0">
+                            <span class="material-symbols-outlined text-[18px]">view_comfy_alt</span>
+                            <span class="text-sm">Run Forensic Analysis</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Features Indicators -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-8 text-on-surface-variant text-[11px] font-bold uppercase tracking-widest">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings:'FILL' 1">bolt</span>
+                    Real-time Analysis
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings:'FILL' 1">lock</span>
+                    Privacy Protected
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-on-surface text-[18px]" style="font-variation-settings:'FILL' 1">smart_toy</span>
+                    BERT + SVM AI
+                </div>
+            </div>
+        </div>
+
+        <!-- Trusted By Section -->
+        <div class="mt-20 text-center fade-in-up fade-delay-3 w-full">
+            <span class="text-outline-variant/60 uppercase tracking-[0.2em] font-bold block mb-8 text-[10px]">Trusted by Intelligence Professionals</span>
+            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-40 grayscale pb-10">
+                <div class="headline-font font-black italic text-xl tracking-tighter">GlobalTimes</div>
+                <div class="headline-font font-bold text-lg tracking-[0.2em]">SENTRY.AI</div>
+                <div class="headline-font font-black italic text-xl tracking-widest">VERITAS</div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-2xl">account_balance</span>
+                    <span class="headline-font font-bold text-lg tracking-tight">LegalNode</span>
                 </div>
             </div>
         </div>
