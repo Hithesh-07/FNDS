@@ -329,18 +329,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <!-- Input box -->
-                <form action="/analyze" method="GET" class="relative group">
-                    <textarea name="text" id="heroAutoTextarea" 
-                              class="w-full h-32 bg-[#0b1326] border border-outline-variant/30 rounded-xl p-4 text-sm text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 resize-none transition-all outline-none pb-16 shadow-inner relative z-10" 
-                              placeholder="Paste a news headline, article excerpt, or social media link..."></textarea>
-                    
-                    <div class="absolute bottom-4 right-4 z-20">
-                        <button type="submit" class="bg-secondary text-on-secondary font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 hover:bg-white hover:text-[#0b1326] transition-all shadow-lg hover:shadow-secondary/30 btn-interactive">
-                            <span class="material-symbols-outlined text-sm">view_comfy_alt</span>
-                            <span class="text-sm">Run Forensic Analysis</span>
-                        </button>
-                    </div>
+                <!-- Input form -->
+                <form method="GET" action="/analyze" class="flex flex-col sm:flex-row gap-3 relative z-10 w-full mt-4">
+                    <input type="text" name="text" 
+                           class="flex-1 bg-[#0b1326] border border-outline-variant/30 rounded-xl px-5 py-4 text-sm md:text-base text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 transition-all outline-none shadow-inner" 
+                           placeholder="Paste news article or text here..." required/>
+                    <button type="submit" 
+                            class="bg-secondary text-[#0b1326] font-bold px-6 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-white transition-all shadow-lg hover:shadow-secondary/30 btn-interactive shrink-0 whitespace-nowrap">
+                        <span class="text-sm">Analyze Now &rarr;</span>
+                    </button>
                 </form>
             </div>
 
