@@ -140,6 +140,11 @@ def not_found(e):
 def server_error(e):
     return jsonify({"error": "Internal server error"}), 500
 
+@app.route('/google5f589252169489ad.html')
+def google_verify():
+    return 'google-site-verification: google5f589252169489ad.html'
+
+
 
 # ══════════════════════════════════════════════════════════
 # ANALYSIS FUNCTION
