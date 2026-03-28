@@ -144,6 +144,27 @@ def server_error(e):
 def google_verify():
     return 'google-site-verification: google5f589252169489ad.html'
 
+@app.route('/sitemap.xml')
+def sitemap():
+    from flask import request, Response
+    base_url = request.url_root.rstrip('/')
+    
+    pages = [
+        {"path": "", "priority": "1.0"},
+        {"path": "/analyze", "priority": "0.9"},
+        {"path": "/how-it-works", "priority": "0.8"},
+        {"path": "/about", "priority": "0.8"},
+        {"path": "/metrics", "priority": "0.5"}
+    ]
+    
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for page in pages:
+        xml += f'  <url>\n    <loc>{base_url}{page["path"]}</loc>\n    <priority>{page["priority"]}</priority>\n  </url>\n'
+    xml += '</urlset>'
+    
+    return Response(xml, mimetype='application/xml')
+
 
 
 # ══════════════════════════════════════════════════════════
