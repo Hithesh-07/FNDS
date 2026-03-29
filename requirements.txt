@@ -1,4 +1,6 @@
 flask
+flask-wtf
+flask-limiter
 gunicorn
 scikit-learn==1.6.1
 nltk

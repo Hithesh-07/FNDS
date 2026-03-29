@@ -335,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Input form -->
                 <form id="analysisForm" method="POST" action="/analyze" class="relative group w-full">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <textarea id="newsInput" name="news_text" rows="8"
                               class="w-full h-48 bg-[#0b1326] border border-outline-variant/30 rounded-xl p-5 text-sm md:text-base text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 resize-none transition-all outline-none pb-20 shadow-inner relative z-10" 
                               placeholder="Paste suspicious text, news excerpt, or social media claim here...">{{ text if text else '' }}</textarea>
