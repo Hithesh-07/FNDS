@@ -3,15 +3,44 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>VerifAI | Verify Truth</title>
+    <title>Analyze Text | TruthLens by Aletheia</title>
+    <meta name="description" content="Submit news articles, headlines, or claims for AI-powered credibility analysis, stylistic feature extraction, and neural verification."/>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
-      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#38bdf8",
+            "primary-dark": "#0284c7",
+            "secondary": "#22d3ee",
+            "tertiary": "#f59e0b",
+            "background": "#070d18",
+            "surface": "#0d1527",
+            "surface-container-lowest": "#050912",
+            "surface-container-low": "#0f1a30",
+            "surface-container": "#13213d",
+            "surface-container-high": "#1b2b4d",
+            "surface-container-highest": "#243761",
+            "on-background": "#e2e8f0",
+            "on-surface": "#e2e8f0",
+            "on-surface-variant": "#94a3b8",
+            "error": "#f43f5e",
+            "error-container": "#881337",
+            "success": "#10b981",
+            "success-container": "#064e3b"
+          },
+          fontFamily: {
+            "headline": ["Manrope", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
     }
     </script>
     <script>
@@ -27,199 +56,94 @@
     })();
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
-        .glass-panel { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); }
-        .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
-        .glow-pulse { box-shadow: 0 0 15px rgba(93,230,255,0.2); }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        
-/* Dark mode (default) */
-html.dark {
-    --bg-color     : #0b1326;
-    --surface      : #171f33;
-    --surface-high : #222a3d;
-    --text-primary : #dae2fd;
-    --text-muted   : #c3c6d7;
-    --border-color : rgba(255,255,255,0.05);
-}
+        body { font-family: 'Inter', sans-serif; background-color: #070d18; }
+        .headline-font { font-family: 'Manrope', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glow-button { box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35); }
 
-/* Light mode */
-html.light {
-    --bg-color     : #f0f4ff;
-    --surface      : #ffffff;
-    --surface-high : #e8edf8;
-    --text-primary : #1a1f33;
-    --text-muted   : #4a5068;
-    --border-color : rgba(0,0,0,0.08);
-}
+        html.dark {
+            --bg-color: #070d18;
+            --surface-card: #0f1a30;
+            --surface-elevated: #13213d;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(7, 13, 24, 0.85);
+        }
 
-html.light body {
-    background-color : var(--bg-color) !important;
-    color            : var(--text-primary) !important;
-}
-html.light .glass-card,
-html.light .glass-panel {
-    background       : rgba(255,255,255,0.8) !important;
-    border-color     : rgba(0,0,0,0.08) !important;
-}
-html.light nav,
-html.light header {
-    background       : rgba(240,244,255,0.85) !important;
-}
-html.light .bg-surface-container-low,
-html.light .bg-surface-container-high,
-html.light .bg-surface-container-lowest {
-    background-color : var(--surface-high) !important;
-}
-html.light .text-on-surface,
-html.light .text-on-background {
-    color: var(--text-primary) !important;
-}
-html.light .text-on-surface-variant {
-    color: var(--text-muted) !important;
-}
-html.light .text-slate-400 {
-    color: #4a5068 !important;
-}
-html.light footer {
-    background: #e0e8f8 !important;
-}
+        html.light {
+            --bg-color: #f8fafc;
+            --surface-card: #ffffff;
+            --surface-elevated: #f1f5f9;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --header-bg: rgba(248, 250, 252, 0.88);
+        }
 
-        
-/* ── Hover glow effects ─────────────────────────────── */
-.hover-glow {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    border-radius: inherit;
-}
-.hover-glow::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, rgba(180,197,255,0.1), rgba(93,230,255,0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-.hover-glow:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3),
-                0 0 0 1px rgba(93,230,255,0.2),
-                0 0 30px rgba(93,230,255,0.1);
-}
-.hover-glow:hover::after { opacity: 1; }
+        html.light body {
+            background-color: var(--bg-color) !important;
+            color: var(--text-main) !important;
+        }
+        html.light .bg-surface-container,
+        html.light .bg-surface-container-low {
+            background-color: #ffffff !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light nav,
+        html.light header {
+            background: var(--header-bg) !important;
+            border-color: rgba(0, 0, 0, 0.06) !important;
+        }
+        html.light .text-on-surface,
+        html.light .text-on-background {
+            color: var(--text-main) !important;
+        }
+        html.light .text-on-surface-variant,
+        html.light .text-slate-400 {
+            color: var(--text-sub) !important;
+        }
+        html.light footer {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+        html.light textarea {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: rgba(0, 0, 0, 0.12) !important;
+        }
 
-.nav-link-animated {
-    position: relative;
-    transition: color 0.2s;
-}
-.nav-link-animated::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 2px;
-    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
-    transition: width 0.3s ease;
-    border-radius: 1px;
-}
-.nav-link-animated:hover::after { width: 100%; }
-.nav-link-animated:hover { color: #5de6ff; }
+        .nav-hover {
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .nav-hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, #38bdf8, #22d3ee);
+            transition: width 0.25s ease;
+            border-radius: 9999px;
+        }
+        .nav-hover:hover::after { width: 100%; }
+        .nav-hover:hover { color: #38bdf8; }
 
-.btn-pop {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-.btn-pop:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
-}
+        .btn-interactive {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-interactive:hover {
+            transform: translateY(-2px);
+        }
+        .btn-interactive:active {
+            transform: translateY(0) scale(0.98);
+        }
 
-/* Button ripple effect */
-.btn-interactive {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-interactive::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.05);
-    opacity: 0;
-    transition: opacity 0.2s;
-    border-radius: inherit;
-}
-.btn-interactive:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(37,99,235,0.35);
-}
-.btn-interactive:hover::after { opacity: 1; }
-.btn-interactive:active {
-    transform: translateY(0) scale(0.98);
-}
-
-/* Card hover glow border */
-.card-interactive {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255,255,255,0.05);
-}
-.card-interactive:hover {
-    transform: translateY(-4px);
-    border-color: rgba(93,230,255,0.25);
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.4),
-        0 0 0 1px rgba(93,230,255,0.15),
-        0 0 30px rgba(93,230,255,0.08);
-}
-
-/* Nav link hover effect */
-.nav-hover {
-    position: relative;
-    transition: color 0.2s;
-}
-.nav-hover::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 2px;
-    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
-    transition: width 0.25s ease;
-    border-radius: 1px;
-}
-.nav-hover:hover::after  { width: 100%; }
-.nav-hover:hover { color: #5de6ff; }
-
-/* Icon bounce on hover */
-.icon-bounce {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.icon-bounce:hover { transform: scale(1.15) rotate(-5deg); }
-
-/* Pulse dot (live indicator) */
-.pulse-dot {
-    animation: pulseDot 2s ease-in-out infinite;
-}
-@keyframes pulseDot {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(93,230,255,0.4); }
-    50%      { box-shadow: 0 0 0 6px rgba(93,230,255,0); }
-}
-
-/* Fade in on load */
-@keyframes fadeInUp {
-    from { opacity:0; transform:translateY(20px); }
-    to   { opacity:1; transform:translateY(0); }
-}
-.fade-in-up {
-    animation: fadeInUp 0.6s ease forwards;
-}
-.fade-delay-1 { animation-delay: 0.1s; opacity:0; }
-.fade-delay-2 { animation-delay: 0.2s; opacity:0; }
-.fade-delay-3 { animation-delay: 0.3s; opacity:0; }
-.fade-delay-4 { animation-delay: 0.4s; opacity:0; }
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+        .spin-slow { animation: spinSlow 8s linear infinite; }
     </style>
-    <!-- Clarity tracking code for https://aletheia-k1os.onrender.com/ -->
+    <!-- Microsoft Clarity analytics -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -228,42 +152,87 @@ html.light footer {
         })(window, document, "clarity", "script", "w35a5rh74y");
     </script>
 </head>
-<body class="bg-background text-on-surface font-body selection:bg-secondary/30">
+<body class="text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
 
-<!-- Fixed Navbar -->
-<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50 relative">
-    <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400 headline-font">VerifAI</a>
-        <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Home</a>
-            <a href="/analyze" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-hover">Analyze</a>
-            <a href="/how-it-works" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">How it Works</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-4">
-            <button id="themeToggle"
-                    class="p-2 rounded-lg transition-all hover:bg-white/10 hover:text-secondary icon-bounce"
-                    title="Toggle light/dark mode"
-                    onclick="toggleTheme()">
-                <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
-            </button>
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 bg-[#070d18]/85 backdrop-blur-xl border-b border-white/5 transition-colors duration-200">
+    <div class="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-7xl mx-auto">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2.5 group" aria-label="TruthLens Home">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary-dark via-primary to-secondary flex items-center justify-center text-slate-950 font-black shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-xl">lens_blur</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-extrabold tracking-tight headline-font text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300">TruthLens</span>
+                <span class="text-[9px] uppercase tracking-[0.2em] font-semibold text-primary/80 -mt-1">by Aletheia</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <div class="hidden md:flex items-center space-x-7">
+            <a href="/" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">Home</a>
+            <a href="/analyze" class="text-primary font-semibold text-sm tracking-wide nav-hover">Analyze</a>
+            <a href="/how-it-works" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">How it Works</a>
+            <a href="/metrics" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">Metrics</a>
+            <a href="/about" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">About</a>
         </div>
-        <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
+
+        <!-- Right Action Buttons -->
+        <div class="hidden md:flex items-center gap-3">
+            <button id="themeToggle"
+                    class="p-2.5 rounded-xl border border-white/10 dark:border-white/10 hover:border-primary/40 bg-white/5 transition-all text-slate-300 hover:text-primary"
+                    title="Toggle light/dark mode"
+                    aria-label="Toggle theme"
+                    onclick="toggleTheme()">
+                <span class="material-symbols-outlined text-lg" id="themeIcon">dark_mode</span>
+            </button>
+            <a href="/how-it-works" class="px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold text-slate-300 hover:text-white hover:border-primary/40 transition-all">
+                Methodology Guide
+            </a>
+        </div>
+
+        <!-- Mobile Menu Trigger -->
+        <button id="menuBtn" class="md:hidden p-2.5 rounded-xl border border-white/10 text-slate-300 hover:text-white"
+                aria-label="Open menu"
                 onclick="toggleMenu()">
             <span class="material-symbols-outlined" id="menuIcon">menu</span>
         </button>
     </div>
-    <!-- Mobile menu dropdown -->
-    <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-[#0b1326]/95 backdrop-blur-xl border-b border-white/5 z-50">
-        <div class="flex flex-col px-8 py-6 gap-4">
-            <a href="/"            class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Home</a>
-            <a href="/analyze"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Analyze</a>
-            <a href="/how-it-works"class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">How it Works</a>
-            <a href="/about"       class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">About</a>
-            <a href="/metrics"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Metrics</a>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden bg-[#070d18]/95 backdrop-blur-2xl border-b border-white/10 px-6 py-6 transition-all duration-300">
+        <div class="flex flex-col gap-3.5">
+            <a href="/" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Home</span>
+                <span class="material-symbols-outlined text-sm">home</span>
+            </a>
+            <a href="/analyze" class="text-primary font-bold py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Analyze Text</span>
+                <span class="material-symbols-outlined text-sm">manage_search</span>
+            </a>
+            <a href="/how-it-works" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>How It Works</span>
+                <span class="material-symbols-outlined text-sm">account_tree</span>
+            </a>
+            <a href="/metrics" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Model Metrics</span>
+                <span class="material-symbols-outlined text-sm">insights</span>
+            </a>
+            <a href="/about" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>About Aletheia</span>
+                <span class="material-symbols-outlined text-sm">info</span>
+            </a>
+            <div class="flex items-center justify-between pt-3">
+                <span class="text-xs text-slate-400">Appearance Mode</span>
+                <button onclick="toggleTheme()" class="px-3 py-1.5 rounded-lg border border-white/10 text-xs flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm" id="mobileThemeIcon">dark_mode</span>
+                    <span id="themeLabel">Dark Mode</span>
+                </button>
+            </div>
         </div>
     </div>
-    <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
-</header>
+</nav>
+
 <script>
 function toggleMenu() {
     const menu = document.getElementById('mobileMenu');
@@ -272,134 +241,245 @@ function toggleMenu() {
     icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
 }
 
+function updateThemeIcons(isDark) {
+    const desktopIcon = document.getElementById('themeIcon');
+    const mobileIcon = document.getElementById('mobileThemeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    if (desktopIcon) desktopIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    if (mobileIcon) mobileIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    if (themeLabel) themeLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+}
+
 function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.classList.contains('dark');
-
     if (isDark) {
         html.classList.remove('dark');
         html.classList.add('light');
-        document.getElementById('themeIcon').textContent = 'light_mode';
         localStorage.setItem('aletheia_theme', 'light');
+        updateThemeIcons(false);
     } else {
         html.classList.remove('light');
         html.classList.add('dark');
-        document.getElementById('themeIcon').textContent = 'dark_mode';
         localStorage.setItem('aletheia_theme', 'dark');
+        updateThemeIcons(true);
     }
 }
 
-// Set correct icon on page load
 document.addEventListener('DOMContentLoaded', () => {
     const theme = localStorage.getItem('aletheia_theme') || 'dark';
-    document.getElementById('themeIcon').textContent =
-        theme === 'light' ? 'light_mode' : 'dark_mode';
+    updateThemeIcons(theme === 'dark');
 });
 </script>
 
-<main class="relative min-h-screen pt-20 overflow-hidden hero-gradient">
-    <div class="absolute top-40 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none"></div>
-
-    <section class="max-w-4xl mx-auto px-6 py-20 lg:py-24 relative z-10 flex flex-col items-center flex-grow">
-        <div class="text-center mb-12">
-            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] fade-in-up" style="font-family:'Manrope',sans-serif;">
-                Before you believe it, <br/>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">verify it.</span>
+<main class="flex-grow py-12 md:py-16 px-6">
+    <div class="max-w-4xl mx-auto">
+        <!-- Page Header -->
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-white/10 text-xs font-mono text-primary mb-4">
+                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span>Forensic Text Workbench</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl headline-font font-bold text-on-surface tracking-tight mb-3">
+                Analyze Content Credibility
             </h1>
-            <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed fade-in-up fade-delay-1">
-                Deploy the veracity layer on any suspect article, social media post, or news headline.
+            <p class="text-sm md:text-base text-on-surface-variant max-w-xl mx-auto font-light leading-relaxed">
+                Paste any article snippet, press release, or viral claim. Our hybrid model examines linguistic indicators, attribution markers, and emotional sensationalism.
             </p>
         </div>
 
-        <!-- Input Card -->
-        <div class="w-full fade-in-up fade-delay-2 mb-8">
-            <div class="bg-surface-container rounded-[1.5rem] p-6 border border-white/5 relative shadow-2xl shadow-black/50 w-full">
-                <!-- Top bar -->
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center gap-2">
-                        <div class="flex gap-1.5 opacity-50">
-                            <div class="w-2.5 h-2.5 rounded-full bg-error"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
-                        </div>
-                        <span class="ml-4 text-[10px] uppercase font-bold tracking-[0.2em] text-on-surface-variant">
-                            Neural Forensic Engine V4.2
-                        </span>
-                    </div>
-                    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20">
-                        <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
-                        <span class="text-[9px] uppercase font-bold tracking-widest text-secondary">AI Ready</span>
-                    </div>
-                </div>
-
-                <!-- Input form -->
-                <form id="analysisForm" method="POST" action="/analyze" class="relative group w-full">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <textarea id="newsInput" name="news_text" rows="8"
-                              class="w-full h-48 bg-[#0b1326] border border-outline-variant/30 rounded-xl p-5 text-sm md:text-base text-on-surface focus:ring-1 focus:ring-secondary/50 placeholder:text-on-surface-variant/40 resize-none transition-all outline-none pb-20 shadow-inner relative z-10" 
-                              placeholder="Paste suspicious text, news excerpt, or social media claim here...">{{ text if text else '' }}</textarea>
-                    
-                    {% if error %}
-                    <div class="absolute top-0 left-0 w-full z-20 bg-error/10 text-error text-xs p-3 rounded-t-xl border-b border-error/20 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">warning</span>
-                        {{ error }}
-                    </div>
-                    {% endif %}
-
-                    <!-- Submit Button Overlay -->
-                    <div class="absolute bottom-5 right-5 z-20 flex gap-4 items-center">
-                        <span id="charCount" class="text-[10px] text-on-surface-variant font-mono uppercase tracking-widest hidden md:block">0 / 50,000</span>
-                        <button id="analyzeBtn" type="submit" 
-                                class="bg-secondary text-[#0b1326] font-bold px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-white transition-all shadow-lg hover:shadow-secondary/30 btn-interactive shrink-0">
-                            <span class="material-symbols-outlined text-[18px]">view_comfy_alt</span>
-                            <span class="text-sm">Run Forensic Analysis</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Features Indicators -->
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-8 text-on-surface-variant text-[11px] font-bold uppercase tracking-widest">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings:'FILL' 1">bolt</span>
-                    Real-time Analysis
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings:'FILL' 1">lock</span>
-                    Privacy Protected
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-on-surface text-[18px]" style="font-variation-settings:'FILL' 1">smart_toy</span>
-                    BERT + SVM AI
-                </div>
+        <!-- Preset Test Scenarios (Delightful & Instant UX) -->
+        <div class="mb-6">
+            <span class="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-2.5">
+                Quick-Load Test Examples:
+            </span>
+            <div class="flex flex-wrap gap-2.5">
+                <button type="button" onclick="loadSample('credible')" 
+                        class="text-xs px-3.5 py-2 rounded-xl bg-surface-container border border-white/10 hover:border-success/40 text-slate-300 hover:text-success transition-all flex items-center gap-1.5 btn-interactive">
+                    <span class="material-symbols-outlined text-sm text-success">verified</span>
+                    <span>Credible Institutional News</span>
+                </button>
+                <button type="button" onclick="loadSample('sensational')" 
+                        class="text-xs px-3.5 py-2 rounded-xl bg-surface-container border border-white/10 hover:border-error/40 text-slate-300 hover:text-error transition-all flex items-center gap-1.5 btn-interactive">
+                    <span class="material-symbols-outlined text-sm text-error">warning</span>
+                    <span>Sensational Conspiracy Claim</span>
+                </button>
+                <button type="button" onclick="loadSample('uncertain')" 
+                        class="text-xs px-3.5 py-2 rounded-xl bg-surface-container border border-white/10 hover:border-tertiary/40 text-slate-300 hover:text-tertiary transition-all flex items-center gap-1.5 btn-interactive">
+                    <span class="material-symbols-outlined text-sm text-tertiary">help</span>
+                    <span>Hedged Scientific Study</span>
+                </button>
             </div>
         </div>
 
-        <!-- Trusted By Section -->
-        <div class="mt-20 text-center fade-in-up fade-delay-3 w-full">
-            <span class="text-outline-variant/60 uppercase tracking-[0.2em] font-bold block mb-8 text-[10px]">Trusted by Intelligence Professionals</span>
-            <div class="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-40 grayscale pb-10">
-                <div class="headline-font font-black italic text-xl tracking-tighter">GlobalTimes</div>
-                <div class="headline-font font-bold text-lg tracking-[0.2em]">SENTRY.AI</div>
-                <div class="headline-font font-black italic text-xl tracking-widest">VERITAS</div>
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-2xl">account_balance</span>
-                    <span class="headline-font font-bold text-lg tracking-tight">LegalNode</span>
+        <!-- Main Form Container -->
+        <div class="bg-surface-container rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl relative">
+            <!-- Form Header Bar -->
+            <div class="flex justify-between items-center pb-4 mb-4 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-xl">description</span>
+                    <span class="text-xs font-mono uppercase tracking-wider font-semibold text-slate-300">Input Document Stream</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="clearInput()" 
+                            class="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1 transition-colors">
+                        <span class="material-symbols-outlined text-sm">clear_all</span>
+                        <span>Clear</span>
+                    </button>
                 </div>
             </div>
+
+            <!-- Analysis Form -->
+            <form id="analysisForm" method="POST" action="/analyze" class="relative">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <!-- Error Alert Box -->
+                {% if error %}
+                <div class="mb-4 bg-error/10 border border-error/25 text-error text-xs p-3.5 rounded-xl flex items-center gap-2.5">
+                    <span class="material-symbols-outlined text-base">error</span>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+
+                <!-- Textarea -->
+                <textarea id="newsInput" name="news_text" rows="9"
+                          class="w-full bg-surface-container-low border border-white/10 rounded-2xl p-5 text-sm md:text-base text-on-surface placeholder:text-slate-500 focus:outline-none focus:border-primary/50 resize-y min-h-[220px] transition-all" 
+                          placeholder="Paste full text, article paragraph, or statement here (e.g. 'The Ministry of Health announced a new vaccination timeline following clinical data review...').">{{ text if text else '' }}</textarea>
+
+                <!-- Input Footer Info & Controls -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 pt-2">
+                    <div class="flex items-center gap-4 text-xs font-mono text-slate-400 w-full sm:w-auto justify-between sm:justify-start">
+                        <span id="charCount">0 / 50,000 chars</span>
+                        <span>·</span>
+                        <span id="wordCount">0 words</span>
+                    </div>
+
+                    <button id="analyzeBtn" type="submit" 
+                            class="w-full sm:w-auto bg-gradient-to-r from-primary to-secondary text-slate-950 font-bold px-8 py-3.5 rounded-xl flex items-center justify-center gap-2 hover:opacity-95 shadow-lg shadow-primary/25 btn-interactive shrink-0">
+                        <span class="material-symbols-outlined text-lg">manage_search</span>
+                        <span>Run Forensic Analysis</span>
+                    </button>
+                </div>
+            </form>
         </div>
-    </section>
+
+        <!-- Input Guidelines -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-on-surface-variant font-light">
+            <div class="p-4 rounded-2xl bg-surface-container-low border border-white/5">
+                <strong class="text-on-surface block font-semibold mb-1">Optimal Input Length</strong>
+                Provide at least 2–3 complete sentences (50–500 words) for accurate stylistic and semantic pattern extraction.
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-container-low border border-white/5">
+                <strong class="text-on-surface block font-semibold mb-1">Dual-Model Voting</strong>
+                Analyzes syntactic features locally via SVM ensemble and verifies semantic context with BERT neural embeddings.
+            </div>
+            <div class="p-4 rounded-2xl bg-surface-container-low border border-white/5">
+                <strong class="text-on-surface block font-semibold mb-1">Scientific Calibration</strong>
+                Preliminary studies and ongoing debates are calibrated to UNCERTAIN to prevent overconfident conclusions.
+            </div>
+        </div>
+    </div>
 </main>
 
-<footer class="bg-[#060e20] py-12 border-t border-white/5 mt-auto w-full z-10 relative">
-    <div class="flex flex-col md:flex-row justify-between items-center px-12 w-full max-w-7xl mx-auto gap-8">
-        <div><span class="font-black text-blue-500 text-xl tracking-tighter headline-font">VerifAI</span><p class="text-xs font-light text-slate-500 max-w-[200px] mt-1">© 2026 VerifAI Inc. The Veracity Layer.</p></div>
-        <div class="flex gap-8">
-            <a href="/analyze" class="text-xs text-slate-500 hover:text-white transition-colors">Analyze</a>
-            <a href="/how-it-works" class="text-xs text-slate-500 hover:text-white transition-colors">How it Works</a>
-            <a href="/about" class="text-xs text-slate-500 hover:text-white transition-colors">About</a>
-            <a href="/metrics" class="text-xs text-slate-500 hover:text-white transition-colors">Metrics</a>
+<!-- Full-Screen Interactive Forensic Loading Modal -->
+<div id="loadingOverlay" style="display:none;"
+     class="fixed inset-0 z-50 bg-[#070d18]/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6"
+     role="dialog" aria-modal="true" aria-label="Analyzing text">
+
+    <!-- Radar / Scanner Visual -->
+    <div class="relative w-32 h-32 mb-8">
+        <div class="absolute inset-0 rounded-full border border-primary/20 animate-ping"></div>
+        <div class="absolute inset-2 rounded-full border border-primary/30 spin-slow"></div>
+        <div class="absolute inset-6 rounded-full border-2 border-secondary/40 animate-pulse"></div>
+        <div class="absolute inset-12 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/50">
+            <span class="material-symbols-outlined text-slate-950 text-xl font-bold animate-spin">sync</span>
+        </div>
+    </div>
+
+    <!-- Title & Status -->
+    <div class="text-center mb-8 max-w-md">
+        <h2 id="loadingHeadline" class="text-2xl font-bold headline-font text-on-surface mb-2">
+            Initiating Forensic Pipeline...
+        </h2>
+        <p id="loadingSubtext" class="text-xs md:text-sm text-on-surface-variant font-mono">
+            Tokenizing and normalizing linguistic structures
+        </p>
+    </div>
+
+    <!-- 4 Pipeline Stages Checklist -->
+    <div class="w-full max-w-sm flex flex-col gap-2.5 mb-8 font-mono text-xs">
+        <div id="step_1" class="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-white/5 opacity-40 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-primary text-base">spellcheck</span>
+                <span>1. Text Normalization & Lemmatization</span>
+            </div>
+            <span class="step-check material-symbols-outlined text-success text-base hidden">check_circle</span>
+        </div>
+        <div id="step_2" class="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-white/5 opacity-40 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-secondary text-base">analytics</span>
+                <span>2. SVM Ensemble Pattern Matching</span>
+            </div>
+            <span class="step-check material-symbols-outlined text-success text-base hidden">check_circle</span>
+        </div>
+        <div id="step_3" class="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-white/5 opacity-40 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-tertiary text-base">balance</span>
+                <span>3. Credibility & Hedging Scoring</span>
+            </div>
+            <span class="step-check material-symbols-outlined text-success text-base hidden">check_circle</span>
+        </div>
+        <div id="step_4" class="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-white/5 opacity-40 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-cyan-400 text-base">neurology</span>
+                <span>4. Neural Context & Final Verdict</span>
+            </div>
+            <span class="step-check material-symbols-outlined text-success text-base hidden">check_circle</span>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="w-full max-w-sm">
+        <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div id="loadingProgress" class="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-500 rounded-full" style="width: 10%"></div>
+        </div>
+        <div class="flex justify-between text-[11px] font-mono text-slate-400 mt-2">
+            <span id="loadingPct">10%</span>
+            <span>Aletheia Veracity Engine</span>
+        </div>
+    </div>
+</div>
+
+<!-- Accessible Toast Notification -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden transition-all">
+    <div class="flex items-center gap-3 bg-error-container border border-error/40 text-on-error-container px-5 py-3 rounded-2xl shadow-2xl text-xs md:text-sm font-medium">
+        <span class="material-symbols-outlined text-error">warning</span>
+        <span id="toastMsg">Please enter at least 10 characters</span>
+        <button onclick="hideToast()" class="ml-2 text-white/70 hover:text-white" aria-label="Close notification">
+            <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-[#050912] py-12 border-t border-white/5 mt-auto transition-colors">
+    <div class="flex flex-col md:flex-row justify-between items-center px-6 md:px-12 max-w-7xl mx-auto gap-6 text-center md:text-left">
+        <div>
+            <div class="flex items-center justify-center md:justify-start gap-2">
+                <span class="font-extrabold text-white text-lg tracking-tight headline-font">TruthLens</span>
+                <span class="text-xs text-primary font-mono">v2.4</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">An open AI media veracity initiative by Aletheia.</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-7 text-xs text-slate-400">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
+            <a href="/analyze" class="hover:text-primary transition-colors">Analyze Workbench</a>
+            <a href="/how-it-works" class="hover:text-primary transition-colors">How It Works</a>
+            <a href="/metrics" class="hover:text-primary transition-colors">Metrics</a>
+            <a href="/about" class="hover:text-primary transition-colors">About & Ethics</a>
+        </div>
+        <div class="text-xs text-slate-500 font-mono">
+            © 2026 Aletheia · TruthLens
         </div>
     </div>
 </footer>
@@ -407,44 +487,44 @@ document.addEventListener('DOMContentLoaded', () => {
 <script>
 const textarea = document.getElementById('newsInput');
 const charCount = document.getElementById('charCount');
-textarea.addEventListener('input', function() {
-    charCount.textContent = this.value.length.toLocaleString() + ' / 50,000';
-    this.classList.remove('border-error/50', 'ring-1', 'ring-error/30');
-});
+const wordCount = document.getElementById('wordCount');
 
-// Load text from URL param if coming from home page
-const urlParams = new URLSearchParams(window.location.search);
-const urlText = urlParams.get('text');
-if (urlText) textarea.value = urlText;
+function updateCounters() {
+    const text = textarea.value;
+    const len = text.length;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    charCount.textContent = len.toLocaleString() + ' / 50,000 chars';
+    wordCount.textContent = words.toLocaleString() + ' words';
+}
 
-const steps = [
-    { id: 'step_1', headline: 'Running BERT Neural Analysis...', sub: 'Deep semantic context processing', pct: 25 },
-    { id: 'step_2', headline: 'SVM Pattern Recognition...', sub: 'Scanning 50,000+ vocabulary patterns', pct: 50 },
-    { id: 'step_3', headline: 'Auditing Credibility Signals...', sub: 'Checking source reliability markers', pct: 75 },
-    { id: 'step_4', headline: 'Generating Intelligence Report...', sub: 'Compiling final verdict', pct: 95 },
-];
+textarea.addEventListener('input', updateCounters);
+document.addEventListener('DOMContentLoaded', updateCounters);
 
-function activateStep(index) {
-    const el = document.getElementById(steps[index].id);
-    el.classList.remove('opacity-30');
-    el.classList.add('opacity-100');
-    el.style.borderLeft = '2px solid rgba(93,230,255,0.5)';
-    el.style.paddingLeft = '8px';
-    document.getElementById('loadingHeadline').textContent = steps[index].headline;
-    document.getElementById('loadingSubtext').textContent  = steps[index].sub;
-    document.getElementById('loadingProgress').style.width = steps[index].pct + '%';
-    document.getElementById('loadingPct').textContent      = steps[index].pct + '%';
-    if (index > 0) {
-        const prev = document.getElementById(steps[index-1].id);
-        prev.querySelector('.step-check').classList.remove('hidden');
+// Sample loaders
+const sampleTexts = {
+    credible: "The Reserve Bank of India kept the repo rate unchanged at 6.5 percent following a scheduled monetary policy committee review, citing balanced domestic economic growth and steady inflation projections.",
+    sensational: "SHOCKING BOMBSHELL EXPOSED: Insiders reveal secret cure for all diseases withheld from the public by pharmaceutical companies! Share before deleted!",
+    uncertain: "A preliminary observational study suggests that intermittent fasting may potentially be associated with metabolic improvements, though researchers caution that further randomized clinical trials are required before drawing firm conclusions."
+};
+
+function loadSample(key) {
+    if (sampleTexts[key]) {
+        textarea.value = sampleTexts[key];
+        updateCounters();
+        textarea.focus();
     }
 }
 
+function clearInput() {
+    textarea.value = '';
+    updateCounters();
+    textarea.focus();
+}
+
 function showToast(msg) {
-    document.getElementById('toastMsg').textContent = msg;
     const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
     toast.classList.remove('hidden');
-    toast.style.animation = 'slideUp 0.3s ease forwards';
     setTimeout(() => hideToast(), 4000);
 }
 
@@ -452,119 +532,80 @@ function hideToast() {
     document.getElementById('toast').classList.add('hidden');
 }
 
-document.getElementById('analysisForm').addEventListener('submit', function(e) {
-    const text = document.getElementById('newsInput').value.trim();
-    const words = text.split(/\s+/).filter(w => w.length > 0);
+// Check URL params
+const urlParams = new URLSearchParams(window.location.search);
+const urlText = urlParams.get('text');
+if (urlText) {
+    textarea.value = urlText;
+    updateCounters();
+}
 
-    if (!text) {
+const pipelineSteps = [
+    { id: 'step_1', headline: 'Normalizing Text & Lemmatizing...', sub: 'Cleaning tokens and extracting linguistic stylometry', pct: 25 },
+    { id: 'step_2', headline: 'Evaluating SVM Pattern Ensemble...', sub: 'Scanning 50,000+ learned vocabulary markers & TF-IDF vectors', pct: 50 },
+    { id: 'step_3', headline: 'Auditing Credibility & Hedging...', sub: 'Evaluating source attribution, sensationalism & uncertainty', pct: 75 },
+    { id: 'step_4', headline: 'Synthesizing Neural Intelligence Verdict...', sub: 'Compiling final probabilistic report', pct: 95 }
+];
+
+function setStepActive(idx) {
+    const step = pipelineSteps[idx];
+    const el = document.getElementById(step.id);
+    if (!el) return;
+    el.classList.remove('opacity-40');
+    el.classList.add('opacity-100', 'border-primary/40');
+    document.getElementById('loadingHeadline').textContent = step.headline;
+    document.getElementById('loadingSubtext').textContent = step.sub;
+    document.getElementById('loadingProgress').style.width = step.pct + '%';
+    document.getElementById('loadingPct').textContent = step.pct + '%';
+    if (idx > 0) {
+        const prev = document.getElementById(pipelineSteps[idx - 1].id);
+        if (prev) {
+            const check = prev.querySelector('.step-check');
+            if (check) check.classList.remove('hidden');
+        }
+    }
+}
+
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    const text = textarea.value.trim();
+    if (!text || text.length < 10) {
         e.preventDefault();
-        document.getElementById('newsInput').classList.add('border-error/50', 'ring-1', 'ring-error/30');
-        showToast('Please enter some text to analyze');
+        showToast('Please enter at least 10 characters to perform analysis.');
+        textarea.focus();
         return;
     }
 
+    const words = text.split(/\s+/).filter(Boolean);
     if (words.length < 3) {
         e.preventDefault();
-        document.getElementById('newsInput').classList.add('border-error/50', 'ring-1', 'ring-error/30');
-        showToast('Please enter at least 3 words for accurate analysis');
+        showToast('Please enter at least 3 words for accurate analysis.');
+        textarea.focus();
         return;
     }
 
-    document.getElementById('newsInput').classList.remove('border-error/50', 'ring-1', 'ring-error/30');
-
-    document.getElementById('loadingOverlay').style.display = 'flex';
+    // Launch loading state
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'flex';
     document.getElementById('analyzeBtn').disabled = true;
-    document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span> Analyzing...';
 
-    let i = 0;
+    let stepIdx = 0;
+    setStepActive(0);
     const interval = setInterval(() => {
-        if (i < steps.length) { activateStep(i); i++; }
-        else clearInterval(interval);
+        stepIdx++;
+        if (stepIdx < pipelineSteps.length) {
+            setStepActive(stepIdx);
+        } else {
+            clearInterval(interval);
+        }
     }, 700);
 
-    // clear loading state on pageshow (when user clicks back button)
-    window.addEventListener("pageshow", function(){
-        document.getElementById('loadingOverlay').style.display = 'none';
+    // Reset when navigating back
+    window.addEventListener('pageshow', function() {
+        overlay.style.display = 'none';
         document.getElementById('analyzeBtn').disabled = false;
-        document.getElementById('analyzeBtn').innerHTML = '<span class="material-symbols-outlined text-sm">search</span> Run Forensic Analysis';
+        clearInterval(interval);
     });
 });
 </script>
-
-<!-- Epic Loading Overlay -->
-<div id="loadingOverlay" style="display:none;"
-     class="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex-col items-center justify-center gap-8">
-
-    <!-- Animated radar/scanner -->
-    <div class="relative w-32 h-32">
-        <div class="absolute inset-0 rounded-full border-2 border-secondary/20 animate-ping"></div>
-        <div class="absolute inset-4 rounded-full border-2 border-primary/30" style="animation: spin 3s linear infinite;"></div>
-        <div class="absolute inset-8 rounded-full border-2 border-secondary/50" style="animation: spin 1.5s linear infinite reverse;"></div>
-        <div class="absolute inset-14 rounded-full bg-secondary" style="animation: pulse 1s ease-in-out infinite; box-shadow: 0 0 20px rgba(93,230,255,0.8);"></div>
-        <div class="absolute inset-0 rounded-full overflow-hidden">
-            <div class="absolute top-1/2 left-1/2 w-full h-0.5 origin-left bg-gradient-to-r from-secondary to-transparent" style="animation: spin 2s linear infinite;"></div>
-        </div>
-    </div>
-
-    <!-- Typewriter headline -->
-    <div class="text-center">
-        <h2 class="text-2xl font-bold tracking-tight mb-2" style="font-family:'Manrope',sans-serif;" id="loadingHeadline">Initializing Analysis...</h2>
-        <p class="text-on-surface-variant text-sm" id="loadingSubtext">Preparing forensic engines</p>
-    </div>
-
-    <!-- Step progress -->
-    <div class="flex flex-col gap-3 w-full max-w-sm">
-        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_1">
-            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">neurology</span></div>
-            <div><div class="text-sm font-medium">BERT Neural Analysis</div><div class="text-xs text-on-surface-variant">Deep semantic processing</div></div>
-            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
-        </div>
-        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_2">
-            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">data_exploration</span></div>
-            <div><div class="text-sm font-medium">SVM Pattern Match</div><div class="text-xs text-on-surface-variant">50,000+ vocabulary scan</div></div>
-            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
-        </div>
-        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_3">
-            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">verified_user</span></div>
-            <div><div class="text-sm font-medium">Credibility Audit</div><div class="text-xs text-on-surface-variant">Source signal analysis</div></div>
-            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
-        </div>
-        <div class="step-item flex items-center gap-3 opacity-30 transition-all duration-500" id="step_4">
-            <div class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-sm">gavel</span></div>
-            <div><div class="text-sm font-medium">Final Verdict</div><div class="text-xs text-on-surface-variant">Generating intelligence report</div></div>
-            <div class="ml-auto step-check hidden"><span class="material-symbols-outlined text-secondary text-sm">check_circle</span></div>
-        </div>
-    </div>
-
-    <!-- Progress bar -->
-    <div class="w-full max-w-sm">
-        <div class="h-1 bg-surface-container-highest rounded-full overflow-hidden">
-            <div id="loadingProgress" class="h-full bg-gradient-to-r from-primary-container to-secondary rounded-full transition-all duration-700" style="width: 0%"></div>
-        </div>
-        <div class="flex justify-between mt-2">
-            <span class="text-xs text-on-surface-variant" id="loadingPct">0%</span>
-            <span class="text-xs text-on-surface-variant">Forensic Analysis</span>
-        </div>
-    </div>
-</div>
-
-<!-- Toast HTML -->
-<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 hidden">
-    <div class="flex items-center gap-3 bg-error-container/90 backdrop-blur-xl border border-error/30 text-on-error-container px-6 py-4 rounded-2xl shadow-2xl">
-        <span class="material-symbols-outlined text-error" style="font-variation-settings:'FILL' 1">error</span>
-        <span id="toastMsg" class="text-sm font-medium">Please enter text to analyze</span>
-        <button onclick="hideToast()" class="ml-2 text-on-surface-variant hover:text-white">
-            <span class="material-symbols-outlined text-sm">close</span>
-        </button>
-    </div>
-</div>
-
-<style>
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes slideUp {
-    from { opacity:0; transform:translate(-50%, 20px); }
-    to   { opacity:1; transform:translate(-50%, 0); }
-}
-</style>
 </body>
 </html>

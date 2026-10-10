@@ -13,13 +13,18 @@ logging.basicConfig(
 )
 log = logging.getLogger("aletheia")
 
-# ── NLTK downloads — must be first ────────────────────────
+# ── NLTK resource verification ────────────────────────────
 try:
     import nltk
-    nltk.download("stopwords", quiet=True)
-    nltk.download("wordnet",   quiet=True)
-    nltk.download("omw-1.4",   quiet=True)
-    log.info("NLTK ready")
+    for _res, _pkg in [("corpora/stopwords", "stopwords"), ("corpora/wordnet", "wordnet"), ("corpora/omw-1.4", "omw-1.4")]:
+        try:
+            nltk.data.find(_res)
+        except LookupError:
+            try:
+                nltk.download(_pkg, quiet=True)
+            except Exception:
+                pass
+    log.info("NLTK resources verified")
 except Exception as e:
     log.warning("NLTK warning: %s", e)
 
@@ -473,6 +478,9 @@ def run_analysis(text: str) -> dict:
 
     log.info("Final: %s %.1f%% via %s", final_label, final_conf, model_used)
     return result
+
+# Backward-compatibility alias
+analyze = run_analysis
 
 
 # ══════════════════════════════════════════════════════════

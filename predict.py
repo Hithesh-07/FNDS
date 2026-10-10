@@ -2,19 +2,21 @@ import joblib
 import os
 from preprocess import clean_text, extract_features
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def get_handcrafted_features(text):
     """Sync helper to get stylistic feature list."""
     return list(extract_features(text).values())
 
 def load_model():
     """Loads the SVM ensemble and preprocessors from disk."""
-    model_path = "model/model.pkl"
-    vec_path   = "model/vectorizer.pkl"
-    scl_path   = "model/scaler.pkl"
+    model_path = os.path.join(BASE_DIR, "model", "model.pkl")
+    vec_path   = os.path.join(BASE_DIR, "model", "vectorizer.pkl")
+    scl_path   = os.path.join(BASE_DIR, "model", "scaler.pkl")
     
     # Check for mandatory files: model and vectorizer
     if not all(os.path.exists(p) for p in [model_path, vec_path]):
-        print("Missing mandatory model files (model.pkl or vectorizer.pkl)! Run train.py first.")
+        print(f"Missing mandatory model files in {model_path} or {vec_path}! Run train.py first.")
         return None, None, None
         
     model = joblib.load(model_path)

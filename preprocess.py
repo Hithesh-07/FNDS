@@ -6,18 +6,41 @@ from functools import lru_cache
 # Ensure Windows console handles all characters
 sys.stdout.reconfigure(encoding='utf-8')
 
-nltk.download("stopwords", quiet=True)
-nltk.download("wordnet", quiet=True)
-nltk.download("omw-1.4", quiet=True)
-nltk.download("punkt", quiet=True)
-nltk.download("punkt_tab", quiet=True)
+def _safe_nltk_init():
+    resources = [
+        ("corpora/stopwords", "stopwords"),
+        ("corpora/wordnet", "wordnet"),
+        ("corpora/omw-1.4", "omw-1.4"),
+        ("tokenizers/punkt", "punkt"),
+        ("tokenizers/punkt_tab", "punkt_tab"),
+    ]
+    for res_path, pkg in resources:
+        try:
+            nltk.data.find(res_path)
+        except LookupError:
+            try:
+                nltk.download(pkg, quiet=True)
+            except Exception:
+                pass
 
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import sent_tokenize
+_safe_nltk_init()
 
-STOPWORDS   = set(stopwords.words("english"))
-lemmatizer  = WordNetLemmatizer()
+try:
+    from nltk.corpus import stopwords
+    STOPWORDS = set(stopwords.words("english"))
+except Exception:
+    STOPWORDS = {"the", "a", "an", "in", "on", "and", "is", "it", "to", "of", "for", "with", "at", "by", "from"}
+
+try:
+    from nltk.stem import WordNetLemmatizer
+    lemmatizer = WordNetLemmatizer()
+except Exception:
+    lemmatizer = None
+
+try:
+    from nltk.tokenize import sent_tokenize
+except Exception:
+    sent_tokenize = None
 
 # Words that are strong signals of fake news — NEVER remove these
 SENSATIONAL_WORDS = {
@@ -30,7 +53,12 @@ SENSATIONAL_WORDS = {
 
 @lru_cache(maxsize=50000)
 def lemmatize_word(w: str) -> str:
-    return lemmatizer.lemmatize(w)
+    if lemmatizer is not None:
+        try:
+            return lemmatizer.lemmatize(w)
+        except Exception:
+            return w
+    return w
 
 
 def clean_text(text: str) -> str:

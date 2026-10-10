@@ -1,37 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{{ code }} Error — Aletheia</title>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    .error-page { display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center;gap:1.5rem; }
-    .error-code { font-family:'JetBrains Mono',monospace;font-size:6rem;font-weight:700;color:var(--fake);line-height:1; }
-    .error-msg  { font-size:1.3rem;color:var(--text-muted);max-width:480px; }
-  </style>
-    <!-- Clarity tracking code for https://aletheia-k1os.onrender.com/ -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "w35a5rh74y");
-    </script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{{ code|default(429) }} - Request Notice | TruthLens</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #070d18; }
+        .headline-font { font-family: 'Manrope', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
 </head>
-<body>
-  <div class="app-container">
-    <div class="error-page">
-      <div class="error-code">{{ code }}</div>
-      <div class="error-msg">{{ message }}</div>
-      <a href="/" class="primary-btn" style="display:inline-block;padding:0.9rem 2rem;text-decoration:none;margin-top:1rem;">← Back to Home</a>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between items-center p-6">
+    <div class="w-full max-w-7xl mx-auto py-6 flex justify-between items-center">
+        <a href="/" class="flex items-center gap-2 group">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-600 to-cyan-400 flex items-center justify-center text-slate-950 font-black">
+                <span class="material-symbols-outlined text-lg">lens_blur</span>
+            </div>
+            <span class="text-lg font-bold headline-font">TruthLens</span>
+        </a>
     </div>
-  </div>
-  <script>
-    if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark');
-  </script>
+
+    <div class="max-w-md w-full text-center bg-slate-900/80 border border-white/10 rounded-3xl p-10 shadow-2xl">
+        <span class="text-6xl font-black font-mono text-amber-400 block mb-3">{{ code|default(429) }}</span>
+        <h1 class="text-2xl font-bold headline-font mb-2">Request Notice</h1>
+        <p class="text-sm text-slate-400 font-light mb-8">
+            {{ message|default("Rate limit reached. To ensure fair access and prevent automated abuse, please wait a moment before running another analysis.") }}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="/analyze" class="px-5 py-3 rounded-xl bg-gradient-to-r from-sky-400 to-cyan-400 text-slate-950 font-bold text-xs">
+                Back to Analyzer
+            </a>
+            <a href="/" class="px-5 py-3 rounded-xl bg-slate-800 border border-white/10 text-slate-200 text-xs font-semibold hover:bg-slate-700">
+                Home
+            </a>
+        </div>
+    </div>
+
+    <div class="text-xs text-slate-500 font-mono py-6">
+        © 2026 TruthLens · Aletheia Initiative
+    </div>
 </body>
 </html>

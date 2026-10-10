@@ -1,6 +1,10 @@
-import os
-from app import analyze
+import sys
 import time
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
+from app import analyze
 
 TEST_CASES = [
     ("FAKE", "A newly discovered plant extract completely eliminates the need for sleep. Early trials showed subjects fully alert for weeks without rest, but scientists have strongly rejected these claims as biologically impossible."),
@@ -8,7 +12,7 @@ TEST_CASES = [
     ("UNCERTAIN", "A preliminary study suggests that intermittent fasting may potentially help with weight loss, but more research is needed."),
 ]
 
-print("── Aletheia Model Fusion Regression Test ──")
+print("== Aletheia Model Fusion Regression Test ==")
 print("===========================================")
 
 for expected, text in TEST_CASES:
@@ -18,7 +22,6 @@ for expected, text in TEST_CASES:
         
         print(f"  VERDICT: {r['label']} (Confidence: {r['confidence']}%)")
         print(f"  Model Used: {r['model_used']}")
-        print(f"  Agreement: {r['agreement_text']} ({r['agreement']})")
         print(f"  Net Score: {r['net_score']} (Reason: {r['decision_reason']})")
         
         match = r['label'] == expected

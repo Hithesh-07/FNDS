@@ -6,6 +6,7 @@ tmp/
 browser_recordings/
 .env
 venv/
+.venv/
 env/
 .vscode/
 .idea/

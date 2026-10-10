@@ -3,15 +3,44 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>VerifAI | How it Works</title>
+    <title>How It Works | TruthLens by Aletheia</title>
+    <meta name="description" content="Explore the multi-stage machine learning architecture and linguistic forensic pipeline behind TruthLens fake news detection."/>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
-      theme: { extend: { colors: { "primary": "#b4c5ff", "secondary": "#5de6ff", "tertiary": "#ffb596", "background": "#0b1326", "surface": "#0b1326", "surface-container-lowest": "#060e20", "surface-container-low": "#131b2e", "surface-container": "#171f33", "surface-container-high": "#222a3d", "surface-container-highest": "#2d3449", "on-background": "#dae2fd", "on-surface": "#dae2fd", "on-surface-variant": "#c3c6d7", "primary-container": "#2563eb", "on-primary": "#002a78", "on-primary-container": "#eeefff", "secondary-container": "#00cbe6", "on-secondary": "#00363e", "tertiary-container": "#bc4800", "on-tertiary-container": "#ffede6", "error": "#ffb4ab", "error-container": "#93000a", "on-error-container": "#ffdad6", "outline": "#8d90a0", "outline-variant": "#434655", "inverse-surface": "#dae2fd", "inverse-primary": "#0053db" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px" } } }
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#38bdf8",
+            "primary-dark": "#0284c7",
+            "secondary": "#22d3ee",
+            "tertiary": "#f59e0b",
+            "background": "#070d18",
+            "surface": "#0d1527",
+            "surface-container-lowest": "#050912",
+            "surface-container-low": "#0f1a30",
+            "surface-container": "#13213d",
+            "surface-container-high": "#1b2b4d",
+            "surface-container-highest": "#243761",
+            "on-background": "#e2e8f0",
+            "on-surface": "#e2e8f0",
+            "on-surface-variant": "#94a3b8",
+            "error": "#f43f5e",
+            "error-container": "#881337",
+            "success": "#10b981",
+            "success-container": "#064e3b"
+          },
+          fontFamily: {
+            "headline": ["Manrope", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
     }
     </script>
     <script>
@@ -27,200 +56,86 @@
     })();
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b1326; }
-        .glass-panel { background: rgba(45,52,73,0.4); backdrop-filter: blur(24px); }
-        .hero-gradient { background: radial-gradient(circle at 50% -20%, rgba(37,99,235,0.15) 0%, transparent 50%); }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { font-family: 'Inter', sans-serif; background-color: #070d18; }
+        .headline-font { font-family: 'Manrope', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-/* Dark mode (default) */
-html.dark {
-    --bg-color     : #0b1326;
-    --surface      : #171f33;
-    --surface-high : #222a3d;
-    --text-primary : #dae2fd;
-    --text-muted   : #c3c6d7;
-    --border-color : rgba(255,255,255,0.05);
-}
+        html.dark {
+            --bg-color: #070d18;
+            --surface-card: #0f1a30;
+            --surface-elevated: #13213d;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --header-bg: rgba(7, 13, 24, 0.85);
+        }
 
-/* Light mode */
-html.light {
-    --bg-color     : #f0f4ff;
-    --surface      : #ffffff;
-    --surface-high : #e8edf8;
-    --text-primary : #1a1f33;
-    --text-muted   : #4a5068;
-    --border-color : rgba(0,0,0,0.08);
-}
+        html.light {
+            --bg-color: #f8fafc;
+            --surface-card: #ffffff;
+            --surface-elevated: #f1f5f9;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --header-bg: rgba(248, 250, 252, 0.88);
+        }
 
-html.light body {
-    background-color : var(--bg-color) !important;
-    color            : var(--text-primary) !important;
-}
-html.light .glass-card,
-html.light .glass-panel {
-    background       : rgba(255,255,255,0.8) !important;
-    border-color     : rgba(0,0,0,0.08) !important;
-}
-html.light nav,
-html.light header {
-    background       : rgba(240,244,255,0.85) !important;
-}
-html.light .bg-surface-container-low,
-html.light .bg-surface-container-high,
-html.light .bg-surface-container-lowest {
-    background-color : var(--surface-high) !important;
-}
-html.light .text-on-surface,
-html.light .text-on-background {
-    color: var(--text-primary) !important;
-}
-html.light .text-on-surface-variant {
-    color: var(--text-muted) !important;
-}
-html.light .text-slate-400 {
-    color: #4a5068 !important;
-}
-html.light footer {
-    background: #e0e8f8 !important;
-}
+        html.light body {
+            background-color: var(--bg-color) !important;
+            color: var(--text-main) !important;
+        }
+        html.light .bg-surface-container,
+        html.light .bg-surface-container-low,
+        html.light .bg-surface-container-high {
+            background-color: #ffffff !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        }
+        html.light nav,
+        html.light header {
+            background: var(--header-bg) !important;
+            border-color: rgba(0, 0, 0, 0.06) !important;
+        }
+        html.light .text-on-surface,
+        html.light .text-on-background {
+            color: var(--text-main) !important;
+        }
+        html.light .text-on-surface-variant,
+        html.light .text-slate-400 {
+            color: var(--text-sub) !important;
+        }
+        html.light footer {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
 
+        .nav-hover {
+            position: relative;
+            transition: color 0.2s ease;
+        }
+        .nav-hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, #38bdf8, #22d3ee);
+            transition: width 0.25s ease;
+            border-radius: 9999px;
+        }
+        .nav-hover:hover::after { width: 100%; }
+        .nav-hover:hover { color: #38bdf8; }
 
-/* ── Hover glow effects ─────────────────────────────── */
-.hover-glow {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    border-radius: inherit;
-}
-.hover-glow::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    background: linear-gradient(135deg, rgba(180,197,255,0.1), rgba(93,230,255,0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-.hover-glow:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3),
-                0 0 0 1px rgba(93,230,255,0.2),
-                0 0 30px rgba(93,230,255,0.1);
-}
-.hover-glow:hover::after { opacity: 1; }
-
-.nav-link-animated {
-    position: relative;
-    transition: color 0.2s;
-}
-.nav-link-animated::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 2px;
-    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
-    transition: width 0.3s ease;
-    border-radius: 1px;
-}
-.nav-link-animated:hover::after { width: 100%; }
-.nav-link-animated:hover { color: #5de6ff; }
-
-.btn-pop {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-.btn-pop:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(37,99,235,0.4);
-}
-.icon-glow { transition: all 0.3s ease; }
-.icon-glow:hover { filter: drop-shadow(0 0 8px rgba(93,230,255,0.8)); transform: scale(1.1) rotate(5deg); }
-
-/* Button ripple effect */
-.btn-interactive {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-interactive::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.05);
-    opacity: 0;
-    transition: opacity 0.2s;
-    border-radius: inherit;
-}
-.btn-interactive:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(37,99,235,0.35);
-}
-.btn-interactive:hover::after { opacity: 1; }
-.btn-interactive:active {
-    transform: translateY(0) scale(0.98);
-}
-
-/* Card hover glow border */
-.card-interactive {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255,255,255,0.05);
-}
-.card-interactive:hover {
-    transform: translateY(-4px);
-    border-color: rgba(93,230,255,0.25);
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.4),
-        0 0 0 1px rgba(93,230,255,0.15),
-        0 0 30px rgba(93,230,255,0.08);
-}
-
-/* Nav link hover effect */
-.nav-hover {
-    position: relative;
-    transition: color 0.2s;
-}
-.nav-hover::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 2px;
-    background: linear-gradient(90deg, #b4c5ff, #5de6ff);
-    transition: width 0.25s ease;
-    border-radius: 1px;
-}
-.nav-hover:hover::after  { width: 100%; }
-.nav-hover:hover { color: #5de6ff; }
-
-/* Icon bounce on hover */
-.icon-bounce {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.icon-bounce:hover { transform: scale(1.15) rotate(-5deg); }
-
-/* Pulse dot (live indicator) */
-.pulse-dot {
-    animation: pulseDot 2s ease-in-out infinite;
-}
-@keyframes pulseDot {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(93,230,255,0.4); }
-    50%      { box-shadow: 0 0 0 6px rgba(93,230,255,0); }
-}
-
-/* Fade in on load */
-@keyframes fadeInUp {
-    from { opacity:0; transform:translateY(20px); }
-    to   { opacity:1; transform:translateY(0); }
-}
-.fade-in-up {
-    animation: fadeInUp 0.6s ease forwards;
-}
-.fade-delay-1 { animation-delay: 0.1s; opacity:0; }
-.fade-delay-2 { animation-delay: 0.2s; opacity:0; }
-.fade-delay-3 { animation-delay: 0.3s; opacity:0; }
-.fade-delay-4 { animation-delay: 0.4s; opacity:0; }
+        .btn-interactive {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-interactive:hover {
+            transform: translateY(-2px);
+        }
+        .btn-interactive:active {
+            transform: translateY(0) scale(0.98);
+        }
     </style>
-    <!-- Clarity tracking code for https://aletheia-k1os.onrender.com/ -->
+    <!-- Microsoft Clarity analytics -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -229,42 +144,83 @@ html.light footer {
         })(window, document, "clarity", "script", "w35a5rh74y");
     </script>
 </head>
-<body class="bg-background text-on-surface font-body selection:bg-secondary/30">
+<body class="text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
 
-<!-- Fixed Navbar -->
-<header class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-xl shadow-2xl shadow-black/50 relative">
-    <div class="flex justify-between items-center px-8 h-20 max-w-7xl mx-auto">
-        <a href="/" class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-400 headline-font">VerifAI</a>
-        <nav class="hidden md:flex items-center gap-8">
-            <a href="/" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Home</a>
-            <a href="/analyze" class="text-slate-400 hover:text-white transition-colors font-bold text-lg nav-hover">Analyze</a>
-            <a href="/how-it-works" class="text-blue-400 border-b-2 border-blue-500 pb-1 font-bold text-lg nav-hover">How it Works</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-4">
-            <button id="themeToggle"
-                    class="p-2 rounded-lg transition-all hover:bg-white/10 hover:text-secondary icon-bounce"
-                    title="Toggle light/dark mode"
-                    onclick="toggleTheme()">
-                <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
-            </button>
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 bg-[#070d18]/85 backdrop-blur-xl border-b border-white/5 transition-colors duration-200">
+    <div class="flex justify-between items-center w-full px-6 md:px-8 py-4 max-w-7xl mx-auto">
+        <a href="/" class="flex items-center gap-2.5 group" aria-label="TruthLens Home">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary-dark via-primary to-secondary flex items-center justify-center text-slate-950 font-black shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
+                <span class="material-symbols-outlined text-xl">lens_blur</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-extrabold tracking-tight headline-font text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300">TruthLens</span>
+                <span class="text-[9px] uppercase tracking-[0.2em] font-semibold text-primary/80 -mt-1">by Aletheia</span>
+            </div>
+        </a>
+
+        <div class="hidden md:flex items-center space-x-7">
+            <a href="/" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">Home</a>
+            <a href="/analyze" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">Analyze</a>
+            <a href="/how-it-works" class="text-primary font-semibold text-sm tracking-wide nav-hover">How it Works</a>
+            <a href="/metrics" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">Metrics</a>
+            <a href="/about" class="text-slate-300 dark:text-slate-300 font-medium text-sm tracking-wide transition-colors nav-hover">About</a>
         </div>
-        <button id="menuBtn" class="md:hidden p-2 text-slate-400 hover:text-white"
+
+        <div class="hidden md:flex items-center gap-3">
+            <button id="themeToggle"
+                    class="p-2.5 rounded-xl border border-white/10 dark:border-white/10 hover:border-primary/40 bg-white/5 transition-all text-slate-300 hover:text-primary"
+                    title="Toggle light/dark mode"
+                    aria-label="Toggle theme"
+                    onclick="toggleTheme()">
+                <span class="material-symbols-outlined text-lg" id="themeIcon">dark_mode</span>
+            </button>
+            <a href="/analyze" class="bg-gradient-to-r from-primary to-secondary text-slate-950 font-bold px-5 py-2.5 rounded-xl text-sm transition-all btn-interactive flex items-center gap-2">
+                <span>Analyze Text</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+            </a>
+        </div>
+
+        <button id="menuBtn" class="md:hidden p-2.5 rounded-xl border border-white/10 text-slate-300 hover:text-white"
+                aria-label="Open menu"
                 onclick="toggleMenu()">
             <span class="material-symbols-outlined" id="menuIcon">menu</span>
         </button>
     </div>
-    <!-- Mobile menu dropdown -->
-    <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 right-0 bg-[#0b1326]/95 backdrop-blur-xl border-b border-white/5 z-50">
-        <div class="flex flex-col px-8 py-6 gap-4">
-            <a href="/"            class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Home</a>
-            <a href="/analyze"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Analyze</a>
-            <a href="/how-it-works"class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">How it Works</a>
-            <a href="/about"       class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">About</a>
-            <a href="/metrics"     class="text-slate-400 hover:text-white transition-colors font-bold py-2 border-b border-white/5">Metrics</a>
+
+    <div id="mobileMenu" class="hidden md:hidden bg-[#070d18]/95 backdrop-blur-2xl border-b border-white/10 px-6 py-6 transition-all duration-300">
+        <div class="flex flex-col gap-3.5">
+            <a href="/" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Home</span>
+                <span class="material-symbols-outlined text-sm">home</span>
+            </a>
+            <a href="/analyze" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Analyze Text</span>
+                <span class="material-symbols-outlined text-sm">manage_search</span>
+            </a>
+            <a href="/how-it-works" class="text-primary font-bold py-2 border-b border-white/5 flex items-center justify-between">
+                <span>How It Works</span>
+                <span class="material-symbols-outlined text-sm">account_tree</span>
+            </a>
+            <a href="/metrics" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>Model Metrics</span>
+                <span class="material-symbols-outlined text-sm">insights</span>
+            </a>
+            <a href="/about" class="text-slate-300 hover:text-white font-medium py-2 border-b border-white/5 flex items-center justify-between">
+                <span>About Aletheia</span>
+                <span class="material-symbols-outlined text-sm">info</span>
+            </a>
+            <div class="flex items-center justify-between pt-3">
+                <span class="text-xs text-slate-400">Appearance Mode</span>
+                <button onclick="toggleTheme()" class="px-3 py-1.5 rounded-lg border border-white/10 text-xs flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm" id="mobileThemeIcon">dark_mode</span>
+                    <span id="themeLabel">Dark Mode</span>
+                </button>
+            </div>
         </div>
     </div>
-    <div class="bg-gradient-to-b from-blue-500/10 to-transparent h-[1px] w-full"></div>
-</header>
+</nav>
+
 <script>
 function toggleMenu() {
     const menu = document.getElementById('mobileMenu');
@@ -273,167 +229,200 @@ function toggleMenu() {
     icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
 }
 
+function updateThemeIcons(isDark) {
+    const desktopIcon = document.getElementById('themeIcon');
+    const mobileIcon = document.getElementById('mobileThemeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    if (desktopIcon) desktopIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    if (mobileIcon) mobileIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    if (themeLabel) themeLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+}
+
 function toggleTheme() {
     const html = document.documentElement;
     const isDark = html.classList.contains('dark');
-
     if (isDark) {
         html.classList.remove('dark');
         html.classList.add('light');
-        document.getElementById('themeIcon').textContent = 'light_mode';
         localStorage.setItem('aletheia_theme', 'light');
+        updateThemeIcons(false);
     } else {
         html.classList.remove('light');
         html.classList.add('dark');
-        document.getElementById('themeIcon').textContent = 'dark_mode';
         localStorage.setItem('aletheia_theme', 'dark');
+        updateThemeIcons(true);
     }
 }
 
-// Set correct icon on page load
 document.addEventListener('DOMContentLoaded', () => {
     const theme = localStorage.getItem('aletheia_theme') || 'dark';
-    document.getElementById('themeIcon').textContent =
-        theme === 'light' ? 'light_mode' : 'dark_mode';
+    updateThemeIcons(theme === 'dark');
 });
 </script>
 
-<main class="relative min-h-screen pt-32 pb-24 overflow-hidden hero-gradient">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        
-        <!-- Hero Section (Centered) -->
-        <div class="text-center mb-24 max-w-4xl mx-auto">
-            <span class="text-[10px] uppercase tracking-[0.3em] font-bold text-secondary mb-6 block fade-in-up">Forensic Methodology</span>
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] fade-in-up fade-delay-1 text-on-surface" style="font-family:'Manrope',sans-serif;">
-                The Science of Certainty.
+<main class="flex-grow py-12 md:py-16 px-6">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-container border border-white/10 text-xs font-mono text-primary mb-4">
+                <span class="material-symbols-outlined text-sm">schema</span>
+                <span>System Pipeline & Forensics</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl headline-font font-bold text-on-surface tracking-tight mb-4">
+                Architecture & Methodology
             </h1>
-            <p class="text-on-surface-variant text-lg md:text-xl font-light leading-relaxed fade-in-up fade-delay-2 mx-auto">
-                Behind every verification is a multi-layered forensic architecture. We don't just detect—we dissect lexical DNA to isolate the markers of synthesized intent.
+            <p class="text-sm md:text-base text-on-surface-variant max-w-2xl mx-auto font-light leading-relaxed">
+                TruthLens pairs traditional machine learning with modern neural embeddings and a rule-based credibility arbitration layer to evaluate veracity transparently.
             </p>
         </div>
 
-        <!-- 3-Step Process Flow -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32 relative fade-in-up fade-delay-3">
-            <div class="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-secondary/30 to-transparent z-0"></div>
+        <!-- 4-Stage Architecture Pipeline -->
+        <div class="space-y-6 mb-16">
+
+            <!-- Stage 1 -->
+            <div class="bg-surface-container rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-mono font-bold text-lg shrink-0">
+                        01
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h2 class="text-xl font-bold headline-font text-on-surface">NLP Normalization & Sensationalism Token Retention</h2>
+                            <span class="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-primary">preprocess.py</span>
+                        </div>
+                        <p class="text-xs md:text-sm text-on-surface-variant font-light leading-relaxed mb-4">
+                            Standard stopword filters remove words indiscriminately. TruthLens applies WordNet lemmatization, URL/HTML tag stripping, and consecutive duplication removal, but explicitly preserves high-signal sensationalist triggers (e.g., <em>shocking, bombshell, coverup, leaked, conspiracy, suppressed</em>) as critical contextual indicators.
+                        </p>
+                        <div class="p-3.5 rounded-xl bg-surface-container-low border border-white/5 font-mono text-xs text-slate-400">
+                            Input Text &rarr; Lowercase & Regex Clean &rarr; WordNet Lemmatization &rarr; Handcrafted Stylometry Extraction
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="bg-surface-container rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary font-mono font-bold text-lg shrink-0">
+                        02
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h2 class="text-xl font-bold headline-font text-on-surface">Dual Feature Stacking: TF-IDF + Stylometry Ensemble</h2>
+                            <span class="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-secondary">predict.py</span>
+                        </div>
+                        <p class="text-xs md:text-sm text-on-surface-variant font-light leading-relaxed mb-4">
+                            Lexical TF-IDF vectors are horizontally stacked with scaled handcrafted stylistic features (uppercase shouting ratio, exclamation count, question density, quote usage, average word length, and sentence count). The stacked feature matrix is classified by an scikit-learn <code>VotingClassifier</code> to yield baseline class probabilities.
+                        </p>
+                        <div class="p-3.5 rounded-xl bg-surface-container-low border border-white/5 font-mono text-xs text-slate-400">
+                            Sparse TF-IDF Matrix (50,000 vocab) ⊕ Scaled Stylometric Vector &rarr; VotingClassifier(SVM + LR)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="bg-surface-container rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-tertiary/10 border border-tertiary/20 flex items-center justify-center text-tertiary font-mono font-bold text-lg shrink-0">
+                        03
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h2 class="text-xl font-bold headline-font text-on-surface">Rule-Based Credibility & Uncertainty Arbitration</h2>
+                            <span class="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-tertiary">decision_engine.py</span>
+                        </div>
+                        <p class="text-xs md:text-sm text-on-surface-variant font-light leading-relaxed mb-4">
+                            Statistical models can misclassify preliminary scientific articles as false, or trust sophisticated conspiracy propaganda. The decision engine evaluates 3 phrase registries: strong fake triggers, institutional authority citations, and 3 tiers of scientific hedging language. It applies priority overrides and arbitrates probability gaps to flag genuine uncertainty.
+                        </p>
+                        <div class="p-3.5 rounded-xl bg-surface-container-low border border-white/5 font-mono text-xs text-slate-400">
+                            Fake Score vs. Real Score &rarr; Net Credibility Score ⊕ Tiered Uncertainty Index &rarr; Arbitration Override
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="bg-surface-container rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400 font-mono font-bold text-lg shrink-0">
+                        04
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                            <h2 class="text-xl font-bold headline-font text-on-surface">Transformer Context Embeddings & Safe Cloud Fallback</h2>
+                            <span class="text-xs font-mono px-2.5 py-1 rounded bg-white/5 text-cyan-400">bert_predict.py</span>
+                        </div>
+                        <p class="text-xs md:text-sm text-on-surface-variant font-light leading-relaxed mb-4">
+                            When connected to the Hugging Face inference router, fine-tuned transformer weights (<code>Monk3ydluffy/truthlens-bert</code>) evaluate semantic nuance with a non-blocking timeout wrapper. If cloud inference is unavailable or times out, the local ensemble and decision engine take over seamlessly without service interruption.
+                        </p>
+                        <div class="p-3.5 rounded-xl bg-surface-container-low border border-white/5 font-mono text-xs text-slate-400">
+                            Hugging Face Router API &rarr; 20s Thread Timeout &rarr; Blended Decision or Automatic SVM Fallback
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Technical FAQ / Limitations -->
+        <div class="bg-surface-container rounded-3xl p-8 md:p-10 border border-white/10 mb-16">
+            <h2 class="text-2xl font-bold headline-font text-on-surface mb-6">Frequently Asked Technical Questions</h2>
             
-            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
-                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">01</div>
-                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">Input Text</h3>
-                <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Ingestion of suspect URL or raw text into isolating chambers for deep semantic parsing and initial heuristic checks.
-                </p>
-            </div>
-
-            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
-                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">02</div>
-                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">AI Analysis</h3>
-                <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Parallel processing through BERT transformers and SVM classifiers to detect systemic logic flaws and synthetic phrasing.
-                </p>
-            </div>
-
-            <div class="glass-panel p-10 rounded-[2rem] border border-white/5 relative z-10 card-interactive group bg-[#131b2e]">
-                <div class="text-secondary font-black text-xl mb-6 font-mono opacity-80 group-hover:opacity-100 transition-opacity">03</div>
-                <h3 class="text-2xl font-bold mb-4 text-on-surface" style="font-family:'Manrope',sans-serif;">Credibility Result</h3>
-                <p class="text-sm text-on-surface-variant leading-relaxed">
-                    Synthesis of confidence indexes into a unified veracity report, highlighting specific manipulated indicators.
-                </p>
-            </div>
-        </div>
-
-        <!-- Mission Section (Full Width Card) -->
-        <div class="mb-32 fade-in-up fade-delay-4">
-            <div class="glass-panel p-12 md:p-16 rounded-[2.5rem] border border-white/5 relative overflow-hidden card-interactive bg-[#131b2e]">
-                <!-- Decorative background elements -->
-                <div class="absolute -top-32 -right-32 w-96 h-96 bg-primary/10 blur-[100px] rounded-full"></div>
-                
-                <span class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4 block">The Purpose</span>
-                <h2 class="text-4xl md:text-5xl font-extrabold mb-8 text-on-surface" style="font-family:'Manrope',sans-serif;">Our Mission</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-                    <p class="text-on-surface-variant text-lg leading-relaxed">
-                        In an era of hyper-optimized misinformation, VerifAI aims to restore the value of truth. We provide the infrastructure for a more transparent information ecosystem where facts are verifiable and accountability is algorithmic.
+            <div class="space-y-6 text-sm text-on-surface-variant font-light">
+                <div>
+                    <h3 class="text-base font-semibold text-on-surface mb-1">Does TruthLens fact-check live events in real time?</h3>
+                    <p class="leading-relaxed">
+                        No. TruthLens is a linguistic and stylistic analysis tool. It analyzes the style, framing, tone, and attribution structure of text based on historical patterns of verified and debunked reporting. It does not browse the live web or verify unrecorded events in real time.
                     </p>
-                    <p class="text-on-surface-variant text-lg leading-relaxed">
-                        By democratizing access to military-grade linguistic forensics, we empower journalists, researchers, and the public to filter out manufactured narratives before they take root in societal discourse.
+                </div>
+                <div class="pt-4 border-t border-white/5">
+                    <h3 class="text-base font-semibold text-on-surface mb-1">Why does the system classify some text as "UNCERTAIN"?</h3>
+                    <p class="leading-relaxed">
+                        Responsible news reporting frequently includes hedged language when covering preliminary clinical trials, active investigations, or scientific debates. Binary real/fake classifiers often penalize cautious phrasing. TruthLens detects hedging vocabulary and marks such content as UNCERTAIN to reflect the nature of the claim.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-white/5">
+                    <h3 class="text-base font-semibold text-on-surface mb-1">What training data was used for the local models?</h3>
+                    <p class="leading-relaxed">
+                        The models were trained on balanced sets of over 44,000 real and fake news articles, incorporating political news, scientific reporting, press announcements, and debunked misinformation archives.
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Science of Veracity (2x2 Grid) -->
-        <div class="mb-32 relative">
-            <div class="mb-12 text-center">
-                <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary mb-4 block">Deep Logic</span>
-                <h2 class="text-4xl font-extrabold text-on-surface" style="font-family:'Manrope',sans-serif;">Science of Veracity</h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Card 1: BERT -->
-                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
-                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-8 group-hover:bg-primary/20 transition-colors">
-                        <span class="material-symbols-outlined text-primary">adjust</span>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">BERT Architecture</h4>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Bidirectional Encoder Representations allow us to understand deep linguistic context and nuance in complex sentences, identifying unnatural patterns typical of LLMs.
-                    </p>
-                </div>
-                
-                <!-- Card 2: SVM -->
-                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
-                    <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mb-8 group-hover:bg-secondary/20 transition-colors">
-                        <span class="material-symbols-outlined text-secondary">monitoring</span>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">SVM Classification</h4>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Support Vector Machines process high-dimensional features to classify text veracity with forensic precision against large historical databases of known disinformation.
-                    </p>
-                </div>
-
-                <!-- Card 3: Lexical Variance -->
-                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
-                    <div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center mb-8 group-hover:bg-tertiary/20 transition-colors">
-                        <span class="material-symbols-outlined text-tertiary">fork_right</span>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">Lexical Variance</h4>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Analysis of vocabulary richness, stylistic repetition, and syntax abnormalities often associated with deceptive narratives or machine generated loops.
-                    </p>
-                </div>
-
-                <!-- Card 4: Global Signal -->
-                <div class="bg-[#0b1326] p-10 rounded-[2rem] border border-white/5 flex flex-col card-interactive group shadow-xl">
-                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-8 group-hover:bg-white/10 transition-colors">
-                        <span class="material-symbols-outlined text-white">public</span>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4 font-headline text-on-surface">Global Signal Network</h4>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Cross-referencing claims against a real-time web of 50M+ verified factual anchors and trusted nodes to evaluate contextual plausibility.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom CTA -->
-        <div class="flex flex-col items-center justify-center text-center py-16">
-            <h2 class="text-3xl font-bold text-on-surface mb-8 font-headline">Ready to see the forensic layer?</h2>
-            <a href="/analyze" class="bg-secondary text-[#0b1326] font-bold px-10 py-4 rounded-xl transition-transform hover:scale-105 shadow-xl hover:shadow-secondary/20 btn-interactive flex items-center gap-2">
-                <span>Run Forensic Analysis &rarr;</span>
+        <!-- Call to Action -->
+        <div class="text-center">
+            <a href="/analyze" class="bg-gradient-to-r from-primary to-secondary text-slate-950 font-bold px-8 py-3.5 rounded-xl text-sm inline-flex items-center gap-2 btn-interactive shadow-lg shadow-primary/20">
+                <span>Try the Analysis Workbench</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
             </a>
         </div>
-
     </div>
 </main>
 
-<footer class="bg-[#060e20] w-full py-12 border-t border-white/5 mt-auto relative z-10">
-    <div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
-        <div class="text-sm font-bold text-slate-500 mb-6 md:mb-0 headline-font">VerifAI Intelligence</div>
-        <div class="flex gap-8 mb-6 md:mb-0">
-            <a href="/analyze" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Analyze</a>
-            <a href="/metrics" class="text-xs uppercase tracking-widest font-medium text-slate-500 hover:text-white transition-colors">Metrics</a>
+<!-- Footer -->
+<footer class="bg-[#050912] py-12 border-t border-white/5 mt-auto transition-colors">
+    <div class="flex flex-col md:flex-row justify-between items-center px-6 md:px-12 max-w-7xl mx-auto gap-6 text-center md:text-left">
+        <div>
+            <div class="flex items-center justify-center md:justify-start gap-2">
+                <span class="font-extrabold text-white text-lg tracking-tight headline-font">TruthLens</span>
+                <span class="text-xs text-primary font-mono">v2.4</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">An open AI media veracity initiative by Aletheia.</p>
         </div>
-        <div class="text-xs uppercase tracking-widest font-medium text-slate-500">© 2026 VerifAI Inc. The Veracity Layer.</div>
+        <div class="flex flex-wrap justify-center gap-7 text-xs text-slate-400">
+            <a href="/" class="hover:text-primary transition-colors">Home</a>
+            <a href="/analyze" class="hover:text-primary transition-colors">Analyze Workbench</a>
+            <a href="/how-it-works" class="hover:text-primary transition-colors">How It Works</a>
+            <a href="/metrics" class="hover:text-primary transition-colors">Metrics</a>
+            <a href="/about" class="hover:text-primary transition-colors">About & Ethics</a>
+        </div>
+        <div class="text-xs text-slate-500 font-mono">
+            © 2026 Aletheia · TruthLens
+        </div>
     </div>
 </footer>
+
 </body>
 </html>
