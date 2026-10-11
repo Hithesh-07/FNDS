@@ -670,6 +670,83 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
+            <!-- External Fact-Check Evidence (Span 12) -->
+            <div class="lg:col-span-12 bg-surface-container rounded-3xl p-8 border border-white/10">
+                {% set fact_check_data = result.get('fact_checks', {}) if result else {} %}
+                {% set fact_check_status = fact_check_data.get('status', 'unavailable') if fact_check_data else 'unavailable' %}
+                {% set fact_check_claims = fact_check_data.get('claims', []) if fact_check_data else [] %}
+
+                <div class="flex items-center gap-2.5 mb-4">
+                    <span class="material-symbols-outlined text-primary text-xl">fact_check</span>
+                    <h3 class="text-base font-bold headline-font text-on-surface">External Fact-Check Evidence</h3>
+                </div>
+
+                <p class="text-xs md:text-sm text-on-surface-variant mb-6 font-light max-w-3xl leading-relaxed">
+                    This section surfaces published fact-check reviews that matched the submitted text. A review may concern only one claim within a larger article and does not verify the entire document.
+                </p>
+
+                {% if fact_check_status == 'matched' and fact_check_claims %}
+                    <div class="space-y-4">
+                        {% for claim in fact_check_claims %}
+                        <article class="bg-surface-container-low border border-white/5 rounded-2xl p-5">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-3">
+                                <div class="flex-1">
+                                    <p class="text-[10px] uppercase tracking-[0.2em] font-mono text-primary mb-2">Matched claim</p>
+                                    <p class="text-sm md:text-base text-slate-100 leading-relaxed">{{ claim.claim|e }}</p>
+                                </div>
+                                {% if claim.rating and claim.rating != 'Rating not provided' %}
+                                <span class="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-mono uppercase tracking-widest text-primary whitespace-nowrap">
+                                    {{ claim.rating|e }}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs md:text-sm text-slate-300">
+                                <div>
+                                    <span class="font-mono text-slate-400 block mb-1">Publisher</span>
+                                    <span>{{ claim.publisher|e }}</span>
+                                </div>
+                                {% if claim.title %}
+                                <div>
+                                    <span class="font-mono text-slate-400 block mb-1">Review title</span>
+                                    <span>{{ claim.title|e }}</span>
+                                </div>
+                                {% endif %}
+                                {% if claim.review_date %}
+                                <div>
+                                    <span class="font-mono text-slate-400 block mb-1">Review date</span>
+                                    <span>{{ claim.review_date|e }}</span>
+                                </div>
+                                {% endif %}
+                                {% if claim.url and (claim.url.startswith('http://') or claim.url.startswith('https://')) %}
+                                <div class="md:col-span-2 pt-1">
+                                    <a href="{{ claim.url|e }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors text-sm font-medium">
+                                        <span class="material-symbols-outlined text-base">open_in_new</span>
+                                        <span>Read original review</span>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                {% elif fact_check_status == 'no_matches' %}
+                    <div class="rounded-2xl border border-white/5 bg-surface-container-low p-5">
+                        <p class="text-lg font-bold text-on-surface">No matching fact-checks found</p>
+                        <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+                            No existing review was returned for this search. This does not mean the claim is true or false; it simply means no matching fact-check entry was available in the Google Fact Check dataset.
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5">
+                        <p class="text-lg font-bold text-amber-300">Fact-check lookup unavailable</p>
+                        <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+                            External reviews could not be retrieved at the moment, so the current text-analysis verdict remains available without this source. {% if fact_check_data and fact_check_data.get('message') %}{{ fact_check_data.get('message')|e }}{% else %}The API may be unavailable or the request may have failed.{% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+
             <!-- Analyzed Content Inspector (Span 12) -->
             <div class="lg:col-span-12 bg-surface-container rounded-3xl p-8 border border-white/10">
                 <div class="flex justify-between items-center mb-4">

@@ -9,4 +9,5 @@ numpy
 joblib
 scipy
 requests
+python-dotenv
 colorama

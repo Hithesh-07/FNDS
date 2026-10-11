@@ -4,6 +4,10 @@ import os
 import sys
 import logging
 from collections import deque
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── Logging setup — structured logging, no print() ─────────
 logging.basicConfig(
@@ -82,6 +86,9 @@ except ImportError:
 # ── Environment ────────────────────────────────────────────
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
+GOOGLE_FACT_CHECK_API_KEY = os.environ.get(
+    "GOOGLE_FACT_CHECK_API_KEY", ""
+)
 
 # ── Global state — bounded deque to prevent memory leak ────
 MAX_LOG_ENTRIES = 100
@@ -95,6 +102,93 @@ _svm_scaler     = None
 # ── Input validation constants ────────────────────────────
 MAX_TEXT_LENGTH = 50_000
 MIN_TEXT_LENGTH = 10
+
+def search_google_fact_checks(text: str) -> dict:
+    """Find existing fact-check reviews; never treat no results as proof."""
+    if not GOOGLE_FACT_CHECK_API_KEY:
+        return {
+            "status": "unavailable",
+            "message": "Fact-check API key is not configured.",
+            "claims": [],
+        }
+
+    normalized = " ".join((text or "").split())
+    query = normalized[:400] if normalized else ""
+
+    if not query:
+        return {
+            "status": "no_matches",
+            "claims": [],
+            "message": "No text was provided for fact-check lookup.",
+        }
+
+    try:
+        response = requests.get(
+            "https://factchecktools.googleapis.com/v1alpha1/claims:search",
+            params={
+                "key": GOOGLE_FACT_CHECK_API_KEY,
+                "query": query,
+                "languageCode": "en-US",
+                "pageSize": 5,
+            },
+            timeout=6,
+        )
+        response.raise_for_status()
+
+        try:
+            data = response.json()
+        except ValueError as exc:
+            log.warning("Google Fact Check response was not valid JSON: %s", exc)
+            return {
+                "status": "unavailable",
+                "claims": [],
+                "message": "External fact-check response could not be processed.",
+            }
+
+        reviews = []
+        for claim in data.get("claims", []):
+            claim_text = claim.get("text") or "Claim text unavailable"
+            for review in claim.get("claimReview", []):
+                publisher = review.get("publisher") or {}
+                url = review.get("url") or ""
+                if not isinstance(url, str) or not url.startswith(("http://", "https://")):
+                    url = ""
+
+                reviews.append({
+                    "claim": claim_text,
+                    "publisher": publisher.get("name", "Unknown publisher"),
+                    "rating": review.get("textualRating") or "Rating not provided",
+                    "title": review.get("title") or "Read fact-check review",
+                    "url": url,
+                    "review_date": review.get("reviewDate") or "",
+                })
+
+                if len(reviews) >= 5:
+                    break
+
+            if len(reviews) >= 5:
+                break
+
+        return {
+            "status": "matched" if reviews else "no_matches",
+            "claims": reviews,
+        }
+
+    except requests.Timeout:
+        log.warning("Google Fact Check lookup timed out for query length=%d", len(query))
+        return {
+            "status": "unavailable",
+            "claims": [],
+            "message": "External fact-check lookup timed out.",
+        }
+    except requests.RequestException as exc:
+        log.warning("Google Fact Check lookup failed for query length=%d: %s", len(query), exc)
+        return {
+            "status": "unavailable",
+            "claims": [],
+            "message": "External fact-check lookup failed.",
+        }
+
 
 
 def get_svm():
@@ -467,6 +561,9 @@ def run_analysis(text: str) -> dict:
         "keywords"         : svm_result.get("keywords", []),
         "red_flags"        : svm_result.get("red_flags", {}),
     }
+
+    # Separate from model verdicts: external reviews are supplemental evidence only.
+    result["fact_checks"] = search_google_fact_checks(text)
 
     # Log prediction — text_preview stripped for security
     prediction_logs.append({
