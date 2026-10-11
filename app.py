@@ -4,14 +4,24 @@ import os
 import sys
 import logging
 from collections import deque
+from pathlib import Path
 
-import os
+import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+PROJECT_ROOT = Path(__file__).resolve().parent
+ENV_PATH = PROJECT_ROOT / ".env"
 
-GOOGLE_FACT_CHECK_API_KEY = os.getenv("GOOGLE_FACT_CHECK_API_KEY")
+if ENV_PATH.exists():
+    load_dotenv(ENV_PATH)
 
+
+def get_google_fact_check_api_key() -> str:
+    """Read the configured Google Fact Check API key from the runtime environment."""
+    return os.environ.get("GOOGLE_FACT_CHECK_API_KEY", "").strip()
+
+
+GOOGLE_FACT_CHECK_API_KEY = get_google_fact_check_api_key()
 
 # ── Logging setup — structured logging, no print() ─────────
 logging.basicConfig(
@@ -90,9 +100,7 @@ except ImportError:
 # ── Environment ────────────────────────────────────────────
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN", "")
-GOOGLE_FACT_CHECK_API_KEY = os.environ.get(
-    "GOOGLE_FACT_CHECK_API_KEY", ""
-)
+GOOGLE_FACT_CHECK_API_KEY = get_google_fact_check_api_key()
 
 # ── Global state — bounded deque to prevent memory leak ────
 MAX_LOG_ENTRIES = 100
@@ -112,6 +120,7 @@ def search_google_fact_checks(text: str) -> dict:
     if not GOOGLE_FACT_CHECK_API_KEY:
         return {
             "status": "unavailable",
+            "error_type": "missing_key",
             "message": "Fact-check API key is not configured.",
             "claims": [],
         }
@@ -122,6 +131,7 @@ def search_google_fact_checks(text: str) -> dict:
     if not query:
         return {
             "status": "no_matches",
+            "error_type": "no_matches",
             "claims": [],
             "message": "No text was provided for fact-check lookup.",
         }
@@ -137,6 +147,34 @@ def search_google_fact_checks(text: str) -> dict:
             },
             timeout=6,
         )
+
+        if response.status_code == 403:
+            log.warning("Google Fact Check API rejected the request (403). Check API key validity and quotas.")
+            return {
+                "status": "unavailable",
+                "error_type": "api_error",
+                "claims": [],
+                "message": "The fact-check service rejected the request.",
+            }
+
+        if response.status_code in {400, 429}:
+            log.warning("Google Fact Check API returned an HTTP %s response.", response.status_code)
+            return {
+                "status": "unavailable",
+                "error_type": "api_error",
+                "claims": [],
+                "message": "The fact-check service rejected the search request.",
+            }
+
+        if 500 <= response.status_code < 600:
+            log.warning("Google Fact Check API returned server error %s.", response.status_code)
+            return {
+                "status": "unavailable",
+                "error_type": "api_error",
+                "claims": [],
+                "message": "The fact-check service is currently unavailable.",
+            }
+
         response.raise_for_status()
 
         try:
@@ -145,14 +183,21 @@ def search_google_fact_checks(text: str) -> dict:
             log.warning("Google Fact Check response was not valid JSON: %s", exc)
             return {
                 "status": "unavailable",
+                "error_type": "api_error",
                 "claims": [],
                 "message": "External fact-check response could not be processed.",
             }
 
         reviews = []
-        for claim in data.get("claims", []):
+        for claim in data.get("claims", []) or []:
+            if not isinstance(claim, dict):
+                continue
+
             claim_text = claim.get("text") or "Claim text unavailable"
-            for review in claim.get("claimReview", []):
+            for review in claim.get("claimReview", []) or []:
+                if not isinstance(review, dict):
+                    continue
+
                 publisher = review.get("publisher") or {}
                 url = review.get("url") or ""
                 if not isinstance(url, str) or not url.startswith(("http://", "https://")):
@@ -160,7 +205,7 @@ def search_google_fact_checks(text: str) -> dict:
 
                 reviews.append({
                     "claim": claim_text,
-                    "publisher": publisher.get("name", "Unknown publisher"),
+                    "publisher": (publisher.get("name") if isinstance(publisher, dict) else "") or "Unknown publisher",
                     "rating": review.get("textualRating") or "Rating not provided",
                     "title": review.get("title") or "Read fact-check review",
                     "url": url,
@@ -175,6 +220,7 @@ def search_google_fact_checks(text: str) -> dict:
 
         return {
             "status": "matched" if reviews else "no_matches",
+            "error_type": "success" if reviews else "no_matches",
             "claims": reviews,
         }
 
@@ -182,6 +228,7 @@ def search_google_fact_checks(text: str) -> dict:
         log.warning("Google Fact Check lookup timed out for query length=%d", len(query))
         return {
             "status": "unavailable",
+            "error_type": "network_error",
             "claims": [],
             "message": "External fact-check lookup timed out.",
         }
@@ -189,6 +236,7 @@ def search_google_fact_checks(text: str) -> dict:
         log.warning("Google Fact Check lookup failed for query length=%d: %s", len(query), exc)
         return {
             "status": "unavailable",
+            "error_type": "api_error",
             "claims": [],
             "message": "External fact-check lookup failed.",
         }

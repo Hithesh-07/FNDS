@@ -14,22 +14,32 @@ class FactCheckFeatureTests(unittest.TestCase):
         self.assertEqual(result["claims"], [])
 
     def test_search_google_fact_checks_matches(self):
-        mock_response = type("Resp", (), {"raise_for_status": lambda self: None, "json": lambda self: {"claims": [{"text": "The claim", "claimReview": [{"publisher": {"name": "PolitiFact"}, "textualRating": "Mostly False", "title": "Fact-check title", "url": "https://example.com/fact-check", "reviewDate": "2026-01-01"}]}]}})()
+        mock_response = type(
+            "Resp",
+            (),
+            {
+                "status_code": 200,
+                "raise_for_status": lambda self: None,
+                "json": lambda self: {"claims": [{"text": "The claim", "claimReview": [{"publisher": {"name": "PolitiFact"}, "textualRating": "Mostly False", "title": "Fact-check title", "url": "https://example.com/fact-check", "reviewDate": "2026-01-01"}]}]},
+            },
+        )()
 
         with patch.object(app_module, "GOOGLE_FACT_CHECK_API_KEY", "abc123"), patch.object(app_module.requests, "get", return_value=mock_response):
             result = app_module.search_google_fact_checks("A claim earlier in the article")
 
         self.assertEqual(result["status"], "matched")
+        self.assertEqual(result["error_type"], "success")
         self.assertEqual(len(result["claims"]), 1)
         self.assertEqual(result["claims"][0]["publisher"], "PolitiFact")
 
     def test_search_google_fact_checks_no_matches(self):
-        mock_response = type("Resp", (), {"raise_for_status": lambda self: None, "json": lambda self: {"claims": []}})()
+        mock_response = type("Resp", (), {"status_code": 200, "raise_for_status": lambda self: None, "json": lambda self: {"claims": []}})()
 
         with patch.object(app_module, "GOOGLE_FACT_CHECK_API_KEY", "abc123"), patch.object(app_module.requests, "get", return_value=mock_response):
             result = app_module.search_google_fact_checks("A claim earlier in the article")
 
         self.assertEqual(result["status"], "no_matches")
+        self.assertEqual(result["error_type"], "no_matches")
         self.assertEqual(result["claims"], [])
 
     def test_search_google_fact_checks_timeout(self):
