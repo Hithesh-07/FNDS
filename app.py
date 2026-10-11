@@ -4,10 +4,14 @@ import os
 import sys
 import logging
 from collections import deque
-import requests
+
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+GOOGLE_FACT_CHECK_API_KEY = os.getenv("GOOGLE_FACT_CHECK_API_KEY")
+
 
 # ── Logging setup — structured logging, no print() ─────────
 logging.basicConfig(
